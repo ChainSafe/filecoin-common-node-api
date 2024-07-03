@@ -1,17 +1,27 @@
 mod core;
+mod services;
 
 use std::{
-    borrow::Cow, fmt::Display, fs::File, hash::RandomState, net::SocketAddr, num::NonZeroUsize,
-    path::PathBuf, pin::pin, str::FromStr, sync::Arc,
+    borrow::Cow,
+    collections::HashMap,
+    fmt::Display,
+    fs::File,
+    hash::{BuildHasher, RandomState},
+    net::SocketAddr,
+    num::NonZeroUsize,
+    path::PathBuf,
+    pin::pin,
+    str::FromStr,
+    sync::Arc,
 };
 
 use crate::jsonrpc_types;
 use anyhow::Context as _;
 use clap::Parser;
-use core::CheckAllMethods;
+use core::{Annotation, CheckAllMethods};
 use futures::{
     future::{self, Either},
-    stream, StreamExt as _,
+    stream, Stream, StreamExt as _,
 };
 use http::Uri;
 use http_body_util::{BodyExt as _, Full};
@@ -46,6 +56,52 @@ struct Log {
     subscriber: tracing_configuration::Subscriber,
     #[serde(deserialize_with = "from_str")]
     filter: EnvFilter,
+}
+
+#[derive(Debug, Default)]
+pub struct Report<S> {
+    pass: HashMap<String, usize, S>,
+    fail: Vec<(
+        jsonrpc_types::Request<'static>,
+        Option<jsonrpc_types::Response<'static>>,
+        nunny::Vec<Annotation>,
+    )>,
+    skip: usize,
+}
+
+async fn report<'a, S>(
+    checker: &CheckAllMethods<impl BuildHasher>,
+    s: impl Stream<
+        Item = (
+            jsonrpc_types::Request<'a>,
+            Option<jsonrpc_types::Response<'a>>,
+        ),
+    >,
+) -> Report<S>
+where
+    S: BuildHasher + Default,
+{
+    s.fold(Report::default(), |mut report, (req, resp)| async move {
+        match checker.get(&req.method) {
+            Some(check) => match nunny::Vec::new(check.check(&req, resp.as_ref())) {
+                Ok(annot) => {
+                    report
+                        .fail
+                        .push((req.into_owned(), resp.map(|it| it.into_owned()), annot))
+                }
+                Err(_) => {
+                    report
+                        .pass
+                        .entry(req.method.into_owned())
+                        .and_modify(|it| *it += 1)
+                        .or_insert(1);
+                }
+            },
+            None => report.skip += 1,
+        }
+        report
+    })
+    .await
 }
 
 async fn proxy(

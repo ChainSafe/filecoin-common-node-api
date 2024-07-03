@@ -259,7 +259,7 @@ mod tests {
     #[test]
     fn ref_path_for_jsonschema() {
         let checker = JSONSchema::compile(&json!({
-            "$ref": "#/components/schemas/bar",
+            "$ref": "#/components/schemas/foo",
             "components": {
                 "schemas": {
                     "foo": {
