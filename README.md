@@ -7,14 +7,13 @@ set of [JSON-RPC](https://www.jsonrpc.org/) methods as an [OpenRPC](https://spec
 document.
 You may [browse the spec on the OpenRPC playground](https://playground.open-rpc.org/?schemaUrl=https://github.com/ChainSafe/filecoin-common-node-api/raw/main/spec.json).
 
-[`tool`](./tool/) contains a binary which was used to generate the above
-document, but also of note is a `diff` subcommand which can summarize differences
-between two different OpenRPC specifications, which you may wish to use for
-conformance checking.
+The [`tool`](./tool/) directory contains tooling for creating and interacting 
+with the schema.
+See [its readme](./tool/README.md) for information on the available commands.
 
-To use `tool`, you should [install rust](https://www.rust-lang.org/tools/install),
-and get an overview of the subcommands by running the following from the root of
-the repository.
+To get started, you should [install rust](https://www.rust-lang.org/tools/install),
+and run the following from the root of the repository.
+Subcommands must follow the `--`.
 ```console
-$ cargo run --manifest-path ./tool/Cargo.toml -- openrpc --help
+$ cargo run --manifest-path ./tool/Cargo.toml -- --help
 ```
