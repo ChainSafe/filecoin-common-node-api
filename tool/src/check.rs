@@ -181,7 +181,8 @@ impl<S> CheckMethod<S> {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, strum::Display)]
+#[strum(serialize_all = "kebab-case")]
 pub enum Annotation {
     IncorrectParamStructure,
     MissingRequiredParam,

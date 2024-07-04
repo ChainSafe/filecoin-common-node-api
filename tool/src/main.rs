@@ -222,8 +222,8 @@ fn validate_dialogues_from_reader(
                 params,
                 response,
             }) => match method2checker.get(&*method) {
-                Some(check) => match check
-                    .check(
+                Some(check) => {
+                    let annotations = check.check(
                         &jsonrpc_types::Request {
                             jsonrpc: jsonrpc_types::V2,
                             method: Cow::Borrowed(&*method),
@@ -240,20 +240,22 @@ fn validate_dialogues_from_reader(
                                 id: jsonrpc_types::Id::Null,
                             })
                             .as_ref(),
-                    )
-                    .is_empty()
-                {
-                    true => {
-                        passed
-                            .entry(method.into_owned())
-                            .and_modify(|it| *it += 1)
-                            .or_insert(1);
+                    );
+                    match annotations.is_empty() {
+                        true => {
+                            passed
+                                .entry(method.into_owned())
+                                .and_modify(|it| *it += 1)
+                                .or_insert(1);
+                        }
+                        false => errs.push(format!(
+                            "script[{}]: failed to validate method {}: [{}]",
+                            ix,
+                            method,
+                            annotations.iter().join(", ")
+                        )),
                     }
-                    false => errs.push(format!(
-                        "script[{}]: failed to validate method {}",
-                        ix, method
-                    )),
-                },
+                }
                 None => errs.push(format!(
                     "script[{}]: method {} not found in spec",
                     ix, method
