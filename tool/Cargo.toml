@@ -34,3 +34,7 @@ tokio-stream = { version = "0.1.15", default-features = false, features = [
 tokio-util = "0.7.11"
 tower = "0.4.13"
 tracing = "0.1.40"
+
+[dev-dependencies]
+expect-test = "1.5.0"
+stack_list = "0.1.0"

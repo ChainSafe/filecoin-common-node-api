@@ -30,7 +30,7 @@ use std::{
 };
 
 /// Utilities for creating, interacting with, and testing against the Filecoin
-/// Common Node API
+/// Common Node API.
 #[derive(Parser)]
 enum Args {
     #[command(subcommand)]
@@ -48,28 +48,29 @@ enum Args {
 /// Subommands related to processing OpenRPC documents.
 #[derive(Parser)]
 enum Openrpc {
-    /// Validates that:
-    /// - method names are unique
-    /// - parameter names are unique
-    /// - there are no optional parameters
+    /// Performs validation of the spec, including FIP-specific validation.
     ///
-    /// Does not validate anything else, including:
-    /// - that example pairings match schemas
-    /// - that Example::value and Example::externalValue are mutually exclusive
-    /// - dead $refs, or JSON Schema $refs
-    /// - links, runtime expressions
-    /// - component keys are idents
-    /// - error codes are unique
+    /// Errors are emitted to stderr.
+    ///
+    /// If stdin is received (and is not a terminal),
+    /// it will be interpreted as concatenated JSON summaries of JSON-RPC
+    /// exchanges (as output by the `json-rpc capture` command).
+    ///
+    /// Each exchange will be validated against the spec.
+    ///
+    /// On EOF, a summary table of `count` and `method` exchanges is printed to
+    /// stdout.
     Validate { spec: PathBuf },
-    /// Interpret `select` as a table of methods to include in `openrpc`, outputting
-    /// a new schema with only the selected methods.
+    /// Interpret `select` as a json document of methods to include in `openrpc`.
+    ///
+    /// A new schema with only the selected methods is printed to stdout.
     Select {
         openrpc: PathBuf,
         select: PathBuf,
-        /// Specify a new title for the schema
+        /// Specify a new title for the schema.
         #[arg(long)]
         overwrite_title: Option<String>,
-        /// Specify a new version for the schema
+        /// Specify a new version for the schema.
         #[arg(long)]
         overwrite_version: Option<String>,
     },
@@ -86,7 +87,9 @@ enum JsonRpc {
     /// method call, print a summary as a JSON line to stdout.
     ///
     /// The summary includes only the method name, params, and response.
+    ///
     /// This does NOT validate adherence to the JSON-RPC protocol.
+    ///
     /// This is NOT robust to malice,
     /// and should only be run in trusted environments.
     Capture {
@@ -492,4 +495,44 @@ impl fmt::Display for Char {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.0.fmt(f)
     }
+}
+
+#[test]
+fn doc() {
+    use stack_list::Node;
+
+    fn write(buf: &mut String, tail: &Node<&str>, cmd: &clap::Command) {
+        if !matches!(tail, Node::Root) {
+            buf.push('\n');
+        }
+        let path = Node::Head {
+            data: cmd.get_name(),
+            tail,
+        };
+        for _ in 0..path.count() {
+            buf.push('#')
+        }
+        path.for_each_rev(|component| {
+            buf.push_str(" `");
+            buf.push_str(component);
+            buf.push('`');
+        });
+        buf.push('\n');
+        let mut cmd = cmd
+            .clone()
+            .disable_help_subcommand(true)
+            .disable_help_flag(true);
+        std::fmt::write(buf, format_args!("\n```\n{}\n```", cmd.render_long_help())).unwrap();
+        for sub in cmd.get_subcommands() {
+            write(buf, &path, sub)
+        }
+    }
+
+    let mut buf = String::new();
+    write(
+        &mut buf,
+        &Node::Root,
+        &<Args as clap::CommandFactory>::command(),
+    );
+    expect_test::expect_file!["../README.md"].assert_eq(&buf);
 }

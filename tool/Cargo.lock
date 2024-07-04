@@ -356,6 +356,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "dissimilar"
+version = "1.0.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "59f8e79d1fbf76bdfbde321e902714bf6c49df88a7dda6fc682fc2979226962d"
+
+[[package]]
 name = "dyn-clone"
 version = "1.0.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -393,6 +399,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "expect-test"
+version = "1.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9e0be0a561335815e06dab7c62e50353134c796e7a6155402a64bcff66b6a5e0"
+dependencies = [
+ "dissimilar",
+ "once_cell",
+]
+
+[[package]]
 name = "fancy-regex"
 version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -420,6 +436,7 @@ dependencies = [
  "clap",
  "csv",
  "either",
+ "expect-test",
  "fluent-uri",
  "futures",
  "http",
@@ -435,6 +452,7 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_path_to_error",
+ "stack_list",
  "tokio",
  "tokio-stream",
  "tokio-util",
@@ -1568,6 +1586,12 @@ name = "spin"
 version = "0.9.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6980e8d7511241f8acf4aebddbb1ff938df5eebe98691418c4468d0b72a96a67"
+
+[[package]]
+name = "stack_list"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "af5a1bfea5b330af714dd615cb58f6df4dc2d880d3d27cc65c228faa9d8c9fec"
 
 [[package]]
 name = "strsim"
