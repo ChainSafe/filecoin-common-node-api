@@ -2,7 +2,6 @@ mod check;
 mod gc;
 #[allow(unused)]
 mod jsonrpc_types;
-mod openrpc_diff;
 mod proxy;
 
 use anyhow::{bail, Context as _};
@@ -48,12 +47,6 @@ enum Openrpc {
     /// - error codes are unique
     Validate {
         path: PathBuf,
-    },
-    /// Print a summary of semantic differences between the `left` and `right`
-    /// OpenRPC schemas.
-    Diff {
-        left: PathBuf,
-        right: PathBuf,
     },
     /// Interpret `select` as a table of methods to include in `openrpc`, outputting
     /// a new schema with only the selected methods.
@@ -135,11 +128,6 @@ fn main() -> anyhow::Result<()> {
                     bail!("found {} errors", n)
                 }
             }
-        }
-        Openrpc::Diff { left, right } => {
-            let summary = openrpc_diff::diff(load_json(left)?, load_json(right)?)?;
-            serde_json::to_writer_pretty(io::stdout(), &summary)?;
-            Ok(())
         }
         Openrpc::Select {
             openrpc,
