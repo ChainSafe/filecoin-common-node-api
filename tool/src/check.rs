@@ -5,8 +5,8 @@ use std::{
 };
 
 use crate::jsonrpc_types::{self, RequestParameters};
-use anyhow::bail;
-use futures::future::Either;
+use anyhow::{bail, Context as _};
+use either::Either;
 use indexmap::IndexMap;
 use jsonschema::{CompilationOptions, JSONSchema, ValidationError};
 use openrpc_types::{Components, ParamStructure};
@@ -14,114 +14,93 @@ use schemars::schema::{Schema, SchemaObject};
 use serde::Serialize;
 use serde_json::json;
 
-pub struct CheckAllMethods<S = RandomState> {
-    methods: HashMap<String, CheckOneMethod<S>, S>,
-}
-
-impl<S> CheckAllMethods<S> {
-    pub fn new_with_hasher_and_compilation_options(
-        document: openrpc_types::resolved::OpenRPC,
-        hasher: S,
-        compilation_options: &CompilationOptions,
-    ) -> anyhow::Result<Self>
-    where
-        S: Clone + BuildHasher,
-    {
-        let mut methods = HashMap::with_capacity_and_hasher(document.methods.len(), hasher.clone());
-
-        for method in document.methods {
-            let param_structure = method.param_structure.unwrap_or_default();
-
-            let mut params =
-                IndexMap::with_capacity_and_hasher(method.params.len(), hasher.clone());
-            let mut options = false;
-            for (ix, param) in method.params.into_iter().enumerate() {
-                let required = param.required.unwrap_or_default();
-                if required
-                    && matches!(
-                        param_structure,
-                        ParamStructure::ByPosition | ParamStructure::Either
-                    )
-                    && options
-                {
-                    bail!(
-                        "parameter at index {} in method {} is out-of-order",
-                        ix,
-                        method.name
-                    )
-                }
-
-                if !required {
-                    options = false
-                }
-
-                if params.contains_key(&param.name)
-                    && matches!(
-                        param_structure,
-                        ParamStructure::ByName | ParamStructure::Either
-                    )
-                {
-                    bail!(
-                        "parameter `{}` in method {} is duplicated",
-                        param.name,
-                        method.name
-                    )
-                }
-
-                params.insert(
-                    param.name,
-                    CheckContentDescriptor {
-                        required,
-                        deprecated: param.deprecated.unwrap_or_default(),
-                        schema: compile(
-                            compilation_options,
-                            &param.schema,
-                            document.components.as_ref(),
-                        )?,
-                    },
-                );
-            }
-
-            if methods.contains_key(&method.name) {
-                bail!("duplicate method {}", method.name)
-            }
-
-            methods.insert(
-                method.name,
-                CheckOneMethod {
-                    params,
-                    param_structure,
-                    deprecated: method.deprecated.unwrap_or_default(),
-                    result: match method.result {
-                        Some(it) => Some(compile(
-                            compilation_options,
-                            &it.schema,
-                            document.components.as_ref(),
-                        )?),
-                        None => None,
-                    },
-                },
-            );
-        }
-
-        Ok(CheckAllMethods { methods })
-    }
-    pub fn get(&self, method: &str) -> Option<&CheckOneMethod<S>>
-    where
-        S: BuildHasher,
-    {
-        self.methods.get(method)
-    }
-}
-
-pub struct CheckOneMethod<S = RandomState> {
+pub struct CheckMethod<S = RandomState> {
     params: IndexMap<String, CheckContentDescriptor, S>,
     param_structure: ParamStructure,
     deprecated: bool,
     result: Option<JSONSchema>,
 }
 
-impl<S> CheckOneMethod<S> {
+impl CheckMethod {
+    pub fn new(
+        spec: &openrpc_types::resolved::Method,
+        compilation_options: &CompilationOptions,
+        components: Option<&Components>,
+    ) -> anyhow::Result<Self> {
+        Self::new_with_hasher(spec, compilation_options, RandomState::new(), components)
+    }
+}
+
+impl<S> CheckMethod<S> {
+    pub fn new_with_hasher(
+        spec: &openrpc_types::resolved::Method,
+        compilation_options: &CompilationOptions,
+        hasher: S,
+        components: Option<&Components>,
+    ) -> anyhow::Result<Self>
+    where
+        S: BuildHasher,
+    {
+        let param_structure = spec.param_structure.unwrap_or_default();
+
+        let mut params = IndexMap::with_capacity_and_hasher(spec.params.len(), hasher);
+        let mut options = false;
+        for (ix, param) in spec.params.iter().enumerate() {
+            let required = param.required.unwrap_or_default();
+            if required
+                && matches!(
+                    param_structure,
+                    ParamStructure::ByPosition | ParamStructure::Either
+                )
+                && options
+            {
+                bail!(
+                    "parameter at index {} in method {} is out-of-order",
+                    ix,
+                    spec.name
+                )
+            }
+
+            if !required {
+                options = false
+            }
+
+            if params.contains_key(&param.name)
+                && matches!(
+                    param_structure,
+                    ParamStructure::ByName | ParamStructure::Either
+                )
+            {
+                bail!(
+                    "parameter `{}` in method {} is duplicated",
+                    param.name,
+                    spec.name
+                )
+            }
+
+            params.insert(
+                param.name.clone(),
+                CheckContentDescriptor {
+                    required,
+                    deprecated: param.deprecated.unwrap_or_default(),
+                    schema: compile(compilation_options, &param.schema, components)?,
+                },
+            );
+        }
+
+        Ok(CheckMethod {
+            params,
+            param_structure,
+            deprecated: spec.deprecated.unwrap_or_default(),
+            result: match &spec.result {
+                Some(it) => Some(
+                    compile(compilation_options, &it.schema, components)
+                        .context("couldn't compile JSON Schema")?,
+                ),
+                None => None,
+            },
+        })
+    }
     pub fn check(
         &self,
         request: &jsonrpc_types::Request,

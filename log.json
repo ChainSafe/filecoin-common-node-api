@@ -1,7 +1,0 @@
-{
-    "filter": "trace",
-    "format": {
-        "formatter": "pretty"
-    },
-    "writer": "stdout"
-}
