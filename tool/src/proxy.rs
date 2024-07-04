@@ -1,4 +1,3 @@
-mod core;
 mod services;
 
 use std::{
@@ -6,48 +5,37 @@ use std::{
     collections::HashMap,
     fmt::Display,
     fs::File,
+    future::IntoFuture as _,
     hash::{BuildHasher, RandomState},
     net::SocketAddr,
-    num::NonZeroUsize,
     path::PathBuf,
-    pin::pin,
     str::FromStr,
-    sync::Arc,
 };
 
+use crate::check::{Annotation, CheckAllMethods};
 use crate::jsonrpc_types;
 use anyhow::Context as _;
 use clap::Parser;
-use core::{Annotation, CheckAllMethods};
-use futures::{
-    future::{self, Either},
-    stream, Stream, StreamExt as _,
-};
-use http::Uri;
-use http_body_util::{BodyExt as _, Full};
-use hyper::body::{Bytes, Incoming};
-use hyper_util::client::legacy::{connect::HttpConnector, Client};
+use fluent_uri::UriRef;
+use futures::{future::join, FutureExt as _, Stream, StreamExt as _};
+use http::StatusCode;
+use hyper::body::Bytes;
 use jsonschema::CompilationOptions;
 use serde::Deserialize;
-use tokio::{net::TcpListener, signal};
-use tokio_stream::wrappers::TcpListenerStream;
-use tracing::{debug, error, info, info_span, Instrument};
+use tokio::net::TcpListener;
+use tracing::{debug, error, info, warn};
 use tracing_subscriber::EnvFilter;
-
-struct Config {
-    remote: Uri,
-    check: CheckAllMethods,
-}
 
 #[derive(Parser)]
 pub struct Args {
     local: SocketAddr,
-    remote: Uri,
+    remote_host: http::HeaderValue,
+    remote_uri: UriRef<String>,
     spec: PathBuf,
-    #[arg(short, long)]
-    concurrency: Option<NonZeroUsize>,
     #[arg(long)]
     log: Option<PathBuf>,
+    #[arg(long, default_value_t = 1024)]
+    queue_depth: usize,
 }
 
 #[derive(Deserialize)]
@@ -60,15 +48,19 @@ struct Log {
 
 #[derive(Debug, Default)]
 pub struct Report<S> {
-    pass: HashMap<String, usize, S>,
-    fail: Vec<(
+    /// Methods which matched the specification.
+    pub pass: HashMap<String, usize, S>,
+    /// Methods which failed (and why).
+    pub fail: Vec<(
         jsonrpc_types::Request<'static>,
         Option<jsonrpc_types::Response<'static>>,
         nunny::Vec<Annotation>,
     )>,
-    skip: usize,
+    /// Methods which were not covered in the specification
+    pub skip: usize,
 }
 
+/// Construct a [`Report`] once the stream is finished.
 async fn report<'a, S>(
     checker: &CheckAllMethods<impl BuildHasher>,
     s: impl Stream<
@@ -104,70 +96,14 @@ where
     .await
 }
 
-async fn proxy(
-    client_request: http::Request<Incoming>,
-    origin: &Client<HttpConnector, Full<Bytes>>,
-    config: &Config,
-) -> anyhow::Result<http::Response<Full<Bytes>>> {
-    let (mut req_parts, req_body) = client_request.into_parts();
-    let req_body = req_body
-        .collect()
-        .await
-        .context("couldn't collect client request")?
-        .to_bytes();
-
-    req_parts.uri.clone_from(&config.remote);
-
-    let response = origin
-        .request(http::Request::from_parts(
-            req_parts,
-            Full::new(req_body.clone()),
-        ))
-        .await
-        .context("couldn't forward to origin")?;
-
-    let (resp_parts, resp_body) = response.into_parts();
-    let resp_body = resp_body
-        .collect()
-        .await
-        .context("couldn't collect origin response")?
-        .to_bytes();
-
-    if let (Ok(request), Ok(response)) = (
-        serde_json::from_slice::<jsonrpc_types::Request>(&req_body),
-        serde_json::from_slice::<jsonrpc_types::Response>(&resp_body),
-    ) {
-        match config.check.get(&request.method) {
-            Some(check) => {
-                let annotations = check.check(&request, Some(&response));
-                match annotations.is_empty() {
-                    true => info!(target: "app::validate", method = %request.method, "passed"),
-                    false => {
-                        info!(target: "app::validate", method = %request.method, ?annotations, "failed")
-                    }
-                }
-            }
-            None => debug!(target: "app::skip", "not a specified method"),
-        }
-    } else {
-        debug!(target: "app::skip", "not a JSON-RPC exchange")
-    }
-
-    Ok(http::Response::from_parts(resp_parts, Full::new(resp_body)))
-}
-
-/// ```text
-/// ┌────────┬─request──►┌────────────┬─request──►┌────────┐
-/// │ client │           │ us (proxy) │           │ origin │
-/// └────────┘◄─response─└────────────┘◄─response─└────────┘
-/// ```
 pub async fn main(
     Args {
         local,
-        remote,
+        remote_host,
+        remote_uri,
         spec,
-        concurrency,
         log,
+        queue_depth,
     }: Args,
 ) -> anyhow::Result<()> {
     let check = CheckAllMethods::new_with_hasher_and_compilation_options(
@@ -188,101 +124,101 @@ pub async fn main(
         builder.with_env_filter(filter).init();
     }
 
-    let config = Arc::new(Config { remote, check });
+    let (remote_host, remote_uri) = leak((remote_host, remote_uri));
 
-    let us = &hyper_util::server::conn::auto::Builder::new(hyper_util::rt::TokioExecutor::new());
-    let origin = Client::builder(hyper_util::rt::TokioExecutor::new())
-        .build::<_, Full<Bytes>>(HttpConnector::new());
-
-    let (client_connections, stop_accepting_connections) =
-        stream::abortable(TcpListenerStream::new(
-            TcpListener::bind(local)
-                .await
-                .context("couldn't bind address")?,
-        ));
+    let (sink, stream) = futures::channel::mpsc::channel(queue_depth);
 
     info!(target: "app::serve", addr = %local, "listening");
 
-    let serve_clients = client_connections
-        .map(|client_connection| {
-            let origin = &origin;
-            let config = &config;
-            async move {
-                match client_connection.and_then(|conn| conn.peer_addr().map(|addr| (conn, addr))) {
-                    Ok((conn, addr)) => {
-                        let handle = us
-                            .serve_connection_with_upgrades(
-                                // ^~~ requires 'static
-                                hyper_util::rt::TokioIo::new(conn),
-                                hyper::service::service_fn({
-                                    |incoming_request: http::Request<Incoming>| {
-                                        let them = origin.clone();
-                                        let config = config.clone();
-                                        async move {
-                                            proxy(incoming_request, &them, &config)
-                                                .instrument(info_span!(
-                                                    target: "app",
-                                                    "serving client",
-                                                    %addr
-                                                ))
-                                                .await
-                                        }
-                                    }
-                                }),
-                            )
-                            .await;
-                        match handle {
-                            Ok(()) => debug!(
-                                target: "app::serve",
-                                %addr,
-                                "finished serving client"
-                            ),
-                            Err(e) => {
-                                error!(
-                                    target: "app::serve",
-                                    error = ?anyhow::Chain::new(&*e).map(|it|it.to_string()).collect::<Vec<_>>(),
-                                    %addr,
-                                    "error serving client"
-                                );
-                            }
-                        };
-                    }
-                    Err(error) => {
-                        error!(
-                            target: "app::accept",
-                            ?error,
-                            "error accepting connection from client",
-                        )
+    use services::*;
+    let report = report::<RandomState>(
+        &check,
+        stream.filter_map(
+            |(req, resp): (http::Request<Bytes>, http::Response<Bytes>)| async move {
+                match (
+                    serde_json::from_slice(req.body()),
+                    match resp.body().is_empty() {
+                        true => Ok(None),
+                        false => serde_json::from_slice(resp.body()).map(Some),
+                    },
+                ) {
+                    (Ok(req), Ok(resp)) => Some((req, resp)),
+                    _ => {
+                        warn!(target: "app", "ignoring HTTP exchange that isn't JSON-RPC");
+                        None
                     }
                 }
-            }
-        })
-        .buffered(match concurrency {
-            Some(it) => it.get(),
-            None => num_cpus::get(),
-        })
-        .collect::<()>();
+            },
+        ),
+    );
+    let proxy = axum::serve(
+        TcpListener::bind(local).await?,
+        axum::Router::new().fallback_service(
+            tower::ServiceBuilder::new()
+                .layer_fn(|svc| {
+                    UnwrapOrElse::new(svc, |e: anyhow::Error| -> axum::response::Response {
+                        http::Response::builder()
+                            .status(StatusCode::INTERNAL_SERVER_ERROR)
+                            .body(format!("{:?}", e).into())
+                            .unwrap()
+                    })
+                })
+                .layer_fn(CollectRequest)
+                .map_response(|resp: http::Response<Bytes>| -> axum::response::Response {
+                    resp.map(Into::into)
+                })
+                .map_response(|(_req, resp)| resp)
+                .layer_fn(move |svc| TeeOk::new(svc, sink.clone()))
+                .layer_fn(Correlate)
+                .layer_fn(CollectResponse)
+                .map_response(|resp: reqwest::Response| -> http::Response<reqwest::Body> {
+                    resp.into()
+                })
+                .layer_fn({
+                    |svc| {
+                        TryMapRequest::new(
+                        svc,
+                        |mut req: http::Request<Bytes>| -> Result<reqwest::Request, anyhow::Error> {
+                            req.headers_mut()
+                                .insert(http::header::HOST, remote_host.clone());
+                            let new_uri = fluent_uri::UriRef::parse(req.uri().to_string())
+                                .context("couldn't parse request URI")?
+                                .resolve_against(remote_uri)
+                                .context("couldn't rewrite URI")?;
+                            let new_uri = new_uri
+                                .as_str()
+                                .parse()
+                                .with_context(|| format!("rewritten URI {} is invalid", new_uri))?;
 
-    match future::select(serve_clients, pin!(signal::ctrl_c())).await {
-        Either::Left(((), _)) => {} // unreachable
-        Either::Right((_signal_or_err, cont)) => {
-            stop_accepting_connections.abort();
-            info!(
-                target: "app::shutdown",
-                "graceful shutdown on Ctrl-C, finishing outstanding requests (repeat to force)"
-            );
-            match future::select(cont, pin!(signal::ctrl_c())).await {
-                Either::Left(((), _)) => info!(
-                    target: "app::shutdown",
-                    "finished graceful shutdown"
-                ),
-                Either::Right((_signal_or_err, _)) => info!(
-                    target: "app::shutdown",
-                    "forced shutdown"
-                ),
-            }
-        }
-    };
+                            debug!(
+                                target: "app::uri",
+                                old = %req.uri(),
+                                new = %new_uri,
+                                "rewrote URI"
+                            );
+
+                            *req.uri_mut() = new_uri;
+                            Ok(req.try_into()?)
+                        },
+                    )
+                    }
+                })
+                .layer_fn(|svc| MapErr::new(svc, anyhow::Error::new))
+                .service(reqwest::Client::new()),
+        ),
+    )
+    .with_graceful_shutdown(tokio::signal::ctrl_c().map(|res| match res {
+        Ok(()) => info!(target: "app::shutdown", "shutdown requested"),
+        Err(error) => error!(target: "app::shutdown", %error, "error registering shutdown signal"),
+    }));
+
+    let (proxy, report) = join(proxy.into_future(), report).await;
+
+    if let Err(error) = proxy {
+        error!(target: "app::serve", %error, "couldn't run proxy server")
+    }
+
+    dbg!(report);
 
     Ok(())
 }
@@ -293,4 +229,8 @@ fn from_str<'de, D: serde::Deserializer<'de>, T: FromStr<Err = E>, E: Display>(
     Cow::<str>::deserialize(d)?
         .parse()
         .map_err(serde::de::Error::custom)
+}
+
+fn leak<T>(it: T) -> &'static T {
+    Box::leak(Box::new(it))
 }

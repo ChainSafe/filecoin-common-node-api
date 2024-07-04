@@ -1,14 +1,7 @@
 {
-    "filter": "app=info",
+    "filter": "trace",
     "format": {
-        "formatter": {
-            "json": {}
-        }
+        "formatter": "pretty"
     },
-    "writer": {
-        "file": {
-            "path": "log.ignoreme",
-            "behaviour": "truncate"
-        }
-    }
+    "writer": "stdout"
 }

@@ -1,3 +1,4 @@
+mod check;
 mod gc;
 #[allow(unused)]
 mod jsonrpc_types;

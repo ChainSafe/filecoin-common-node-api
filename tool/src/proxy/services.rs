@@ -591,7 +591,7 @@ where
     fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
         let this = self.project();
         let res = ready!(this.inner.poll(cx));
-        let a = this.attach.take().expect("future polled after completion");
+        let a = this.attach.take().expect(PANIC_MSG);
         Poll::Ready(match res {
             Ok(t) => Ok((a, t)),
             Err(e) => Err(e),
