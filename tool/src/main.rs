@@ -1,8 +1,6 @@
 mod capture;
 mod check;
 mod gc;
-#[allow(unused)]
-mod jsonrpc_types;
 
 use anyhow::{bail, Context as _};
 use ascii::AsciiChar;
@@ -19,7 +17,6 @@ use openrpc_types::{
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use serde_json::Value;
 use std::{
-    borrow::Cow,
     collections::{BTreeMap, BTreeSet, HashMap},
     fmt,
     fs::File,
@@ -103,19 +100,19 @@ enum JsonRpc {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Dialogue<'a> {
-    method: Cow<'a, str>,
+pub struct Dialogue {
+    method: String,
     #[serde(skip_serializing_if = "Option::is_none")]
-    params: Option<jsonrpc_types::RequestParameters<'a>>,
+    params: Option<jsonrpc_types::RequestParameters>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    response: Option<DialogueResponse<'a>>,
+    response: Option<DialogueResponse>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
-enum DialogueResponse<'a> {
+enum DialogueResponse {
     Result(Value),
-    Error(jsonrpc_types::Error<'a>),
+    Error(jsonrpc_types::Error),
 }
 
 fn main() -> anyhow::Result<()> {
@@ -225,14 +222,12 @@ fn validate_dialogues_from_reader(
                 Some(check) => {
                     let annotations = check.check(
                         &jsonrpc_types::Request {
-                            jsonrpc: jsonrpc_types::V2,
-                            method: Cow::Borrowed(&*method),
+                            method: method.clone(),
                             params,
                             id: response.is_some().then_some(jsonrpc_types::Id::Null),
                         },
                         response
                             .map(|it| jsonrpc_types::Response {
-                                jsonrpc: jsonrpc_types::V2,
                                 result: match it {
                                     DialogueResponse::Result(it) => Ok(it),
                                     DialogueResponse::Error(e) => Err(e),
@@ -243,10 +238,7 @@ fn validate_dialogues_from_reader(
                     );
                     match annotations.is_empty() {
                         true => {
-                            passed
-                                .entry(method.into_owned())
-                                .and_modify(|it| *it += 1)
-                                .or_insert(1);
+                            passed.entry(method).and_modify(|it| *it += 1).or_insert(1);
                         }
                         false => errs.push(format!(
                             "script[{}]: failed to validate method {}: [{}]",
@@ -343,8 +335,7 @@ fn validate_document<'a>(
                         continue;
                     };
                     let request = jsonrpc_types::Request {
-                        jsonrpc: jsonrpc_types::V2,
-                        method: Cow::Borrowed(name),
+                        method: name.clone(),
                         params: Some(match param_structure.unwrap_or_default() {
                             ParamStructure::ByPosition | ParamStructure::Either => {
                                 if params.len() > method.params.len() {
@@ -359,7 +350,7 @@ fn validate_document<'a>(
                                     params
                                         .into_iter()
                                         .zip(&method.params)
-                                        .map(|(p, m)| (Cow::Borrowed(&*m.name), p))
+                                        .map(|(p, m)| (m.name.clone(), p))
                                         .collect(),
                                 )
                             }
@@ -370,8 +361,7 @@ fn validate_document<'a>(
                     let response = match result {
                         Some(it) => match it.value.clone() {
                             Some(it) => Some(jsonrpc_types::Response {
-                                jsonrpc: jsonrpc_types::V2,
-                                result: Ok::<_, jsonrpc_types::Error<Value>>(it),
+                                result: Ok::<_, jsonrpc_types::Error>(it),
                                 id: jsonrpc_types::Id::Null,
                             }),
                             None => {

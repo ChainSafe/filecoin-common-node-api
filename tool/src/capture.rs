@@ -1,4 +1,4 @@
-use crate::{jsonrpc_types, Dialogue, DialogueResponse};
+use crate::{Dialogue, DialogueResponse};
 use anyhow::Context as _;
 use axum::response::IntoResponse as _;
 use bytes::Bytes;

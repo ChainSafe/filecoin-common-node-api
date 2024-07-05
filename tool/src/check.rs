@@ -4,10 +4,10 @@ use std::{
     hash::{BuildHasher, RandomState},
 };
 
-use crate::jsonrpc_types::{self, RequestParameters};
 use anyhow::{bail, Context as _};
 use either::Either;
 use indexmap::IndexMap;
+use jsonrpc_types::{self, RequestParameters};
 use jsonschema::{CompilationOptions, JSONSchema, ValidationError};
 use openrpc_types::{Components, ParamStructure};
 use schemars::schema::{Schema, SchemaObject};
