@@ -1,9 +1,9 @@
-# `filecoin-common-node-api-util`
+# `filecoin-common-node-api-tool`
 
 ```
 Utilities for creating, interacting with, and testing against the Filecoin Common Node API
 
-Usage: filecoin-common-node-api-util <COMMAND>
+Usage: filecoin-common-node-api-tool <COMMAND>
 
 Commands:
   openrpc   Subommands related to processing OpenRPC documents
@@ -11,7 +11,7 @@ Commands:
   json-rpc  Interact with JSON-RPC endpoints
 
 ```
-## `filecoin-common-node-api-util` `openrpc`
+## `filecoin-common-node-api-tool` `openrpc`
 
 ```
 Subommands related to processing OpenRPC documents
@@ -23,7 +23,7 @@ Commands:
   select    Interpret `select` as a json document of methods to include in `openrpc`
 
 ```
-### `filecoin-common-node-api-util` `openrpc` `validate`
+### `filecoin-common-node-api-tool` `openrpc` `validate`
 
 ```
 Performs validation of the spec, including FIP-specific validation.
@@ -42,7 +42,7 @@ Arguments:
   <SPEC>
 
 ```
-### `filecoin-common-node-api-util` `openrpc` `select`
+### `filecoin-common-node-api-tool` `openrpc` `select`
 
 ```
 Interpret `select` as a json document of methods to include in `openrpc`.
@@ -66,7 +66,7 @@ Options:
           Specify a new version for the schema
 
 ```
-## `filecoin-common-node-api-util` `csv2json`
+## `filecoin-common-node-api-tool` `csv2json`
 
 ```
 Interpret stdin as a `delimiter`-separated series of lines, with a header, and print JSON
@@ -78,7 +78,7 @@ Options:
           [default: "\t"]
 
 ```
-## `filecoin-common-node-api-util` `json-rpc`
+## `filecoin-common-node-api-tool` `json-rpc`
 
 ```
 Interact with JSON-RPC endpoints
@@ -89,7 +89,7 @@ Commands:
   capture  Start a HTTP server, forwarding all requests to a single URI
 
 ```
-### `filecoin-common-node-api-util` `json-rpc` `capture`
+### `filecoin-common-node-api-tool` `json-rpc` `capture`
 
 ```
 Start a HTTP server, forwarding all requests to a single URI.

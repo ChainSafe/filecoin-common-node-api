@@ -1,5 +1,5 @@
 [package]
-name = "filecoin-common-node-api-util"
+name = "filecoin-common-node-api-tool"
 version = "0.1.0"
 edition = "2021"
 publish = false
