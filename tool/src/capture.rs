@@ -1,7 +1,8 @@
-use crate::{jsonrpc_types, Dialogue, DialogueResponse};
+use crate::{Dialogue, DialogueResponse};
 use anyhow::Context as _;
 use axum::response::IntoResponse as _;
 use bytes::Bytes;
+use ez_jsonrpc_types as jsonrpc;
 use fluent_uri::UriRef;
 use futures::FutureExt as _;
 use http_body_util::BodyExt as _;
@@ -41,12 +42,10 @@ async fn handler(
     match proxy(&state, request).await {
         Ok((req, resp)) => {
             match (
-                serde_json::from_slice::<jsonrpc_types::Request>(req.body()),
+                serde_json::from_slice::<jsonrpc::Request>(req.body()),
                 match resp.body().is_empty() {
                     true => Ok(None),
-                    false => {
-                        serde_json::from_slice::<jsonrpc_types::Response>(resp.body()).map(Some)
-                    }
+                    false => serde_json::from_slice::<jsonrpc::Response>(resp.body()).map(Some),
                 },
             ) {
                 (Ok(req), Ok(resp)) => {

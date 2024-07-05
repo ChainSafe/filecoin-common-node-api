@@ -1,16 +1,14 @@
 mod capture;
 mod check;
 mod gc;
-#[allow(unused)]
-mod jsonrpc_types;
 
 use anyhow::{bail, Context as _};
 use ascii::AsciiChar;
 use check::CheckMethod;
 use clap::Parser;
+use ez_jsonrpc_types::{self as jsonrpc, Id, RequestParameters};
 use fluent_uri::UriRef;
 use itertools::Itertools as _;
-use jsonrpc_types::RequestParameters;
 use openrpc_types::{
     resolve_within,
     resolved::{ExamplePairing, Method},
@@ -19,7 +17,6 @@ use openrpc_types::{
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use serde_json::Value;
 use std::{
-    borrow::Cow,
     collections::{BTreeMap, BTreeSet, HashMap},
     fmt,
     fs::File,
@@ -103,19 +100,19 @@ enum JsonRpc {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Dialogue<'a> {
-    method: Cow<'a, str>,
+pub struct Dialogue {
+    method: String,
     #[serde(skip_serializing_if = "Option::is_none")]
-    params: Option<jsonrpc_types::RequestParameters<'a>>,
+    params: Option<RequestParameters>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    response: Option<DialogueResponse<'a>>,
+    response: Option<DialogueResponse>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
-enum DialogueResponse<'a> {
+enum DialogueResponse {
     Result(Value),
-    Error(jsonrpc_types::Error<'a>),
+    Error(ez_jsonrpc_types::Error),
 }
 
 fn main() -> anyhow::Result<()> {
@@ -224,29 +221,24 @@ fn validate_dialogues_from_reader(
             }) => match method2checker.get(&*method) {
                 Some(check) => {
                     let annotations = check.check(
-                        &jsonrpc_types::Request {
-                            jsonrpc: jsonrpc_types::V2,
-                            method: Cow::Borrowed(&*method),
+                        &ez_jsonrpc_types::Request {
+                            method: method.clone(),
                             params,
-                            id: response.is_some().then_some(jsonrpc_types::Id::Null),
+                            id: response.is_some().then_some(ez_jsonrpc_types::Id::Null),
                         },
                         response
-                            .map(|it| jsonrpc_types::Response {
-                                jsonrpc: jsonrpc_types::V2,
+                            .map(|it| ez_jsonrpc_types::Response {
                                 result: match it {
                                     DialogueResponse::Result(it) => Ok(it),
                                     DialogueResponse::Error(e) => Err(e),
                                 },
-                                id: jsonrpc_types::Id::Null,
+                                id: ez_jsonrpc_types::Id::Null,
                             })
                             .as_ref(),
                     );
                     match annotations.is_empty() {
                         true => {
-                            passed
-                                .entry(method.into_owned())
-                                .and_modify(|it| *it += 1)
-                                .or_insert(1);
+                            passed.entry(method).and_modify(|it| *it += 1).or_insert(1);
                         }
                         false => errs.push(format!(
                             "script[{}]: failed to validate method {}: [{}]",
@@ -342,9 +334,8 @@ fn validate_document<'a>(
                         ));
                         continue;
                     };
-                    let request = jsonrpc_types::Request {
-                        jsonrpc: jsonrpc_types::V2,
-                        method: Cow::Borrowed(name),
+                    let request = jsonrpc::Request {
+                        method: name.clone(),
                         params: Some(match param_structure.unwrap_or_default() {
                             ParamStructure::ByPosition | ParamStructure::Either => {
                                 if params.len() > method.params.len() {
@@ -359,20 +350,19 @@ fn validate_document<'a>(
                                     params
                                         .into_iter()
                                         .zip(&method.params)
-                                        .map(|(p, m)| (Cow::Borrowed(&*m.name), p))
+                                        .map(|(p, m)| (m.name.clone(), p))
                                         .collect(),
                                 )
                             }
                             ParamStructure::ByName => RequestParameters::ByPosition(params),
                         }),
-                        id: Some(jsonrpc_types::Id::Null),
+                        id: Some(Id::Null),
                     };
                     let response = match result {
                         Some(it) => match it.value.clone() {
-                            Some(it) => Some(jsonrpc_types::Response {
-                                jsonrpc: jsonrpc_types::V2,
-                                result: Ok::<_, jsonrpc_types::Error<Value>>(it),
-                                id: jsonrpc_types::Id::Null,
+                            Some(it) => Some(jsonrpc::Response {
+                                result: Ok::<_, jsonrpc::Error>(it),
+                                id: Id::Null,
                             }),
                             None => {
                                 errs.push(format!(

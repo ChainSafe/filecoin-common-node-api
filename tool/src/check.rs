@@ -4,9 +4,9 @@ use std::{
     hash::{BuildHasher, RandomState},
 };
 
-use crate::jsonrpc_types::{self, RequestParameters};
 use anyhow::{bail, Context as _};
 use either::Either;
+use ez_jsonrpc_types::{self as jsonrpc, RequestParameters};
 use indexmap::IndexMap;
 use jsonschema::{CompilationOptions, JSONSchema, ValidationError};
 use openrpc_types::{Components, ParamStructure};
@@ -103,8 +103,8 @@ impl<S> CheckMethod<S> {
     }
     pub fn check(
         &self,
-        request: &jsonrpc_types::Request,
-        response: Option<&jsonrpc_types::Response>,
+        request: &jsonrpc::Request,
+        response: Option<&jsonrpc::Response>,
     ) -> Vec<Annotation> {
         let mut annotations = vec![];
         match (self.param_structure, &request.params) {
@@ -162,7 +162,7 @@ impl<S> CheckMethod<S> {
         match (&request.id, &self.result, response) {
             (None, None, None) => {}
 
-            (Some(request_id), Some(schema), Some(jsonrpc_types::Response { result, id, .. })) => {
+            (Some(request_id), Some(schema), Some(jsonrpc::Response { result, id, .. })) => {
                 if request_id != id {
                     annotations.push(Annotation::BadNotification)
                 }

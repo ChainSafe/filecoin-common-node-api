@@ -409,6 +409,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "ez-jsonrpc-types"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "43d67b06e45bbb8cba8cde6abdc6adacd8eafd1ecee6f2310fad60d507b282f0"
+dependencies = [
+ "ryu",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "fancy-regex"
 version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -437,6 +448,7 @@ dependencies = [
  "csv",
  "either",
  "expect-test",
+ "ez-jsonrpc-types",
  "fluent-uri",
  "futures",
  "http",
@@ -1517,9 +1529,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.117"
+version = "1.0.120"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "455182ea6142b14f93f4bc5320a2b31c1f266b66a4a5c858b013302a5d8cbfc3"
+checksum = "4e0d21c9a8cae1235ad58a00c11cb40d4b1e5c784f1ef2c537876ed6ffd8b7c5"
 dependencies = [
  "itoa",
  "ryu",
