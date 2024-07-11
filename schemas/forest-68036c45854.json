@@ -7,11 +7,6 @@
   "methods": [
     {
       "name": "Filecoin.AuthNew",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "params",
@@ -32,11 +27,6 @@
     },
     {
       "name": "Filecoin.AuthVerify",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "header_raw",
@@ -48,7 +38,7 @@
       ],
       "result": {
         "name": "Filecoin.AuthVerify::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "type": [
             "array",
@@ -62,38 +52,7 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.BeaconGetEntry",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
-      "params": [
-        {
-          "name": "first",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.BeaconGetEntry::Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/BeaconEntry"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
       "name": "Filecoin.ChainGetMessage",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "msg_cid",
@@ -114,11 +73,6 @@
     },
     {
       "name": "Filecoin.ChainGetParentMessages",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "block_cid",
@@ -130,7 +84,7 @@
       ],
       "result": {
         "name": "Filecoin.ChainGetParentMessages::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "type": [
             "array",
@@ -145,11 +99,6 @@
     },
     {
       "name": "Filecoin.ChainGetParentReceipts",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "block_cid",
@@ -161,7 +110,7 @@
       ],
       "result": {
         "name": "Filecoin.ChainGetParentReceipts::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "type": [
             "array",
@@ -176,11 +125,6 @@
     },
     {
       "name": "Filecoin.ChainGetMessagesInTipset",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "tsk",
@@ -198,7 +142,7 @@
       ],
       "result": {
         "name": "Filecoin.ChainGetMessagesInTipset::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "type": [
             "array",
@@ -213,11 +157,6 @@
     },
     {
       "name": "Filecoin.ChainExport",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "params",
@@ -229,7 +168,7 @@
       ],
       "result": {
         "name": "Filecoin.ChainExport::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "type": [
             "string",
@@ -241,11 +180,6 @@
     },
     {
       "name": "Filecoin.ChainReadObj",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "cid",
@@ -266,11 +200,6 @@
     },
     {
       "name": "Filecoin.ChainHasObj",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "cid",
@@ -291,11 +220,6 @@
     },
     {
       "name": "Filecoin.ChainStatObj",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "obj_cid",
@@ -330,11 +254,6 @@
     },
     {
       "name": "Filecoin.ChainGetBlockMessages",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "cid",
@@ -355,11 +274,6 @@
     },
     {
       "name": "Filecoin.ChainGetPath",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "from",
@@ -378,7 +292,7 @@
       ],
       "result": {
         "name": "Filecoin.ChainGetPath::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "type": [
             "array",
@@ -393,11 +307,6 @@
     },
     {
       "name": "Filecoin.ChainGetTipSetByHeight",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "height",
@@ -432,11 +341,6 @@
     },
     {
       "name": "Filecoin.ChainGetTipSetAfterHeight",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v1"
-        }
-      ],
       "params": [
         {
           "name": "height",
@@ -471,15 +375,10 @@
     },
     {
       "name": "Filecoin.ChainGetGenesis",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [],
       "result": {
         "name": "Filecoin.ChainGetGenesis::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "anyOf": [
             {
@@ -495,11 +394,6 @@
     },
     {
       "name": "Filecoin.ChainHead",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [],
       "result": {
         "name": "Filecoin.ChainHead::Result",
@@ -512,11 +406,6 @@
     },
     {
       "name": "Filecoin.ChainGetBlock",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "cid",
@@ -537,11 +426,6 @@
     },
     {
       "name": "Filecoin.ChainGetTipSet",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "tsk",
@@ -568,11 +452,6 @@
     },
     {
       "name": "Filecoin.ChainSetHead",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "tsk",
@@ -598,39 +477,7 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.ChainGetMinBaseFee",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
-      "params": [
-        {
-          "name": "lookback",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "format": "uint32",
-            "minimum": 0.0
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.ChainGetMinBaseFee::Result",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
       "name": "Filecoin.ChainTipSetWeight",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "tsk",
@@ -657,11 +504,6 @@
     },
     {
       "name": "Filecoin.Session",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [],
       "result": {
         "name": "Filecoin.Session::Result",
@@ -675,11 +517,6 @@
     },
     {
       "name": "Filecoin.Version",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [],
       "result": {
         "name": "Filecoin.Version::Result",
@@ -692,11 +529,6 @@
     },
     {
       "name": "Filecoin.Shutdown",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [],
       "result": {
         "name": "Filecoin.Shutdown::Result",
@@ -709,11 +541,6 @@
     },
     {
       "name": "Filecoin.StartTime",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [],
       "result": {
         "name": "Filecoin.StartTime::Result",
@@ -727,11 +554,6 @@
     },
     {
       "name": "Filecoin.Web3ClientVersion",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v1"
-        }
-      ],
       "params": [],
       "result": {
         "name": "Filecoin.Web3ClientVersion::Result",
@@ -744,11 +566,6 @@
     },
     {
       "name": "Filecoin.EthSyncing",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v1"
-        }
-      ],
       "params": [],
       "result": {
         "name": "Filecoin.EthSyncing::Result",
@@ -761,15 +578,10 @@
     },
     {
       "name": "Filecoin.EthAccounts",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v1"
-        }
-      ],
       "params": [],
       "result": {
         "name": "Filecoin.EthAccounts::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "type": [
             "array",
@@ -784,11 +596,6 @@
     },
     {
       "name": "Filecoin.EthBlockNumber",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v1"
-        }
-      ],
       "params": [],
       "result": {
         "name": "Filecoin.EthBlockNumber::Result",
@@ -801,11 +608,6 @@
     },
     {
       "name": "Filecoin.EthChainId",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v1"
-        }
-      ],
       "params": [],
       "result": {
         "name": "Filecoin.EthChainId::Result",
@@ -817,12 +619,48 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.EthGetCode",
-      "tags": [
+      "name": "Filecoin.EthFeeHistory",
+      "params": [
         {
-          "$ref": "#/components/tags/v1"
+          "name": "block_count",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Uint64"
+          }
+        },
+        {
+          "name": "newest_block_number",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/BlockNumberOrPredefined"
+          }
+        },
+        {
+          "name": "reward_percentiles",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "number",
+              "format": "double"
+            }
+          }
         }
       ],
+      "result": {
+        "name": "Filecoin.EthFeeHistory::Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/EthFeeHistoryResult"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.EthGetCode",
       "params": [
         {
           "name": "eth_address",
@@ -850,11 +688,6 @@
     },
     {
       "name": "Filecoin.EthGetStorageAt",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v1"
-        }
-      ],
       "params": [
         {
           "name": "eth_address",
@@ -889,11 +722,6 @@
     },
     {
       "name": "Filecoin.EthGasPrice",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v1"
-        }
-      ],
       "params": [],
       "result": {
         "name": "Filecoin.EthGasPrice::Result",
@@ -906,11 +734,6 @@
     },
     {
       "name": "Filecoin.EthGetBalance",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v1"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -938,11 +761,6 @@
     },
     {
       "name": "Filecoin.EthGetBlockByHash",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v1"
-        }
-      ],
       "params": [
         {
           "name": "block_param",
@@ -970,11 +788,6 @@
     },
     {
       "name": "Filecoin.EthGetBlockByNumber",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v1"
-        }
-      ],
       "params": [
         {
           "name": "block_param",
@@ -1002,11 +815,6 @@
     },
     {
       "name": "Filecoin.EthGetBlockTransactionCountByHash",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v1"
-        }
-      ],
       "params": [
         {
           "name": "block_hash",
@@ -1027,11 +835,6 @@
     },
     {
       "name": "Filecoin.EthGetBlockTransactionCountByNumber",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v1"
-        }
-      ],
       "params": [
         {
           "name": "block_number",
@@ -1051,12 +854,61 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.GasEstimateGasLimit",
-      "tags": [
+      "name": "Filecoin.EthGetMessageCidByTransactionHash",
+      "params": [
         {
-          "$ref": "#/components/tags/v0"
+          "name": "tx_hash",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Hash"
+          }
         }
       ],
+      "result": {
+        "name": "Filecoin.EthGetMessageCidByTransactionHash::Result",
+        "required": false,
+        "schema": {
+          "anyOf": [
+            {
+              "$ref": "#/components/schemas/Cid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.EthGetTransactionCount",
+      "params": [
+        {
+          "name": "sender",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/EthAddress"
+          }
+        },
+        {
+          "name": "block_param",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/BlockNumberOrHash"
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.EthGetTransactionCount::Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Uint64"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.GasEstimateGasLimit",
       "params": [
         {
           "name": "msg",
@@ -1091,11 +943,6 @@
     },
     {
       "name": "Filecoin.GasEstimateMessageGas",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "msg",
@@ -1143,11 +990,6 @@
     },
     {
       "name": "Filecoin.GasEstimateFeeCap",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "message",
@@ -1189,11 +1031,6 @@
     },
     {
       "name": "Filecoin.GasEstimateGasPremium",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "nblocksincl",
@@ -1244,11 +1081,6 @@
     },
     {
       "name": "Filecoin.MinerCreateBlock",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "block_template",
@@ -1269,11 +1101,6 @@
     },
     {
       "name": "Filecoin.MinerGetBaseInfo",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -1306,7 +1133,7 @@
       ],
       "result": {
         "name": "Filecoin.MinerGetBaseInfo::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "anyOf": [
             {
@@ -1322,11 +1149,6 @@
     },
     {
       "name": "Filecoin.MpoolGetNonce",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -1349,11 +1171,6 @@
     },
     {
       "name": "Filecoin.MpoolPending",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "tsk",
@@ -1373,10 +1190,7 @@
         "name": "Filecoin.MpoolPending::Result",
         "required": true,
         "schema": {
-          "type": [
-            "array",
-            "null"
-          ],
+          "type": "array",
           "items": {
             "$ref": "#/components/schemas/SignedMessage"
           }
@@ -1386,14 +1200,9 @@
     },
     {
       "name": "Filecoin.MpoolSelect",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
-          "name": "tsk",
+          "name": "tipset_key",
           "required": true,
           "schema": {
             "type": [
@@ -1406,7 +1215,7 @@
           }
         },
         {
-          "name": "tq",
+          "name": "ticket_quality",
           "required": true,
           "schema": {
             "type": "number",
@@ -1416,7 +1225,7 @@
       ],
       "result": {
         "name": "Filecoin.MpoolSelect::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "type": [
             "array",
@@ -1431,11 +1240,6 @@
     },
     {
       "name": "Filecoin.MpoolPush",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "msg",
@@ -1456,11 +1260,6 @@
     },
     {
       "name": "Filecoin.MpoolPushMessage",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "usmg",
@@ -1495,11 +1294,6 @@
     },
     {
       "name": "Filecoin.MsigGetAvailableBalance",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -1533,11 +1327,6 @@
     },
     {
       "name": "Filecoin.MsigGetPending",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -1562,7 +1351,7 @@
       ],
       "result": {
         "name": "Filecoin.MsigGetPending::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "type": [
             "array",
@@ -1577,11 +1366,6 @@
     },
     {
       "name": "Filecoin.MsigGetVested",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -1628,11 +1412,6 @@
     },
     {
       "name": "Filecoin.MsigGetVestingSchedule",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -1666,11 +1445,6 @@
     },
     {
       "name": "Filecoin.NetAddrsListen",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [],
       "result": {
         "name": "Filecoin.NetAddrsListen::Result",
@@ -1683,15 +1457,10 @@
     },
     {
       "name": "Filecoin.NetPeers",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [],
       "result": {
         "name": "Filecoin.NetPeers::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "type": [
             "array",
@@ -1706,11 +1475,6 @@
     },
     {
       "name": "Filecoin.NetListening",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v1"
-        }
-      ],
       "params": [],
       "result": {
         "name": "Filecoin.NetListening::Result",
@@ -1722,29 +1486,7 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Forest.NetInfo",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
-      "params": [],
-      "result": {
-        "name": "Forest.NetInfo::Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/NetInfoResult"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
       "name": "Filecoin.NetConnect",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "info",
@@ -1765,11 +1507,6 @@
     },
     {
       "name": "Filecoin.NetDisconnect",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "id",
@@ -1790,11 +1527,6 @@
     },
     {
       "name": "Filecoin.NetAgentVersion",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "id",
@@ -1815,11 +1547,6 @@
     },
     {
       "name": "Filecoin.NetAutoNatStatus",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [],
       "result": {
         "name": "Filecoin.NetAutoNatStatus::Result",
@@ -1832,11 +1559,6 @@
     },
     {
       "name": "Filecoin.NetVersion",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v1"
-        }
-      ],
       "params": [],
       "result": {
         "name": "Filecoin.NetVersion::Result",
@@ -1849,11 +1571,6 @@
     },
     {
       "name": "Filecoin.NetProtectAdd",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "acl",
@@ -1874,11 +1591,6 @@
     },
     {
       "name": "Filecoin.NodeStatus",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [],
       "result": {
         "name": "Filecoin.NodeStatus::Result",
@@ -1891,11 +1603,6 @@
     },
     {
       "name": "Filecoin.StateCall",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "message",
@@ -1929,11 +1636,6 @@
     },
     {
       "name": "Filecoin.StateGetBeaconEntry",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v1"
-        }
-      ],
       "params": [
         {
           "name": "epoch",
@@ -1955,11 +1657,6 @@
     },
     {
       "name": "Filecoin.StateListMessages",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "message_filter",
@@ -1992,7 +1689,7 @@
       ],
       "result": {
         "name": "Filecoin.StateListMessages::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "type": [
             "array",
@@ -2007,11 +1704,6 @@
     },
     {
       "name": "Filecoin.StateGetNetworkParams",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [],
       "result": {
         "name": "Filecoin.StateGetNetworkParams::Result",
@@ -2024,11 +1716,6 @@
     },
     {
       "name": "Filecoin.StateNetworkName",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [],
       "result": {
         "name": "Filecoin.StateNetworkName::Result",
@@ -2041,11 +1728,6 @@
     },
     {
       "name": "Filecoin.StateReplay",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "tipset_key",
@@ -2079,11 +1761,6 @@
     },
     {
       "name": "Filecoin.StateSectorGetInfo",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "miner_address",
@@ -2117,20 +1794,22 @@
       ],
       "result": {
         "name": "Filecoin.StateSectorGetInfo::Result",
-        "required": true,
+        "required": false,
         "schema": {
-          "$ref": "#/components/schemas/SectorOnChainInfo"
+          "anyOf": [
+            {
+              "$ref": "#/components/schemas/SectorOnChainInfo"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "paramStructure": "by-position"
     },
     {
       "name": "Filecoin.StateSectorPreCommitInfo",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "miner_address",
@@ -2164,20 +1843,22 @@
       ],
       "result": {
         "name": "Filecoin.StateSectorPreCommitInfo::Result",
-        "required": true,
+        "required": false,
         "schema": {
-          "$ref": "#/components/schemas/SectorPreCommitOnChainInfo"
+          "anyOf": [
+            {
+              "$ref": "#/components/schemas/SectorPreCommitOnChainInfo"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "paramStructure": "by-position"
     },
     {
       "name": "Filecoin.StateAccountKey",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -2211,11 +1892,6 @@
     },
     {
       "name": "Filecoin.StateLookupID",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -2249,11 +1925,6 @@
     },
     {
       "name": "Filecoin.StateGetActor",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -2278,7 +1949,7 @@
       ],
       "result": {
         "name": "Filecoin.StateGetActor::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "anyOf": [
             {
@@ -2294,11 +1965,6 @@
     },
     {
       "name": "Filecoin.StateMinerInfo",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -2332,11 +1998,6 @@
     },
     {
       "name": "Filecoin.StateMinerActiveSectors",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -2361,7 +2022,7 @@
       ],
       "result": {
         "name": "Filecoin.StateMinerActiveSectors::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "type": [
             "array",
@@ -2375,12 +2036,40 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.StateMinerPartitions",
-      "tags": [
+      "name": "Filecoin.StateMinerAllocated",
+      "params": [
         {
-          "$ref": "#/components/tags/v0"
+          "name": "address",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
         }
       ],
+      "result": {
+        "name": "Filecoin.StateMinerAllocated::Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/BitField"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateMinerPartitions",
       "params": [
         {
           "name": "address",
@@ -2414,7 +2103,7 @@
       ],
       "result": {
         "name": "Filecoin.StateMinerPartitions::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "type": [
             "array",
@@ -2429,11 +2118,6 @@
     },
     {
       "name": "Filecoin.StateMinerSectors",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -2472,7 +2156,7 @@
       ],
       "result": {
         "name": "Filecoin.StateMinerSectors::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "type": [
             "array",
@@ -2487,11 +2171,6 @@
     },
     {
       "name": "Filecoin.StateMinerSectorCount",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -2525,11 +2204,6 @@
     },
     {
       "name": "Filecoin.StateMinerSectorAllocated",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "miner_address",
@@ -2572,11 +2246,6 @@
     },
     {
       "name": "Filecoin.StateMinerPower",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -2610,11 +2279,6 @@
     },
     {
       "name": "Filecoin.StateMinerDeadlines",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -2639,7 +2303,7 @@
       ],
       "result": {
         "name": "Filecoin.StateMinerDeadlines::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "type": [
             "array",
@@ -2654,11 +2318,6 @@
     },
     {
       "name": "Filecoin.StateMinerProvingDeadline",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -2692,11 +2351,6 @@
     },
     {
       "name": "Filecoin.StateMinerFaults",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -2730,11 +2384,6 @@
     },
     {
       "name": "Filecoin.StateMinerRecoveries",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -2768,11 +2417,6 @@
     },
     {
       "name": "Filecoin.StateMinerAvailableBalance",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -2806,11 +2450,6 @@
     },
     {
       "name": "Filecoin.StateMinerInitialPledgeCollateral",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -2850,50 +2489,7 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.StateGetReceipt",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
-      "params": [
-        {
-          "name": "cid",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Cid"
-          }
-        },
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateGetReceipt::Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/Receipt"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
       "name": "Filecoin.StateGetRandomnessFromTickets",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "personalization",
@@ -2943,11 +2539,6 @@
     },
     {
       "name": "Filecoin.StateGetRandomnessFromBeacon",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "personalization",
@@ -2997,11 +2588,6 @@
     },
     {
       "name": "Filecoin.StateReadState",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -3035,11 +2621,6 @@
     },
     {
       "name": "Filecoin.StateCirculatingSupply",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "tipset_key",
@@ -3066,11 +2647,6 @@
     },
     {
       "name": "Filecoin.StateVerifiedClientStatus",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -3095,7 +2671,7 @@
       ],
       "result": {
         "name": "Filecoin.StateVerifiedClientStatus::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "anyOf": [
             {
@@ -3111,11 +2687,6 @@
     },
     {
       "name": "Filecoin.StateVMCirculatingSupplyInternal",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "tipset_key",
@@ -3142,11 +2713,6 @@
     },
     {
       "name": "Filecoin.StateListMiners",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "tipset_key",
@@ -3164,7 +2730,7 @@
       ],
       "result": {
         "name": "Filecoin.StateListMiners::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "type": [
             "array",
@@ -3179,11 +2745,6 @@
     },
     {
       "name": "Filecoin.StateListActors",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "tipset_key",
@@ -3201,7 +2762,7 @@
       ],
       "result": {
         "name": "Filecoin.StateListActors::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "type": [
             "array",
@@ -3216,11 +2777,6 @@
     },
     {
       "name": "Filecoin.StateNetworkVersion",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "tipset_key",
@@ -3249,11 +2805,6 @@
     },
     {
       "name": "Filecoin.StateMarketBalance",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -3287,11 +2838,6 @@
     },
     {
       "name": "Filecoin.StateMarketParticipants",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "tipset_key",
@@ -3321,11 +2867,6 @@
     },
     {
       "name": "Filecoin.StateMarketDeals",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "tipset_key",
@@ -3355,11 +2896,6 @@
     },
     {
       "name": "Filecoin.StateDealProviderCollateralBounds",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "size",
@@ -3402,11 +2938,6 @@
     },
     {
       "name": "Filecoin.StateMarketStorageDeal",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "deal_id",
@@ -3441,45 +2972,7 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.StateWaitMsgV0",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
-      "params": [
-        {
-          "name": "message_cid",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Cid"
-          }
-        },
-        {
-          "name": "confidence",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateWaitMsgV0::Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/MessageLookup"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
       "name": "Filecoin.StateWaitMsg",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v1"
-        }
-      ],
       "params": [
         {
           "name": "message_cid",
@@ -3523,11 +3016,6 @@
     },
     {
       "name": "Filecoin.StateSearchMsg",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "message_cid",
@@ -3547,80 +3035,7 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.StateSearchMsgLimited",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
-      "params": [
-        {
-          "name": "message_cid",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Cid"
-          }
-        },
-        {
-          "name": "look_back_limit",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateSearchMsgLimited::Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/MessageLookup"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Forest.StateFetchRoot",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
-      "params": [
-        {
-          "name": "root_cid",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Cid"
-          }
-        },
-        {
-          "name": "save_to_file",
-          "required": true,
-          "schema": {
-            "type": [
-              "string",
-              "null"
-            ]
-          }
-        }
-      ],
-      "result": {
-        "name": "Forest.StateFetchRoot::Result",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
       "name": "Filecoin.StateMinerPreCommitDepositForPower",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -3661,11 +3076,6 @@
     },
     {
       "name": "Filecoin.StateVerifierStatus",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -3690,7 +3100,7 @@
       ],
       "result": {
         "name": "Filecoin.StateVerifierStatus::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "anyOf": [
             {
@@ -3706,11 +3116,6 @@
     },
     {
       "name": "Filecoin.StateGetClaim",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -3744,7 +3149,7 @@
       ],
       "result": {
         "name": "Filecoin.StateGetClaim::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "anyOf": [
             {
@@ -3760,11 +3165,6 @@
     },
     {
       "name": "Filecoin.StateGetClaims",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -3801,11 +3201,6 @@
     },
     {
       "name": "Filecoin.StateGetAllocation",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -3839,7 +3234,7 @@
       ],
       "result": {
         "name": "Filecoin.StateGetAllocation::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "anyOf": [
             {
@@ -3855,11 +3250,6 @@
     },
     {
       "name": "Filecoin.StateGetAllocations",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -3896,11 +3286,6 @@
     },
     {
       "name": "Filecoin.StateSectorExpiration",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "miner_address",
@@ -3943,11 +3328,6 @@
     },
     {
       "name": "Filecoin.StateSectorPartition",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "miner_address",
@@ -3990,11 +3370,6 @@
     },
     {
       "name": "Filecoin.SyncCheckBad",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "cid",
@@ -4015,11 +3390,6 @@
     },
     {
       "name": "Filecoin.SyncMarkBad",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "cid",
@@ -4040,11 +3410,6 @@
     },
     {
       "name": "Filecoin.SyncState",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [],
       "result": {
         "name": "Filecoin.SyncState::Result",
@@ -4057,11 +3422,6 @@
     },
     {
       "name": "Filecoin.SyncSubmitBlock",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "blk",
@@ -4082,11 +3442,6 @@
     },
     {
       "name": "Filecoin.WalletBalance",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -4107,15 +3462,10 @@
     },
     {
       "name": "Filecoin.WalletDefaultAddress",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [],
       "result": {
         "name": "Filecoin.WalletDefaultAddress::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "anyOf": [
             {
@@ -4131,11 +3481,6 @@
     },
     {
       "name": "Filecoin.WalletExport",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -4156,11 +3501,6 @@
     },
     {
       "name": "Filecoin.WalletHas",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -4181,11 +3521,6 @@
     },
     {
       "name": "Filecoin.WalletImport",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "key",
@@ -4206,15 +3541,10 @@
     },
     {
       "name": "Filecoin.WalletList",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [],
       "result": {
         "name": "Filecoin.WalletList::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "type": [
             "array",
@@ -4229,11 +3559,6 @@
     },
     {
       "name": "Filecoin.WalletNew",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "signature_type",
@@ -4254,11 +3579,6 @@
     },
     {
       "name": "Filecoin.WalletSetDefault",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -4279,11 +3599,6 @@
     },
     {
       "name": "Filecoin.WalletSign",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -4311,11 +3626,6 @@
     },
     {
       "name": "Filecoin.WalletValidateAddress",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -4336,11 +3646,6 @@
     },
     {
       "name": "Filecoin.WalletVerify",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -4375,11 +3680,6 @@
     },
     {
       "name": "Filecoin.WalletDelete",
-      "tags": [
-        {
-          "$ref": "#/components/tags/v0"
-        }
-      ],
       "params": [
         {
           "name": "address",
@@ -5063,6 +4363,16 @@
           }
         ]
       },
+      "BlockNumberOrPredefined": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "$ref": "#/components/schemas/Int64"
+          }
+        ]
+      },
       "BlockTemplate": {
         "type": "object",
         "required": [
@@ -5292,6 +4602,44 @@
       },
       "EthBytes": {
         "type": "string"
+      },
+      "EthFeeHistoryResult": {
+        "type": "object",
+        "required": [
+          "baseFeePerGas",
+          "gasUsedRatio",
+          "oldestBlock"
+        ],
+        "properties": {
+          "baseFeePerGas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EthBigInt"
+            }
+          },
+          "gasUsedRatio": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          "oldestBlock": {
+            "$ref": "#/components/schemas/Uint64"
+          },
+          "reward": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/EthBigInt"
+              }
+            }
+          }
+        }
       },
       "EthSyncingResultLotusJson": {
         "anyOf": [
@@ -6016,49 +5364,6 @@
           }
         }
       },
-      "NetInfoResult": {
-        "type": "object",
-        "required": [
-          "num_connections",
-          "num_established",
-          "num_peers",
-          "num_pending",
-          "num_pending_incoming",
-          "num_pending_outgoing"
-        ],
-        "properties": {
-          "num_connections": {
-            "type": "integer",
-            "format": "uint32",
-            "minimum": 0.0
-          },
-          "num_established": {
-            "type": "integer",
-            "format": "uint32",
-            "minimum": 0.0
-          },
-          "num_peers": {
-            "type": "integer",
-            "format": "uint",
-            "minimum": 0.0
-          },
-          "num_pending": {
-            "type": "integer",
-            "format": "uint32",
-            "minimum": 0.0
-          },
-          "num_pending_incoming": {
-            "type": "integer",
-            "format": "uint32",
-            "minimum": 0.0
-          },
-          "num_pending_outgoing": {
-            "type": "integer",
-            "format": "uint32",
-            "minimum": 0.0
-          }
-        }
-      },
       "NetworkParams": {
         "type": "object",
         "required": [
@@ -6081,7 +5386,7 @@
           },
           "Eip155ChainID": {
             "type": "integer",
-            "format": "uint32",
+            "format": "uint64",
             "minimum": 0.0
           },
           "ForkUpgradeParams": {
@@ -7047,17 +6352,6 @@
       "int64": {
         "type": "integer",
         "format": "int64"
-      }
-    },
-    "tags": {
-      "client_interoperability": {
-        "name": "client_interoperability"
-      },
-      "v0": {
-        "name": "v0"
-      },
-      "v1": {
-        "name": "v1"
       }
     }
   }
