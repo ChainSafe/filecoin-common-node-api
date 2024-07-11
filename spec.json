@@ -1,17 +1,12 @@
 {
   "openrpc": "1.3.2",
   "info": {
-    "title": "common-node-interface",
+    "title": "common-node-api",
     "version": "0.0.0"
   },
   "methods": [
     {
       "name": "Filecoin.ChainGetMessage",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns the message with the specified CID",
       "params": [
         {
@@ -32,12 +27,34 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.ChainReadObj",
-      "tags": [
+      "name": "Filecoin.ChainGetParentMessages",
+      "description": "Returns the messages included in the blocks of the parent tipset",
+      "params": [
         {
-          "name": "v0"
+          "name": "block_cid",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Cid"
+          }
         }
       ],
+      "result": {
+        "name": "Filecoin.ChainGetParentMessages::Result",
+        "required": false,
+        "schema": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/components/schemas/ApiMessage"
+          }
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.ChainReadObj",
       "description": "Reads IPLD nodes referenced by the specified CID from chain blockstore and returns raw bytes.",
       "params": [
         {
@@ -59,11 +76,6 @@
     },
     {
       "name": "Filecoin.ChainHasObj",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "checks if a given CID exists in the chain blockstore",
       "params": [
         {
@@ -84,12 +96,41 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.ChainGetTipSetByHeight",
-      "tags": [
+      "name": "Filecoin.ChainGetPath",
+      "description": "Returns the path between the specified tipsets",
+      "params": [
         {
-          "name": "v0"
+          "name": "from",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/NonEmpty_Array_of_Cid"
+          }
+        },
+        {
+          "name": "to",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/NonEmpty_Array_of_Cid"
+          }
         }
       ],
+      "result": {
+        "name": "Filecoin.ChainGetPath::Result",
+        "required": false,
+        "schema": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/components/schemas/PathChange_for_Tipset"
+          }
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.ChainGetTipSetByHeight",
       "description": "Returns the tipset at the specified height",
       "params": [
         {
@@ -125,11 +166,6 @@
     },
     {
       "name": "Filecoin.ChainGetTipSetAfterHeight",
-      "tags": [
-        {
-          "name": "v1"
-        }
-      ],
       "description": "Looks back for a tipset at the specified epoch. If there are no blocks at the specified epoch, the first non-nil tipset at a later epoch will be returned. A fork can be specified, or null for the heaviest chain",
       "params": [
         {
@@ -165,11 +201,6 @@
     },
     {
       "name": "Filecoin.ChainHead",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns the chain head (ie. the heaviest tipset)",
       "params": [],
       "result": {
@@ -183,11 +214,6 @@
     },
     {
       "name": "Filecoin.ChainGetBlock",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns the block with the specified CID",
       "params": [
         {
@@ -209,11 +235,6 @@
     },
     {
       "name": "Filecoin.ChainGetTipSet",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns the tipset with the specified CID",
       "params": [
         {
@@ -241,11 +262,6 @@
     },
     {
       "name": "Filecoin.ChainTipSetWeight",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns the weight of the specified tipset",
       "params": [
         {
@@ -273,11 +289,6 @@
     },
     {
       "name": "Filecoin.GasEstimateGasLimit",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns the estimated gas limit for the given parameters",
       "params": [
         {
@@ -313,11 +324,6 @@
     },
     {
       "name": "Filecoin.GasEstimateMessageGas",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns the estimated gas for the given parameters",
       "params": [
         {
@@ -366,11 +372,6 @@
     },
     {
       "name": "Filecoin.GasEstimateFeeCap",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns the estimated fee cap for the given parameters",
       "params": [
         {
@@ -413,11 +414,6 @@
     },
     {
       "name": "Filecoin.GasEstimateGasPremium",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns the estimated gas premium for the given parameters",
       "params": [
         {
@@ -469,11 +465,6 @@
     },
     {
       "name": "Filecoin.MinerCreateBlock",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Fill and sign a block template on behalf of the given miner, returning a suitable block header",
       "params": [
         {
@@ -495,11 +486,6 @@
     },
     {
       "name": "Filecoin.MinerGetBaseInfo",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Looks up the Miner Actor at the given address (and tipset), returning basic information like their power, eligibility to mine etc",
       "params": [
         {
@@ -533,7 +519,7 @@
       ],
       "result": {
         "name": "Filecoin.MinerGetBaseInfo::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "anyOf": [
             {
@@ -549,11 +535,6 @@
     },
     {
       "name": "Filecoin.MpoolGetNonce",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns the current nonce for the specified address",
       "params": [
         {
@@ -577,11 +558,6 @@
     },
     {
       "name": "Filecoin.MpoolPending",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns the pending messages for a given tipset",
       "params": [
         {
@@ -602,10 +578,7 @@
         "name": "Filecoin.MpoolPending::Result",
         "required": true,
         "schema": {
-          "type": [
-            "array",
-            "null"
-          ],
+          "type": "array",
           "items": {
             "$ref": "#/components/schemas/SignedMessage"
           }
@@ -615,15 +588,10 @@
     },
     {
       "name": "Filecoin.MpoolSelect",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "returns a list of pending messages for inclusion in the next block",
       "params": [
         {
-          "name": "tsk",
+          "name": "tipset_key",
           "required": true,
           "schema": {
             "type": [
@@ -636,7 +604,7 @@
           }
         },
         {
-          "name": "tq",
+          "name": "ticket_quality",
           "required": true,
           "schema": {
             "type": "number",
@@ -646,7 +614,7 @@
       ],
       "result": {
         "name": "Filecoin.MpoolSelect::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "type": [
             "array",
@@ -661,11 +629,6 @@
     },
     {
       "name": "Filecoin.MpoolPush",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Adds a signed message into the message pool",
       "params": [
         {
@@ -687,11 +650,6 @@
     },
     {
       "name": "Filecoin.MpoolPushMessage",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Assigns a nonce, signs, and pushes a message to the mempool",
       "params": [
         {
@@ -727,11 +685,6 @@
     },
     {
       "name": "Filecoin.NetAddrsListen",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Return list of listening addresses and peer ID",
       "params": [],
       "result": {
@@ -745,16 +698,11 @@
     },
     {
       "name": "Filecoin.NetPeers",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Return list of currently connected peers",
       "params": [],
       "result": {
         "name": "Filecoin.NetPeers::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "type": [
             "array",
@@ -769,11 +717,6 @@
     },
     {
       "name": "Filecoin.NetConnect",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Connect to a specified peer",
       "params": [
         {
@@ -795,11 +738,6 @@
     },
     {
       "name": "Filecoin.NetDisconnect",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Disconnect from the specified peer",
       "params": [
         {
@@ -821,11 +759,6 @@
     },
     {
       "name": "Filecoin.NetAgentVersion",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns agent version string",
       "params": [
         {
@@ -847,11 +780,6 @@
     },
     {
       "name": "Filecoin.NetProtectAdd",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "params": [
         {
           "name": "acl",
@@ -872,11 +800,6 @@
     },
     {
       "name": "Filecoin.StateCall",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Runs the given message and returns its result without any persisted changes. StateCall applies the message to the tipset's parent state. The message is not applied on-top-of the messages in the passed-in tipset.",
       "params": [
         {
@@ -911,11 +834,6 @@
     },
     {
       "name": "Filecoin.StateGetBeaconEntry",
-      "tags": [
-        {
-          "name": "v1"
-        }
-      ],
       "description": "Returns the claim for a given address and claim ID",
       "params": [
         {
@@ -938,11 +856,6 @@
     },
     {
       "name": "Filecoin.StateListMessages",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "looks back and returns all messages with a matching to or from address, stopping at the given height.",
       "params": [
         {
@@ -976,7 +889,7 @@
       ],
       "result": {
         "name": "Filecoin.StateListMessages::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "type": [
             "array",
@@ -991,11 +904,6 @@
     },
     {
       "name": "Filecoin.StateGetNetworkParams",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns current network params",
       "params": [],
       "result": {
@@ -1008,12 +916,41 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.StateSectorGetInfo",
-      "tags": [
+      "name": "Filecoin.StateReplay",
+      "description": "https://github.com/filecoin-project/lotus/blob/286fadaca4d2af81bedf4213daebfbbdbcd5e337/api/api_full.go#L356-L373",
+      "params": [
         {
-          "name": "v0"
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        },
+        {
+          "name": "message_cid",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Cid"
+          }
         }
       ],
+      "result": {
+        "name": "Filecoin.StateReplay::Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/ApiInvocResult"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateSectorGetInfo",
       "description": "Returns the on-chain info for the specified miner's sector. Returns null in case the sector info isn't found. NOTE: returned info.Expiration may not be accurate in some cases, use StateSectorExpiration to get accurate expiration epoch.",
       "params": [
         {
@@ -1048,20 +985,22 @@
       ],
       "result": {
         "name": "Filecoin.StateSectorGetInfo::Result",
-        "required": true,
+        "required": false,
         "schema": {
-          "$ref": "#/components/schemas/SectorOnChainInfo"
+          "anyOf": [
+            {
+              "$ref": "#/components/schemas/SectorOnChainInfo"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "paramStructure": "by-position"
     },
     {
       "name": "Filecoin.StateSectorPreCommitInfo",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns the PreCommit info for the specified miner's sector. Returns null and no error if the sector isn't precommitted. Note that the sector number may be allocated while PreCommitInfo is nil. This means that either allocated sector numbers were compacted, and the sector number was marked as allocated in order to reduce size of the allocated sectors bitfield, or that the sector was precommitted, but the precommit has expired.",
       "params": [
         {
@@ -1096,20 +1035,22 @@
       ],
       "result": {
         "name": "Filecoin.StateSectorPreCommitInfo::Result",
-        "required": true,
+        "required": false,
         "schema": {
-          "$ref": "#/components/schemas/SectorPreCommitOnChainInfo"
+          "anyOf": [
+            {
+              "$ref": "#/components/schemas/SectorPreCommitOnChainInfo"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "paramStructure": "by-position"
     },
     {
       "name": "Filecoin.StateAccountKey",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns the public key address of the given ID address for secp and bls accounts",
       "params": [
         {
@@ -1144,11 +1085,6 @@
     },
     {
       "name": "Filecoin.StateLookupID",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "retrieves the ID address of the given address",
       "params": [
         {
@@ -1183,11 +1119,6 @@
     },
     {
       "name": "Filecoin.StateGetActor",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns the specified actor's nonce and balance.",
       "params": [
         {
@@ -1213,7 +1144,7 @@
       ],
       "result": {
         "name": "Filecoin.StateGetActor::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "anyOf": [
             {
@@ -1229,11 +1160,6 @@
     },
     {
       "name": "Filecoin.StateMinerInfo",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "returns info about the specified miner",
       "params": [
         {
@@ -1268,11 +1194,6 @@
     },
     {
       "name": "Filecoin.StateMinerActiveSectors",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns info about sectors that a given miner is actively proving",
       "params": [
         {
@@ -1298,7 +1219,7 @@
       ],
       "result": {
         "name": "Filecoin.StateMinerActiveSectors::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "type": [
             "array",
@@ -1312,12 +1233,41 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.StateMinerPartitions",
-      "tags": [
+      "name": "Filecoin.StateMinerAllocated",
+      "description": "Returns info about sectors that a given miner is actively proving",
+      "params": [
         {
-          "name": "v0"
+          "name": "address",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
         }
       ],
+      "result": {
+        "name": "Filecoin.StateMinerAllocated::Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/BitField"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateMinerPartitions",
       "description": "returns all partitions in the specified deadline",
       "params": [
         {
@@ -1352,7 +1302,7 @@
       ],
       "result": {
         "name": "Filecoin.StateMinerPartitions::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "type": [
             "array",
@@ -1367,11 +1317,6 @@
     },
     {
       "name": "Filecoin.StateMinerSectors",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "returns info about the given miner's sectors. If the filter bitfield is nil, all sectors are included",
       "params": [
         {
@@ -1411,7 +1356,7 @@
       ],
       "result": {
         "name": "Filecoin.StateMinerSectors::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "type": [
             "array",
@@ -1426,11 +1371,6 @@
     },
     {
       "name": "Filecoin.StateMinerSectorCount",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "returns the number of sectors in a miner's sector set and proving set",
       "params": [
         {
@@ -1465,11 +1405,6 @@
     },
     {
       "name": "Filecoin.StateMinerSectorAllocated",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "checks if a sector number is marked as allocated",
       "params": [
         {
@@ -1513,11 +1448,6 @@
     },
     {
       "name": "Filecoin.StateMinerPower",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "returns the power of the indicated miner",
       "params": [
         {
@@ -1552,11 +1482,6 @@
     },
     {
       "name": "Filecoin.StateMinerDeadlines",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns all the proving deadlines for the given miner",
       "params": [
         {
@@ -1582,7 +1507,7 @@
       ],
       "result": {
         "name": "Filecoin.StateMinerDeadlines::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "type": [
             "array",
@@ -1597,11 +1522,6 @@
     },
     {
       "name": "Filecoin.StateMinerProvingDeadline",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "calculates the deadline at some epoch for a proving period and returns the deadline-related calculations.",
       "params": [
         {
@@ -1636,11 +1556,6 @@
     },
     {
       "name": "Filecoin.StateMinerFaults",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns a bitfield indicating the faulty sectors of the given miner",
       "params": [
         {
@@ -1675,11 +1590,6 @@
     },
     {
       "name": "Filecoin.StateMinerRecoveries",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "returns a bitfield indicating the recovering sectors of the given miner",
       "params": [
         {
@@ -1714,11 +1624,6 @@
     },
     {
       "name": "Filecoin.StateMinerAvailableBalance",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns the portion of a miner's balance that can be withdrawn or spent",
       "params": [
         {
@@ -1753,11 +1658,6 @@
     },
     {
       "name": "Filecoin.StateMinerInitialPledgeCollateral",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "returns the initial pledge collateral for the specified miner's sector",
       "params": [
         {
@@ -1799,11 +1699,6 @@
     },
     {
       "name": "Filecoin.StateGetRandomnessFromTickets",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "sample the chain for randomness",
       "params": [
         {
@@ -1854,11 +1749,6 @@
     },
     {
       "name": "Filecoin.StateGetRandomnessFromBeacon",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns the beacon entry for the given filecoin epoch. If the entry has not yet been produced, the call will block until the entry becomes available",
       "params": [
         {
@@ -1909,11 +1799,6 @@
     },
     {
       "name": "Filecoin.StateReadState",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns the indicated actor's state",
       "params": [
         {
@@ -1948,11 +1833,6 @@
     },
     {
       "name": "Filecoin.StateCirculatingSupply",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns the exact circulating supply of Filecoin at the given tipset.",
       "params": [
         {
@@ -1980,11 +1860,6 @@
     },
     {
       "name": "Filecoin.StateVerifiedClientStatus",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns the data cap for the given address. Returns nil if there is no entry in the data cap table for the address.",
       "params": [
         {
@@ -2010,7 +1885,7 @@
       ],
       "result": {
         "name": "Filecoin.StateVerifiedClientStatus::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "anyOf": [
             {
@@ -2026,11 +1901,6 @@
     },
     {
       "name": "Filecoin.StateVMCirculatingSupplyInternal",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "returns an approximation of the circulating supply of Filecoin at the given tipset. This is the value reported by the runtime interface to actors code.",
       "params": [
         {
@@ -2058,11 +1928,6 @@
     },
     {
       "name": "Filecoin.StateListMiners",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns the addresses of every miner that has claimed power in the Power Actor",
       "params": [
         {
@@ -2081,7 +1946,7 @@
       ],
       "result": {
         "name": "Filecoin.StateListMiners::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "type": [
             "array",
@@ -2096,11 +1961,6 @@
     },
     {
       "name": "Filecoin.StateListActors",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "returns the addresses of every actor in the state",
       "params": [
         {
@@ -2119,7 +1979,7 @@
       ],
       "result": {
         "name": "Filecoin.StateListActors::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "type": [
             "array",
@@ -2134,11 +1994,6 @@
     },
     {
       "name": "Filecoin.StateMarketBalance",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "looks up the Escrow and Locked balances of the given address in the Storage Market",
       "params": [
         {
@@ -2173,11 +2028,6 @@
     },
     {
       "name": "Filecoin.StateMarketParticipants",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "returns the Escrow and Locked balances of every participant in the Storage Market",
       "params": [
         {
@@ -2208,11 +2058,6 @@
     },
     {
       "name": "Filecoin.StateMarketDeals",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "returns information about every deal in the Storage Market",
       "params": [
         {
@@ -2243,11 +2088,6 @@
     },
     {
       "name": "Filecoin.StateDealProviderCollateralBounds",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns the min and max collateral a storage provider can issue. It takes the deal size and verified status as parameters.",
       "params": [
         {
@@ -2291,11 +2131,6 @@
     },
     {
       "name": "Filecoin.StateMarketStorageDeal",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "returns information about the specified deal",
       "params": [
         {
@@ -2331,12 +2166,72 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.StateMinerPreCommitDepositForPower",
-      "tags": [
+      "name": "Filecoin.StateWaitMsg",
+      "description": "https://github.com/filecoin-project/lotus/blob/286fadaca4d2af81bedf4213daebfbbdbcd5e337/api/api_full.go#L448-L466",
+      "params": [
         {
-          "name": "v0"
+          "name": "message_cid",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Cid"
+          }
+        },
+        {
+          "name": "confidence",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        {
+          "name": "look_back_limit",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        {
+          "name": "allow_replaced",
+          "required": true,
+          "schema": {
+            "type": "boolean"
+          }
         }
       ],
+      "result": {
+        "name": "Filecoin.StateWaitMsg::Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/MessageLookup"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateSearchMsg",
+      "description": "https://github.com/filecoin-project/lotus/blob/286fadaca4d2af81bedf4213daebfbbdbcd5e337/api/api_full.go#L431-L447",
+      "params": [
+        {
+          "name": "message_cid",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Cid"
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateSearchMsg::Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/MessageLookup"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateMinerPreCommitDepositForPower",
       "params": [
         {
           "name": "address",
@@ -2377,11 +2272,6 @@
     },
     {
       "name": "Filecoin.StateVerifierStatus",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns the data cap for the given address. Returns nil if there is no entry in the data cap table for the address.",
       "params": [
         {
@@ -2407,7 +2297,7 @@
       ],
       "result": {
         "name": "Filecoin.StateVerifierStatus::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "anyOf": [
             {
@@ -2423,11 +2313,6 @@
     },
     {
       "name": "Filecoin.StateGetClaim",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns the claim for a given address and claim ID",
       "params": [
         {
@@ -2462,7 +2347,7 @@
       ],
       "result": {
         "name": "Filecoin.StateGetClaim::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "anyOf": [
             {
@@ -2478,11 +2363,6 @@
     },
     {
       "name": "Filecoin.StateGetClaims",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "returns the all the claims for a given provider",
       "params": [
         {
@@ -2520,11 +2400,6 @@
     },
     {
       "name": "Filecoin.StateGetAllocation",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns the allocation for a given address and allocation ID.",
       "params": [
         {
@@ -2559,7 +2434,7 @@
       ],
       "result": {
         "name": "Filecoin.StateGetAllocation::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "anyOf": [
             {
@@ -2575,11 +2450,6 @@
     },
     {
       "name": "Filecoin.StateGetAllocations",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "returns the all the allocations for a given client",
       "params": [
         {
@@ -2617,11 +2487,6 @@
     },
     {
       "name": "Filecoin.StateSectorExpiration",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns the epoch at which given sector will expire",
       "params": [
         {
@@ -2665,11 +2530,6 @@
     },
     {
       "name": "Filecoin.StateSectorPartition",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Finds deadline/partition with the specified sector",
       "params": [
         {
@@ -2713,11 +2573,6 @@
     },
     {
       "name": "Filecoin.WalletBalance",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns balance of a wallet",
       "params": [
         {
@@ -2739,11 +2594,6 @@
     },
     {
       "name": "Filecoin.WalletHas",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "indicates whether the given address is in the wallet",
       "params": [
         {
@@ -2765,16 +2615,11 @@
     },
     {
       "name": "Filecoin.WalletList",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "Returns a list of all the addresses in the wallet.",
       "params": [],
       "result": {
         "name": "Filecoin.WalletList::Result",
-        "required": true,
+        "required": false,
         "schema": {
           "type": [
             "array",
@@ -2789,11 +2634,6 @@
     },
     {
       "name": "Filecoin.WalletSign",
-      "tags": [
-        {
-          "name": "v0"
-        }
-      ],
       "description": "signs the given bytes using the given address",
       "params": [
         {
@@ -3105,6 +2945,21 @@
           },
           "State": {
             "$ref": "#/components/schemas/ApiDealState"
+          }
+        }
+      },
+      "ApiMessage": {
+        "type": "object",
+        "required": [
+          "Cid",
+          "Message"
+        ],
+        "properties": {
+          "Cid": {
+            "$ref": "#/components/schemas/Cid"
+          },
+          "Message": {
+            "$ref": "#/components/schemas/Message"
           }
         }
       },
@@ -3796,6 +3651,32 @@
           }
         }
       },
+      "MessageLookup": {
+        "type": "object",
+        "required": [
+          "Height",
+          "Message",
+          "Receipt",
+          "ReturnDec",
+          "TipSet"
+        ],
+        "properties": {
+          "Height": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "Message": {
+            "$ref": "#/components/schemas/Cid"
+          },
+          "Receipt": {
+            "$ref": "#/components/schemas/Receipt"
+          },
+          "ReturnDec": true,
+          "TipSet": {
+            "$ref": "#/components/schemas/NonEmpty_Array_of_Cid"
+          }
+        }
+      },
       "MessageSendSpec": {
         "type": "object",
         "required": [
@@ -4061,7 +3942,7 @@
           },
           "Eip155ChainID": {
             "type": "integer",
-            "format": "uint32",
+            "format": "uint64",
             "minimum": 0.0
           },
           "ForkUpgradeParams": {
@@ -4259,6 +4140,46 @@
           },
           {
             "type": "null"
+          }
+        ]
+      },
+      "PathChange_for_Tipset": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "Type",
+              "Val"
+            ],
+            "properties": {
+              "Type": {
+                "type": "string",
+                "enum": [
+                  "revert"
+                ]
+              },
+              "Val": {
+                "$ref": "#/components/schemas/Tipset"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "Type",
+              "Val"
+            ],
+            "properties": {
+              "Type": {
+                "type": "string",
+                "enum": [
+                  "apply"
+                ]
+              },
+              "Val": {
+                "$ref": "#/components/schemas/Tipset"
+              }
+            }
           }
         ]
       },
@@ -4639,17 +4560,6 @@
       "int64": {
         "type": "integer",
         "format": "int64"
-      }
-    },
-    "tags": {
-      "client_interoperability": {
-        "name": "client_interoperability"
-      },
-      "v0": {
-        "name": "v0"
-      },
-      "v1": {
-        "name": "v1"
       }
     }
   }
