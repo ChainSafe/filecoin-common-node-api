@@ -87,6 +87,7 @@ Usage: json-rpc <COMMAND>
 
 Commands:
   capture  Start a HTTP server, forwarding all requests to a single URI
+  replay   Receive's stdin's concatenated JSON summaries of JSON-RPC exchanges (as output by the `json-rpc capture` command)
 
 ```
 ### `filecoin-common-node-api-tool` `json-rpc` `capture`
@@ -112,5 +113,28 @@ Options:
 
       --remote <REMOTE>
           The remote URI to forward requests to
+
+```
+### `filecoin-common-node-api-tool` `json-rpc` `replay`
+
+```
+Receive's stdin's concatenated JSON summaries of JSON-RPC exchanges (as output by the `json-rpc capture` command).
+
+Each request in the exchange is send via HTTP POST to `remote`, and the replayed exchange is printed to stdout.
+
+All requests are sent with an `id` (i.e not as a JSON-RPC Notification).
+
+This does NOT validate adherence to the JSON-RPC protocol.
+
+Usage: replay [OPTIONS] --remote <REMOTE>
+
+Options:
+      --header <HEADER>
+          Additional headers to append to every request.
+          
+          By default, `Content-Type` and `User-Agent` headers are set.
+
+      --remote <REMOTE>
+          The host to send JSON-RPC requests to
 
 ```

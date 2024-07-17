@@ -8,6 +8,7 @@ use check::CheckMethod;
 use clap::Parser;
 use ez_jsonrpc_types::{self as jsonrpc, Id, RequestParameters};
 use fluent_uri::UriRef;
+use futures::TryFutureExt as _;
 use itertools::Itertools as _;
 use openrpc_types::{
     resolve_within,
@@ -24,6 +25,7 @@ use std::{
     io::{self, IsTerminal as _},
     net::SocketAddr,
     path::{Path, PathBuf},
+    str::FromStr,
 };
 
 /// Utilities for creating, interacting with, and testing against the Filecoin
@@ -96,6 +98,25 @@ enum JsonRpc {
         /// The remote URI to forward requests to.
         #[arg(long)]
         remote: UriRef<String>,
+    },
+    /// Receive's stdin's concatenated JSON summaries of JSON-RPC
+    /// exchanges (as output by the `json-rpc capture` command).
+    ///
+    /// Each request in the exchange is send via HTTP POST to `remote`,
+    /// and the replayed exchange is printed to stdout.
+    ///
+    /// All requests are sent with an `id` (i.e not as a JSON-RPC Notification).
+    ///
+    /// This does NOT validate adherence to the JSON-RPC protocol.
+    Replay {
+        /// Additional headers to append to every request.
+        ///
+        /// By default, `Content-Type` and `User-Agent` headers are set.
+        #[arg(long)]
+        header: Vec<Header>,
+        /// The host to send JSON-RPC requests to.
+        #[arg(long)]
+        remote: String,
     },
 }
 
@@ -193,14 +214,97 @@ fn main() -> anyhow::Result<()> {
             serde_json::to_writer_pretty(io::stdout(), &records)?;
             Ok(())
         }
-        Args::JsonRpc(JsonRpc::Capture { local, remote }) => {
-            tokio::runtime::Builder::new_current_thread()
-                .enable_all()
-                .build()
-                .context("couldn't start async runtime")?
-                .block_on(capture::capture(local, remote))
+        Args::JsonRpc(sub) => tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .context("couldn't start async runtime")?
+            .block_on(async move {
+                match sub {
+                    JsonRpc::Capture { local, remote } => capture::capture(local, remote).await,
+                    JsonRpc::Replay { header, remote } => replay(header, remote).await,
+                }
+            }),
+    }
+}
+
+async fn replay(header: Vec<Header>, remote: String) -> anyhow::Result<()> {
+    let client = reqwest::Client::builder()
+        .user_agent(concat!(
+            env!("CARGO_PKG_NAME"),
+            "/",
+            env!("CARGO_PKG_VERSION")
+        ))
+        .default_headers(
+            header
+                .into_iter()
+                .map(|Header { header, value }| (header, value))
+                .collect(),
+        )
+        .build()
+        .context("couldn't start HTTP client")?;
+    for (ix, it) in serde_json::Deserializer::from_reader(io::stdin())
+        .into_iter()
+        .enumerate()
+    {
+        match it {
+            Ok(Dialogue {
+                method,
+                params,
+                response: _,
+            }) => {
+                let request = ez_jsonrpc_types::Request {
+                    method,
+                    params,
+                    id: Some(ez_jsonrpc_types::Id::Number(ix.into())),
+                };
+                let result = client
+                    .post(&remote)
+                    .json(&request)
+                    .send()
+                    .map_err(|it| {
+                        anyhow::Error::from(it).context("couldn't sent request to remote")
+                    })
+                    .and_then(|it| async move {
+                        let body = it
+                            .error_for_status()
+                            .context("HTTP error from remote")?
+                            .text()
+                            .await
+                            .context("couldn't collect HTTP response from remote")?;
+                        match body.trim().is_empty() {
+                            true => Ok(None),
+                            false => {
+                                let ez_jsonrpc_types::Response { result, id: _ } =
+                                    serde_json::from_str(&body).context(
+                                        "couldn't deserialize HTTP response as JSON-RPC",
+                                    )?;
+                                anyhow::Ok(Some(result))
+                            }
+                        }
+                    })
+                    .await
+                    .with_context(|| format!("couldn't execute request at index {}", ix))?;
+                serde_json::to_writer(
+                    io::stdout(),
+                    &Dialogue {
+                        method: request.method,
+                        params: request.params,
+                        response: match result {
+                            Some(Ok(v)) => Some(DialogueResponse::Result(v)),
+                            Some(Err(e)) => Some(DialogueResponse::Error(e)),
+                            None => None,
+                        },
+                    },
+                )
+                .context("couldn't serialize dialogue")?;
+                println!()
+            }
+            Err(e) => {
+                bail!("failed to deserialize dialogue at index {}: {}", ix, e)
+            }
         }
     }
+    Ok(())
 }
 
 fn validate_dialogues_from_reader(
@@ -486,6 +590,26 @@ impl std::str::FromStr for Char {
 impl fmt::Display for Char {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.0.fmt(f)
+    }
+}
+
+#[derive(Clone)]
+struct Header {
+    header: http::HeaderName,
+    value: http::HeaderValue,
+}
+
+impl FromStr for Header {
+    type Err = anyhow::Error;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let (header, value) = s
+            .split_once(':')
+            .context("expected format `header-name: header-value`")?;
+        Ok(Self {
+            header: header.trim().parse()?,
+            value: value.trim().parse()?,
+        })
     }
 }
 

@@ -22,7 +22,7 @@ itertools = "0.13.0"
 jsonschema = { version = "0.18.0", default-features = false }
 nunny = "0.2.0"
 openrpc-types = "0.3.3"
-reqwest = "0.12.5"
+reqwest = { version = "0.12.5", features = ["json"] }
 schemars = { version = "0.8.21", default-features = false }
 semver = { version = "1.0.23", features = ["serde"] }
 serde = { version = "1.0.203", features = ["derive"] }
