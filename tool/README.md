@@ -30,11 +30,11 @@ Performs validation of the spec, including FIP-specific validation.
 
 Errors are emitted to stderr.
 
-If stdin is received (and is not a terminal), it will be interpreted as concatenated JSON summaries of JSON-RPC exchanges (as output by the `json-rpc capture` command).
+If stdin is received (and is not a terminal), it will be interpreted as concatenated JSON summaries of JSON-RPC dialogues (as output by the `json-rpc capture` command).
 
-Each exchange will be validated against the spec.
+Each dialogue will be validated against the spec.
 
-On EOF, a summary table of `count` and `method` exchanges is printed to stdout.
+On EOF, a summary table of `count` and `method` dialogues is printed to stdout.
 
 Usage: validate <SPEC>
 
@@ -87,7 +87,7 @@ Usage: json-rpc <COMMAND>
 
 Commands:
   capture  Start a HTTP server, forwarding all requests to a single URI
-  replay   Receive's stdin's concatenated JSON summaries of JSON-RPC exchanges (as output by the `json-rpc capture` command)
+  play     Receive's stdin's concatenated JSON summaries of JSON-RPC dialogue (as output by the `json-rpc capture` command)
 
 ```
 ### `filecoin-common-node-api-tool` `json-rpc` `capture`
@@ -97,7 +97,7 @@ Start a HTTP server, forwarding all requests to a single URI.
 
 Ctrl+C will request a graceful shutdown.
 
-For HTTP exchanges whose bodies can be parsed as a singel JSON-RPC v2 method call, print a summary as a JSON line to stdout.
+For HTTP dialogue whose bodies can be parsed as a single JSON-RPC v2 method call, print a summary as a JSON line to stdout.
 
 The summary includes only the method name, params, and response.
 
@@ -115,18 +115,18 @@ Options:
           The remote URI to forward requests to
 
 ```
-### `filecoin-common-node-api-tool` `json-rpc` `replay`
+### `filecoin-common-node-api-tool` `json-rpc` `play`
 
 ```
-Receive's stdin's concatenated JSON summaries of JSON-RPC exchanges (as output by the `json-rpc capture` command).
+Receive's stdin's concatenated JSON summaries of JSON-RPC dialogue (as output by the `json-rpc capture` command).
 
-Each request in the exchange is send via HTTP POST to `remote`, and the replayed exchange is printed to stdout.
+Each request in the exchange is send via HTTP POST to `remote`, and the dialogue is printed to stdout.
 
 All requests are sent with an `id` (i.e not as a JSON-RPC Notification).
 
 This does NOT validate adherence to the JSON-RPC protocol.
 
-Usage: replay [OPTIONS] --remote <REMOTE>
+Usage: play [OPTIONS] --remote <REMOTE>
 
 Options:
       --header <HEADER>

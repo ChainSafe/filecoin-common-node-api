@@ -53,11 +53,11 @@ enum Openrpc {
     ///
     /// If stdin is received (and is not a terminal),
     /// it will be interpreted as concatenated JSON summaries of JSON-RPC
-    /// exchanges (as output by the `json-rpc capture` command).
+    /// dialogues (as output by the `json-rpc capture` command).
     ///
-    /// Each exchange will be validated against the spec.
+    /// Each dialogue will be validated against the spec.
     ///
-    /// On EOF, a summary table of `count` and `method` exchanges is printed to
+    /// On EOF, a summary table of `count` and `method` dialogues is printed to
     /// stdout.
     Validate { spec: PathBuf },
     /// Interpret `select` as a json document of methods to include in `openrpc`.
@@ -82,7 +82,7 @@ enum JsonRpc {
     ///
     /// Ctrl+C will request a graceful shutdown.
     ///
-    /// For HTTP exchanges whose bodies can be parsed as a singel JSON-RPC v2
+    /// For HTTP dialogue whose bodies can be parsed as a single JSON-RPC v2
     /// method call, print a summary as a JSON line to stdout.
     ///
     /// The summary includes only the method name, params, and response.
@@ -100,15 +100,15 @@ enum JsonRpc {
         remote: UriRef<String>,
     },
     /// Receive's stdin's concatenated JSON summaries of JSON-RPC
-    /// exchanges (as output by the `json-rpc capture` command).
+    /// dialogue (as output by the `json-rpc capture` command).
     ///
     /// Each request in the exchange is send via HTTP POST to `remote`,
-    /// and the replayed exchange is printed to stdout.
+    /// and the dialogue is printed to stdout.
     ///
     /// All requests are sent with an `id` (i.e not as a JSON-RPC Notification).
     ///
     /// This does NOT validate adherence to the JSON-RPC protocol.
-    Replay {
+    Play {
         /// Additional headers to append to every request.
         ///
         /// By default, `Content-Type` and `User-Agent` headers are set.
@@ -221,7 +221,7 @@ fn main() -> anyhow::Result<()> {
             .block_on(async move {
                 match sub {
                     JsonRpc::Capture { local, remote } => capture::capture(local, remote).await,
-                    JsonRpc::Replay { header, remote } => replay(header, remote).await,
+                    JsonRpc::Play { header, remote } => replay(header, remote).await,
                 }
             }),
     }
