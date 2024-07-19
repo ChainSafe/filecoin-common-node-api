@@ -6,13 +6,13 @@ use std::{
 
 use anyhow::{bail, Context as _};
 use either::Either;
-use ez_jsonrpc_types::{self as jsonrpc, RequestParameters};
+use ez_jsonrpc_types::RequestParameters;
 use indexmap::IndexMap;
 use jsonschema::{CompilationOptions, JSONSchema, ValidationError};
 use openrpc_types::{Components, ParamStructure};
 use schemars::schema::{Schema, SchemaObject};
 use serde::Serialize;
-use serde_json::json;
+use serde_json::{json, Value};
 
 pub struct CheckMethod<S = RandomState> {
     params: IndexMap<String, CheckContentDescriptor, S>,
@@ -103,11 +103,12 @@ impl<S> CheckMethod<S> {
     }
     pub fn check(
         &self,
-        request: &jsonrpc::Request,
-        response: Option<&jsonrpc::Response>,
+        params: Option<&RequestParameters>,
+        response: Option<&Result<Value, ez_jsonrpc_types::Error>>,
+        in_depth: bool,
     ) -> Vec<Annotation> {
         let mut annotations = vec![];
-        match (self.param_structure, &request.params) {
+        match (self.param_structure, params) {
             (ParamStructure::ByName, Some(RequestParameters::ByPosition(_)))
             | (ParamStructure::ByPosition, Some(RequestParameters::ByName(_))) => {
                 annotations.push(Annotation::IncorrectParamStructure);
@@ -115,7 +116,7 @@ impl<S> CheckMethod<S> {
             _ => {}
         }
 
-        let mut request_params = match &request.params {
+        let mut request_params = match params {
             None => Either::Left(VecDeque::new()),
             Some(RequestParameters::ByPosition(it)) => Either::Left(it.iter().collect()),
             Some(RequestParameters::ByName(it)) => Either::Right(
@@ -139,13 +140,28 @@ impl<S> CheckMethod<S> {
                 Either::Right(by_name) => by_name.remove(&**name),
             };
             match (required, provided) {
-                (true, None) => annotations.push(Annotation::MissingRequiredParam),
+                (true, None) => annotations.push(Annotation::MissingRequiredParam(name.clone())),
                 (_, Some(provided)) => {
                     if *deprecated {
-                        annotations.push(Annotation::DeprecatedParam)
+                        annotations.push(Annotation::DeprecatedParam(name.clone()))
                     }
-                    if !schema.is_valid(provided) {
-                        annotations.push(Annotation::InvalidParam)
+
+                    match in_depth {
+                        true => {
+                            if let Err(errs) = schema.validate(provided) {
+                                annotations.push(Annotation::InvalidResult(Some(
+                                    errs.map(to_owned).collect(),
+                                )))
+                            }
+                        }
+                        false => {
+                            if !schema.is_valid(provided) {
+                                annotations.push(Annotation::InvalidParam {
+                                    name: name.clone(),
+                                    errors: None,
+                                })
+                            }
+                        }
                     }
                 }
                 (false, None) => {}
@@ -156,19 +172,27 @@ impl<S> CheckMethod<S> {
             Either::Left(it) => it.is_empty(),
             Either::Right(it) => it.is_empty(),
         } {
-            annotations.push(Annotation::ExcessParam)
+            annotations.push(Annotation::ExcessParams)
         }
 
-        match (&request.id, &self.result, response) {
-            (None, None, None) => {}
+        match (&self.result, response) {
+            (None, None) => {}
 
-            (Some(request_id), Some(schema), Some(jsonrpc::Response { result, id, .. })) => {
-                if request_id != id {
-                    annotations.push(Annotation::BadNotification)
-                }
+            (Some(schema), Some(result)) => {
                 if let Ok(result) = result {
-                    if !schema.is_valid(result) {
-                        annotations.push(Annotation::InvalidResult)
+                    match in_depth {
+                        true => {
+                            if let Err(errs) = schema.validate(result) {
+                                annotations.push(Annotation::InvalidResult(Some(
+                                    errs.map(to_owned).collect(),
+                                )))
+                            }
+                        }
+                        false => {
+                            if !schema.is_valid(result) {
+                                annotations.push(Annotation::InvalidResult(None))
+                            }
+                        }
                     }
                 }
             }
@@ -185,13 +209,32 @@ impl<S> CheckMethod<S> {
 #[strum(serialize_all = "kebab-case")]
 pub enum Annotation {
     IncorrectParamStructure,
-    MissingRequiredParam,
-    DeprecatedParam,
-    InvalidParam,
-    InvalidResult,
-    ExcessParam,
+    MissingRequiredParam(String),
+    DeprecatedParam(String),
+    InvalidParam {
+        name: String,
+        errors: Option<Vec<ValidationError<'static>>>,
+    },
+    InvalidResult(Option<Vec<ValidationError<'static>>>),
+    ExcessParams,
     BadNotification,
     DeprecatedMethod,
+}
+
+fn to_owned(
+    ValidationError {
+        instance,
+        kind,
+        instance_path,
+        schema_path,
+    }: ValidationError<'_>,
+) -> ValidationError<'static> {
+    ValidationError {
+        instance: Cow::Owned(instance.into_owned()),
+        kind,
+        instance_path,
+        schema_path,
+    }
 }
 
 struct CheckContentDescriptor {

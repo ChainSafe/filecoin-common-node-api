@@ -330,9 +330,10 @@ fn validate_dialogues_from_reader(
     reader: impl io::Read,
 ) -> anyhow::Result<BTreeMap<String, usize>> {
     let mut passed = BTreeMap::new();
-    for (ix, it) in serde_json::Deserializer::from_reader(reader)
+    for (pos, (ix, it)) in serde_json::Deserializer::from_reader(reader)
         .into_iter()
         .enumerate()
+        .with_position()
     {
         match it {
             Ok(Dialogue {
@@ -341,32 +342,69 @@ fn validate_dialogues_from_reader(
                 response,
             }) => match method2checker.get(&*method) {
                 Some(check) => {
+                    let in_depth = matches!(pos, itertools::Position::Only);
                     let annotations = check.check(
-                        &ez_jsonrpc_types::Request {
-                            method: method.clone(),
-                            params,
-                            id: response.is_some().then_some(ez_jsonrpc_types::Id::Null),
-                        },
+                        params.as_ref(),
                         response
-                            .map(|it| ez_jsonrpc_types::Response {
-                                result: match it {
-                                    DialogueResponse::Result(it) => Ok(it),
-                                    DialogueResponse::Error(e) => Err(e),
-                                },
-                                id: ez_jsonrpc_types::Id::Null,
+                            .map(|it| match it {
+                                DialogueResponse::Result(ok) => Ok(ok),
+                                DialogueResponse::Error(err) => Err(err),
                             })
                             .as_ref(),
+                        in_depth,
                     );
                     match annotations.is_empty() {
                         true => {
                             passed.entry(method).and_modify(|it| *it += 1).or_insert(1);
                         }
-                        false => errs.push(format!(
-                            "script[{}]: failed to validate method {}: [{}]",
-                            ix,
-                            method,
-                            annotations.iter().join(", ")
-                        )),
+                        false => match in_depth {
+                            true => {
+                                errs.push(format_args!(
+                                    "script[{}]: failed to validate method {} ({} errors)",
+                                    ix,
+                                    method,
+                                    annotations.len()
+                                ));
+                                for annotation in annotations {
+                                    use check::Annotation::*;
+                                    match annotation {
+                                        MissingRequiredParam(name) => errs.push(format_args!(
+                                            "missing required parameter {}",
+                                            name
+                                        )),
+                                        DeprecatedParam(name) => errs.push(format_args!(
+                                            "use of deprecated parameter {}",
+                                            name
+                                        )),
+                                        InvalidParam { name, errors } => {
+                                            errs.push(format_args!("invalid parameter {}", name));
+                                            for it in errors.into_iter().flatten() {
+                                                errs.push(format_args!(
+                                                    "\t{}\t{}\t{}",
+                                                    it.schema_path, it.instance_path, it
+                                                ))
+                                            }
+                                        }
+                                        InvalidResult(errors) => {
+                                            errs.push("invalid result:");
+                                            for it in errors.into_iter().flatten() {
+                                                errs.push(format_args!(
+                                                    "\t{}\t{}\t{}",
+                                                    it.schema_path, it.instance_path, it
+                                                ))
+                                            }
+                                        }
+                                        other => errs.push(other),
+                                    }
+                                }
+                            }
+                            false => errs.push(format!(
+                                "script[{}]: failed to validate method {}: [{}]",
+                                ix,
+                                method,
+                                annotations.iter().join(", ")
+                            )),
+                        },
                     }
                 }
                 None => errs.push(format!(
@@ -496,7 +534,14 @@ fn validate_document<'a>(
                         },
                         None => None,
                     };
-                    if !check_method.check(&request, response.as_ref()).is_empty() {
+                    if !check_method
+                        .check(
+                            request.params.as_ref(),
+                            response.map(|it| it.result).as_ref(),
+                            true,
+                        )
+                        .is_empty()
+                    {
                         errs.push(format!(
                             "spec: example at index {} for method {} failed to validate",
                             ix, name
