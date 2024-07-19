@@ -117,6 +117,9 @@ enum JsonRpc {
         /// The host to send JSON-RPC requests to.
         #[arg(long)]
         remote: String,
+        /// Don't short-circuit on the first HTTP/serialization failure.
+        #[arg(long)]
+        keep_going: bool,
     },
 }
 
@@ -221,13 +224,18 @@ fn main() -> anyhow::Result<()> {
             .block_on(async move {
                 match sub {
                     JsonRpc::Capture { local, remote } => capture::capture(local, remote).await,
-                    JsonRpc::Play { header, remote } => replay(header, remote).await,
+                    JsonRpc::Play {
+                        header,
+                        remote,
+                        keep_going,
+                    } => play(header, remote, keep_going).await,
                 }
             }),
     }
 }
 
-async fn replay(header: Vec<Header>, remote: String) -> anyhow::Result<()> {
+async fn play(header: Vec<Header>, remote: String, keep_going: bool) -> anyhow::Result<()> {
+    let mut errs = ErrorEmitter::new(io::stderr());
     let client = reqwest::Client::builder()
         .user_agent(concat!(
             env!("CARGO_PKG_NAME"),
@@ -257,7 +265,7 @@ async fn replay(header: Vec<Header>, remote: String) -> anyhow::Result<()> {
                     params,
                     id: Some(ez_jsonrpc_types::Id::Number(ix.into())),
                 };
-                let result = client
+                let res = client
                     .post(&remote)
                     .json(&request)
                     .send()
@@ -282,29 +290,38 @@ async fn replay(header: Vec<Header>, remote: String) -> anyhow::Result<()> {
                             }
                         }
                     })
-                    .await
-                    .with_context(|| format!("couldn't execute request at index {}", ix))?;
-                serde_json::to_writer(
-                    io::stdout(),
-                    &Dialogue {
-                        method: request.method,
-                        params: request.params,
-                        response: match result {
-                            Some(Ok(v)) => Some(DialogueResponse::Result(v)),
-                            Some(Err(e)) => Some(DialogueResponse::Error(e)),
-                            None => None,
-                        },
-                    },
-                )
-                .context("couldn't serialize dialogue")?;
-                println!()
+                    .await;
+                match (res, keep_going) {
+                    (Ok(rpc), _) => {
+                        serde_json::to_writer(
+                            io::stdout(),
+                            &Dialogue {
+                                method: request.method,
+                                params: request.params,
+                                response: match rpc {
+                                    Some(Ok(v)) => Some(DialogueResponse::Result(v)),
+                                    Some(Err(e)) => Some(DialogueResponse::Error(e)),
+                                    None => None,
+                                },
+                            },
+                        )
+                        .context("couldn't serialize dialogue")?;
+                        println!()
+                    }
+                    (Err(e), true) => {
+                        errs.push(format_args!("couldn't sent request at index {}: {}", ix, e))
+                    }
+                    (Err(e), false) => {
+                        return Err(e.context(format!("couldn't execute request at index {}", ix)))
+                    }
+                };
             }
             Err(e) => {
                 bail!("failed to deserialize dialogue at index {}: {}", ix, e)
             }
         }
     }
-    Ok(())
+    errs.finish()
 }
 
 fn validate_dialogues_from_reader(
