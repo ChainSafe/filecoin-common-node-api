@@ -57,8 +57,11 @@ enum Openrpc {
     ///
     /// Each dialogue will be validated against the spec.
     ///
-    /// On EOF, a summary table of `count` and `method` dialogues is printed to
-    /// stdout.
+    /// On EOF, a summary table of passing `count` and `method` dialogues is
+    /// printed to stdout.
+    ///
+    /// If there is only a single dialogue, and it fails to validate,
+    /// more detailed errors will be emitted.
     Validate { spec: PathBuf },
     /// Interpret `select` as a json document of methods to include in `openrpc`.
     ///

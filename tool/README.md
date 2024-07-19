@@ -34,7 +34,9 @@ If stdin is received (and is not a terminal), it will be interpreted as concaten
 
 Each dialogue will be validated against the spec.
 
-On EOF, a summary table of `count` and `method` dialogues is printed to stdout.
+On EOF, a summary table of passing `count` and `method` dialogues is printed to stdout.
+
+If there is only a single dialogue, and it fails to validate, more detailed errors will be emitted.
 
 Usage: validate <SPEC>
 
@@ -136,5 +138,8 @@ Options:
 
       --remote <REMOTE>
           The host to send JSON-RPC requests to
+
+      --keep-going
+          Don't short-circuit on the first HTTP/serialization failure
 
 ```
