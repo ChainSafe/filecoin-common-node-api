@@ -1,6 +1,7 @@
 use crate::{Dialogue, DialogueResponse};
 use anyhow::Context as _;
 use axum::response::IntoResponse as _;
+use bstr::ByteSlice as _;
 use bytes::Bytes;
 use ez_jsonrpc_types as jsonrpc;
 use fluent_uri::UriRef;
@@ -43,7 +44,7 @@ async fn handler(
         Ok((req, resp)) => {
             match (
                 serde_json::from_slice::<jsonrpc::Request>(req.body()),
-                match resp.body().is_empty() {
+                match resp.body().trim().is_empty() {
                     true => Ok(None),
                     false => serde_json::from_slice::<jsonrpc::Response>(resp.body()).map(Some),
                 },
