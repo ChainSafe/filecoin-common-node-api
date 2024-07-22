@@ -1,6 +1,6 @@
 # Filecoin Common Node API Specification
 
-This repo is an appendix to the Filecoin Common Node API FIP.
+This repo is an appendix to the [Filecoin Common Node API FIP](https://github.com/filecoin-project/FIPs/pull/1027).
 
 The main document is the [`spec.json`](./spec.json), which is a description of a
 set of [JSON-RPC](https://www.jsonrpc.org/) methods as an [OpenRPC](https://spec.open-rpc.org/)
