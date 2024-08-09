@@ -1,12 +1,15 @@
 mod capture;
 mod check;
 mod gc;
+mod generate;
+mod test;
+mod test_suite;
 
 use anyhow::{bail, Context as _};
 use ascii::AsciiChar;
 use check::CheckMethod;
 use clap::Parser;
-use ez_jsonrpc_types::{self as jsonrpc, Id, RequestParameters};
+use ez_jsonrpc::types::{self as jsonrpc, Id, RequestParameters};
 use fluent_uri::UriRef;
 use futures::TryFutureExt as _;
 use itertools::Itertools as _;
@@ -62,7 +65,9 @@ enum Openrpc {
     ///
     /// If there is only a single dialogue, and it fails to validate,
     /// more detailed errors will be emitted.
-    Validate { spec: PathBuf },
+    Validate {
+        spec: PathBuf,
+    },
     /// Interpret `select` as a json document of methods to include in `openrpc`.
     ///
     /// A new schema with only the selected methods is printed to stdout.
@@ -76,6 +81,7 @@ enum Openrpc {
         #[arg(long)]
         overwrite_version: Option<String>,
     },
+    Generate,
 }
 
 /// Interact with JSON-RPC endpoints.
@@ -139,7 +145,7 @@ pub struct Dialogue {
 #[serde(rename_all = "lowercase")]
 enum DialogueResponse {
     Result(Value),
-    Error(ez_jsonrpc_types::Error),
+    Error(ez_jsonrpc::types::Error),
 }
 
 fn main() -> anyhow::Result<()> {
@@ -206,6 +212,12 @@ fn main() -> anyhow::Result<()> {
             serde_json::to_writer_pretty(io::stdout(), &openrpc)?;
             Ok(())
         }
+        Args::Openrpc(Openrpc::Generate) => {
+            let mut space = typify::TypeSpace::default();
+            let mut src = resolve_within(serde_json::from_reader(io::stdin())?)?;
+
+            todo!()
+        }
         Args::Csv2json {
             delimiter: Char(delimiter),
         } => {
@@ -263,10 +275,10 @@ async fn play(header: Vec<Header>, remote: String, keep_going: bool) -> anyhow::
                 params,
                 response: _,
             }) => {
-                let request = ez_jsonrpc_types::Request {
+                let request = ez_jsonrpc::types::Request {
                     method,
                     params,
-                    id: Some(ez_jsonrpc_types::Id::Number(ix.into())),
+                    id: Some(ez_jsonrpc::types::Id::Number(ix.into())),
                 };
                 let res = client
                     .post(&remote)
@@ -285,7 +297,7 @@ async fn play(header: Vec<Header>, remote: String, keep_going: bool) -> anyhow::
                         match body.trim().is_empty() {
                             true => Ok(None),
                             false => {
-                                let ez_jsonrpc_types::Response { result, id: _ } =
+                                let ez_jsonrpc::types::Response { result, id: _ } =
                                     serde_json::from_str(&body).context(
                                         "couldn't deserialize HTTP response as JSON-RPC",
                                     )?;
