@@ -6,7 +6,7 @@ use std::{
 
 use anyhow::{bail, Context as _};
 use either::Either;
-use ez_jsonrpc_types::RequestParameters;
+use ez_jsonrpc::types::RequestParameters;
 use indexmap::IndexMap;
 use jsonschema::{CompilationOptions, JSONSchema, ValidationError};
 use openrpc_types::{Components, ParamStructure};
@@ -104,7 +104,7 @@ impl<S> CheckMethod<S> {
     pub fn check(
         &self,
         params: Option<&RequestParameters>,
-        response: Option<&Result<Value, ez_jsonrpc_types::Error>>,
+        response: Option<&Result<Value, ez_jsonrpc::types::Error>>,
         in_depth: bool,
     ) -> Vec<Annotation> {
         let mut annotations = vec![];
