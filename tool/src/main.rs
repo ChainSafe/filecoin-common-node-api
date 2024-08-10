@@ -213,10 +213,10 @@ fn main() -> anyhow::Result<()> {
             Ok(())
         }
         Args::Openrpc(Openrpc::Generate) => {
-            let mut space = typify::TypeSpace::default();
-            let mut src = resolve_within(serde_json::from_reader(io::stdin())?)?;
-
-            todo!()
+            let tokens =
+                generate::generate(resolve_within(serde_json::from_reader(io::stdin())?)?)?;
+            println!("{}", tokens);
+            Ok(())
         }
         Args::Csv2json {
             delimiter: Char(delimiter),

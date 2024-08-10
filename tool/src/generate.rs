@@ -1,12 +1,13 @@
-use std::collections::HashSet;
-
-use anyhow::Context as _;
+use anyhow::{bail, Context as _};
+use proc_macro2::TokenStream;
+use quote::quote;
 use schemars::schema::{
     ArrayValidation, ObjectValidation, RootSchema, Schema, SchemaObject, SingleOrVec,
     SubschemaValidation,
 };
+use syn::Ident;
 
-pub fn process(mut doc: openrpc_types::resolved::OpenRPC) -> anyhow::Result<RootSchema> {
+pub fn generate(mut doc: openrpc_types::resolved::OpenRPC) -> anyhow::Result<TokenStream> {
     if let Some(components_schemas) = doc.components.as_mut().and_then(|it| it.schemas.as_mut()) {
         for schema in components_schemas.values_mut() {
             rewrite_references(schema, |it| {
@@ -28,20 +29,81 @@ pub fn process(mut doc: openrpc_types::resolved::OpenRPC) -> anyhow::Result<Root
             .unwrap_or_default(),
     })?;
 
-    for method in doc.methods {
-        let name = method.name;
-        let result = method
-            .result
-            .as_ref()
-            .map(|cd| space.add_type(&cd.schema))
-            .transpose()?;
-        let params = method
-            .params
-            .iter()
-            .map(|cd| space.add_type(&cd.schema).map(|id| (&*cd.name, id)))
-            .collect::<Result<Vec<_>, _>>()?;
-    }
-    todo!()
+    let method_ir = doc
+        .methods
+        .into_iter()
+        .map(|method| {
+            anyhow::Ok(Method {
+                name: method.name,
+                result: method
+                    .result
+                    .as_ref()
+                    .map(|cd| space.add_type(&cd.schema))
+                    .transpose()?,
+                params: method
+                    .params
+                    .into_iter()
+                    .map(|cd| space.add_type(&cd.schema).map(|id| (cd.name, id)))
+                    .collect::<Result<Vec<_>, _>>()?,
+            })
+        })
+        .collect::<Result<Vec<_>, _>>()?;
+
+    let method_code = method_ir.iter().try_fold(
+        TokenStream::new(),
+        |mut acc,
+         Method {
+             name,
+             result,
+             params,
+         }| {
+            let fn_name = syn::parse_str::<Ident>(&name.replace('.', "_"))?;
+            let ret = result
+                .as_ref()
+                .map(|id| space.get_type(id).map(|ty| ty.ident()))
+                .transpose()?;
+            let vars = params
+                .iter()
+                .map(|(name, _)| syn::parse_str::<Ident>(name))
+                .collect::<Result<Vec<_>, _>>()?;
+            let params = params
+                .iter()
+                .map(|(name, id)| {
+                    let name = syn::parse_str::<Ident>(name)?;
+                    let ty = space.get_type(id)?.parameter_ident();
+                    anyhow::Ok(quote! { #name: #ty })
+                })
+                .collect::<Result<Vec<_>, _>>()?;
+            match ret {
+                Some(ret) => acc.extend(quote! {
+                    fn #fn_name(&mut self, #(#params),*) -> Result<#ret, TestFailure> {
+                        self.call(#name, (#(#vars,)*))
+                    }
+                }),
+                None => bail!("notifications are not currently supported"),
+            };
+            anyhow::Ok(acc)
+        },
+    )?;
+
+    Ok(quote! {
+        #![allow(clippy::to_string_trait_impl, clippy::clone_on_copy)]
+
+        use super::TestFailure;
+        use serde::{Serialize, Deserialize};
+
+        #[allow(non_snake_case, unused)]
+        impl super::Ctx {
+            #method_code
+        }
+        #space
+    })
+}
+
+struct Method {
+    name: String,
+    result: Option<typify::TypeId>,
+    params: Vec<(String, typify::TypeId)>,
 }
 
 fn extract(s: &str) -> anyhow::Result<&str> {
@@ -62,7 +124,7 @@ fn rewrite_references(
         ..
     }) = schema
     {
-        reference.as_mut().map(&mut rewrite).transpose()?;
+        reference.as_mut().map(cast(&mut rewrite)).transpose()?;
 
         for child in array
             .as_deref_mut()
@@ -115,8 +177,13 @@ fn rewrite_references(
                 },
             ))
         {
-            rewrite_references(child, &mut rewrite)?;
+            rewrite_references(child, cast(&mut rewrite))?;
         }
     }
     Ok(())
+}
+
+// break trait solver cycles
+fn cast<U>(f: &mut impl FnMut(&mut String) -> U) -> &mut dyn FnMut(&mut String) -> U {
+    f as _
 }

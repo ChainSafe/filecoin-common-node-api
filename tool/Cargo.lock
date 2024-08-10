@@ -427,7 +427,9 @@ dependencies = [
 
 [[package]]
 name = "ez-jsonrpc"
-version = "0.1.1"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a9f470e4beb10d34f401689ec503dc9c71217aabcbf008e25d43958cc0360568"
 dependencies = [
  "ez-jsonrpc-types",
  "ryu",
@@ -438,6 +440,8 @@ dependencies = [
 [[package]]
 name = "ez-jsonrpc-types"
 version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f2747606f36870744e10eadab98cf4772b27dc721ab04fa1cda329dedfbae444"
 dependencies = [
  "serde",
  "serde_json",
@@ -496,6 +500,7 @@ dependencies = [
  "stack_list",
  "strum",
  "syn",
+ "thiserror",
  "tokio",
  "tokio-stream",
  "tokio-util",
