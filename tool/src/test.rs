@@ -3,7 +3,13 @@
 mod generated;
 
 use std::{
-    any::type_name, collections::BTreeSet, convert::Infallible, fmt, io::Read as _, time::Duration,
+    any::type_name,
+    collections::BTreeSet,
+    convert::Infallible,
+    fmt,
+    io::Read as _,
+    panic::{self, AssertUnwindSafe, PanicInfo},
+    time::Duration,
 };
 
 use bstr::BString;
@@ -12,7 +18,7 @@ use ez_jsonrpc::{
     types::{self as jsonrpc, RequestParameters},
 };
 use serde::de::DeserializeOwned;
-use tracing::debug;
+use tracing::{debug, info, info_span};
 
 /// Represents that a single test has failed - the runner may stop running.
 ///
@@ -111,6 +117,7 @@ pub struct Ctx {
     url: String,
     id: u64,
     current_test_tags: BTreeSet<Tag>,
+    log: Vec<Log>,
 
     harness_tags: Option<BTreeSet<Tag>>,
 
@@ -210,7 +217,7 @@ impl Ctx {
             )),
             id: Some(request_id.clone()),
         };
-        debug!(?request);
+        debug!(target: { target::INFRA },?request);
         let builder = self
             .client
             .post(&self.url)
@@ -236,11 +243,11 @@ impl Ctx {
                 .context("invalid JSON-RPC response from server"),
         ) {
             (Err(e), _) | (_, Err(e)) => {
-                debug!(?body);
+                debug!(target: { target::INFRA }, ?body);
                 Err(e)
             }
             (_, Ok(response)) => {
-                debug!(?response);
+                debug!(target: { target::INFRA }, ?response);
                 if request_id != response.id {
                     fail!("server violated the JSON-RPC protocol (member `id` does not match)")
                 }
@@ -284,6 +291,10 @@ pub fn run<'a>(tests: impl IntoIterator<Item = Test<'a>>, args: Args) {
         bad_auth,
     } = args;
 
+    let mut skipped = 0;
+    let mut succeeded = 0;
+    let mut failed = 0;
+
     let mut ctx = Ctx {
         client: reqwest::blocking::Client::builder()
             .user_agent(concat!(
@@ -294,6 +305,8 @@ pub fn run<'a>(tests: impl IntoIterator<Item = Test<'a>>, args: Args) {
             .build()
             .expect("couldn't initialize client"),
         url,
+        log: vec![],
+
         id: 0,
         current_test_tags: BTreeSet::new(),
         harness_tags: tags,
@@ -308,9 +321,61 @@ pub fn run<'a>(tests: impl IntoIterator<Item = Test<'a>>, args: Args) {
         harness_auth_good: auth,
     };
 
+    // TODO(aatifsyed): siphon off a backtrace and log it
+    panic::set_hook(Box::new(|_| {}));
     for Test { name, runner } in tests {
-        runner(&mut ctx);
+        let _span = info_span!(target: { target::RUNTIME }, "test", %name).entered();
+        let res = match &filter_name {
+            Some(filter_name) => match name == *filter_name {
+                true => {
+                    info!(target: { target::RUNTIME }, "start");
+                    panic::catch_unwind(AssertUnwindSafe(|| runner(&mut ctx)))
+                }
+                false => {
+                    info!(target: { target::RUNTIME }, "skipped (name)");
+                    skipped += 1;
+                    continue;
+                }
+            },
+            None => {
+                info!(target: { target::RUNTIME }, "start");
+                panic::catch_unwind(AssertUnwindSafe(|| runner(&mut ctx)))
+            }
+        };
+        match res {
+            Ok(Ok(())) => {
+                info!(target: { target::RUNTIME }, "succeeded");
+                succeeded += 1;
+            }
+            Ok(Err(TestFailure(e))) => match e.downcast_ref::<Ignored>() {
+                Some(_) => {
+                    info!(target: { target::RUNTIME }, "skipped (tag)");
+                    skipped += 1
+                }
+                None => {
+                    let errors = e.chain().map(ToString::to_string).collect::<Vec<_>>();
+                    info!(target: { target::RUNTIME }, ?errors, "failed");
+                    failed += 1
+                }
+            },
+            Err(panic) => {
+                let panic_msg = match (panic.downcast_ref::<String>(), panic.downcast_ref::<&str>())
+                {
+                    (Some(s), _) => s.as_str(),
+                    (_, Some(s)) => s,
+                    _ => "Box<dyn Any>",
+                };
+                info!(target: { target::RUNTIME }, %panic_msg, "failed");
+                failed += 1
+            }
+        }
+
+        ctx.current_test_tags.clear();
+        ctx.done_first_call = false;
+        ctx.auth_mode = Auth::Good;
+        ctx.timeout_mode = Timeout::Default;
     }
+    let _unregister = panic::take_hook();
 
     todo!()
 }
@@ -355,3 +420,16 @@ macro_rules! fail {
     };
 }
 pub(crate) use fail;
+
+#[derive(Debug)]
+enum Log {
+    User(String),
+    Request(jsonrpc::Request),
+    Response(jsonrpc::Response),
+    Body(BString),
+}
+
+mod target {
+    pub const RUNTIME: &str = "runtime";
+    pub const INFRA: &str = "infra";
+}
