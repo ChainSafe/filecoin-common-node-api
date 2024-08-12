@@ -112,6 +112,120 @@ pub enum Tag {
     Basic,
 }
 
+/// Configure your test.
+///
+/// This should be used to request any of the following from the test harness:
+/// - Authorization scopes.
+/// - Resource bundles.
+/// - Categorization.
+pub struct ConfigurationHandle {
+    per_run: PerRun,
+    per_test: PerTest,
+    requested: BTreeSet<ConfigRequest>,
+    tags: BTreeSet<Tag>,
+}
+
+/// We keep track of all the configuration that the user has requested to catch
+/// over or under provision.
+///
+/// This is important for maintaining test quality.
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
+enum ConfigRequest {
+    Read,
+    Write,
+    Admin,
+    Wrong,
+}
+
+impl ConfigurationHandle {
+    /// This test requires a token with `read` permissions.
+    pub fn read(mut self) -> Self {
+        self.requested.insert(ConfigRequest::Read);
+        self
+    }
+    /// This test requires a token with `write` permissions.
+    pub fn write(mut self) -> Self {
+        self.requested.insert(ConfigRequest::Write);
+        self
+    }
+    /// This test requires a token with `admin` permissions.
+    pub fn admin(mut self) -> Self {
+        self.requested.insert(ConfigRequest::Admin);
+        self
+    }
+    /// This test requires an invalid token.
+    pub fn wrong(mut self) -> Self {
+        self.requested.insert(ConfigRequest::Wrong);
+        self
+    }
+    pub fn tag(mut self, tag: Tag) -> Self {
+        self.tags.insert(tag);
+        self
+    }
+    pub fn tags(mut self, tags: impl IntoIterator<Item = Tag>) -> Self {
+        self.tags.extend(tags);
+        self
+    }
+    /// End configuration, possibly [cancelling](Cancelled) this test
+    /// (if required resources were not loaded, or the test was filtered out).
+    pub fn begin_test(self) -> Result<RunHandle, Cancelled> {
+        let Self {
+            per_run,
+            per_test,
+            requested,
+            tags,
+        } = self;
+        for requested in requested {
+            match (
+                requested,
+                &per_run.token_read,
+                &per_run.token_write,
+                &per_run.token_admin,
+                &per_run.token_bad,
+            ) {
+                (ConfigRequest::Read, None, _, _, _) => return Err(Cancelled(())),
+                (ConfigRequest::Write, _, None, _, _) => return Err(Cancelled(())),
+                (ConfigRequest::Admin, _, _, None, _) => return Err(Cancelled(())),
+                (ConfigRequest::Wrong, _, _, _, None) => return Err(Cancelled(())),
+                _ => {}
+            }
+        }
+        Ok(())
+    }
+}
+
+pub struct Cancelled(());
+
+/// State that is shared across many [`Test`] executions.
+///
+/// Most of these are immutable.
+#[derive(Debug)]
+struct PerRun {
+    /// mutable
+    id: u64,
+
+    tag_filter: BTreeSet<String>,
+
+    client: reqwest::blocking::Client,
+    url: String,
+
+    timeout_default: Duration,
+    timeout_long: Duration,
+
+    token_read: Option<String>,
+    token_write: Option<String>,
+    token_admin: Option<String>,
+    token_bad: Option<String>,
+}
+
+/// State that is reset after a [`Test`] execution.
+#[derive(Default, Debug)]
+struct PerTest {
+    timeout_mode: TimeoutMode,
+    auth_mode: AuthMode,
+    log: Vec<Log>,
+}
+
 /// Context for a [`Test`].
 ///
 /// You may use this to:
@@ -130,26 +244,30 @@ pub struct Ctx {
 
     done_first_call: bool,
 
-    timeout_mode: Timeout,
+    timeout_mode: TimeoutMode,
     harness_timeout_default: Duration,
     harness_timeout_long: Duration,
 
-    auth_mode: Auth,
+    auth_mode: AuthMode,
     harness_auth_bad: String,
     harness_auth_good: String,
 }
 
-#[derive(Debug, Clone, Copy)]
-enum Timeout {
+#[derive(Debug, Clone, Copy, Default)]
+enum TimeoutMode {
+    #[default]
     Default,
     Long,
 }
 
-#[derive(Debug, Clone, Copy)]
-enum Auth {
+#[derive(Debug, Clone, Copy, Default)]
+enum AuthMode {
+    #[default]
     None,
     Bad,
-    Good,
+    Read,
+    Write,
+    Admin,
 }
 
 impl Ctx {
@@ -175,26 +293,26 @@ impl Ctx {
 
     /// [`Self::call`]s after this will use a longer timeout.
     pub fn long_timeout(&mut self) {
-        self.timeout_mode = Timeout::Long
+        self.timeout_mode = TimeoutMode::Long
     }
 
     /// [`Self::call`]s after this will use the default timeout.
     pub fn normal_timeout(&mut self) {
-        self.timeout_mode = Timeout::Default
+        self.timeout_mode = TimeoutMode::Default
     }
 
     /// [`Self::call`]s after this will be unauthorised.
     pub fn no_auth(&mut self) {
-        self.auth_mode = Auth::None
+        self.auth_mode = AuthMode::None
     }
     /// [`Self::call`]s after this will have authorisation.
     /// (This is the default).
     pub fn good_auth(&mut self) {
-        self.auth_mode = Auth::Good
+        self.auth_mode = AuthMode::Good
     }
     /// [`Self::call`]s after this will have malformed authorisation.
     pub fn bad_auth(&mut self) {
-        self.auth_mode = Auth::Bad
+        self.auth_mode = AuthMode::Bad
     }
     pub fn log(&mut self, msg: impl fmt::Display) {
         self.log.push(Log::User(msg.to_string()))
@@ -232,14 +350,14 @@ impl Ctx {
             .post(&self.url)
             .json(&request)
             .timeout(match self.timeout_mode {
-                Timeout::Default => self.harness_timeout_default,
-                Timeout::Long => self.harness_timeout_long,
+                TimeoutMode::Default => self.harness_timeout_default,
+                TimeoutMode::Long => self.harness_timeout_long,
             });
 
         let mut resp = match self.auth_mode {
-            Auth::None => builder,
-            Auth::Bad => builder.bearer_auth(&self.harness_auth_bad),
-            Auth::Good => builder,
+            AuthMode::None => builder,
+            AuthMode::Bad => builder.bearer_auth(&self.harness_auth_bad),
+            AuthMode::Good => builder,
         }
         .send()
         .context("couldn't send HTTP request")?;
@@ -331,11 +449,11 @@ pub fn run<'a>(tests: impl IntoIterator<Item = Test<'a>>, args: Args) -> anyhow:
         harness_tags: tags.into_iter().collect(),
         done_first_call: false,
 
-        timeout_mode: Timeout::Default,
+        timeout_mode: TimeoutMode::Default,
         harness_timeout_default: Duration::from_secs_f64(default_timeout),
         harness_timeout_long: Duration::from_secs_f64(long_timeout),
 
-        auth_mode: Auth::Good,
+        auth_mode: AuthMode::Good,
         harness_auth_bad: bad_auth,
         harness_auth_good: auth,
     };
@@ -395,8 +513,8 @@ pub fn run<'a>(tests: impl IntoIterator<Item = Test<'a>>, args: Args) -> anyhow:
         ctx.current_test_tags.clear();
         ctx.log.clear();
         ctx.done_first_call = false;
-        ctx.auth_mode = Auth::Good;
-        ctx.timeout_mode = Timeout::Default;
+        ctx.auth_mode = AuthMode::Good;
+        ctx.timeout_mode = TimeoutMode::Default;
     }
     let _unregister = panic::take_hook();
 
