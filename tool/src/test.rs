@@ -7,18 +7,19 @@ use std::{
     collections::BTreeSet,
     convert::Infallible,
     fmt,
-    io::Read as _,
-    panic::{self, AssertUnwindSafe, PanicInfo},
+    io::{self, Read as _, Write as _},
+    mem,
+    panic::{self, AssertUnwindSafe},
+    process,
     time::Duration,
 };
 
-use bstr::BString;
 use ez_jsonrpc::{
     params::SerializePositional,
     types::{self as jsonrpc, RequestParameters},
 };
+use owo_colors::OwoColorize as _;
 use serde::de::DeserializeOwned;
-use tracing::{debug, info, info_span};
 
 /// Represents that a single test has failed - the runner may stop running.
 ///
@@ -82,7 +83,9 @@ impl<T> Context<T, Infallible> for Option<T> {
 
 /// Create a test case.
 ///
-/// `name` SHOULD be unique.
+/// `name` SHOULD:
+/// - be unique.
+/// - fit on a single line, with no punctuation.
 pub fn test<'a>(
     name: impl Into<String>,
     f: impl FnOnce(&mut Ctx) -> Result<(), TestFailure> + 'a,
@@ -101,9 +104,12 @@ pub struct Test<'a> {
 }
 
 /// Closed set of tags for the test suite.
-#[derive(strum::Display, strum::EnumString, PartialEq, Eq, PartialOrd, Ord, Debug)]
+#[derive(strum::Display, strum::EnumString, PartialEq, Eq, PartialOrd, Ord, Debug, Clone)]
 #[strum(serialize_all = "snake_case")]
-pub enum Tag {}
+pub enum Tag {
+    /// Simple test that just tries to cover schemas.
+    Basic,
+}
 
 /// Context for a [`Test`].
 ///
@@ -119,7 +125,7 @@ pub struct Ctx {
     current_test_tags: BTreeSet<Tag>,
     log: Vec<Log>,
 
-    harness_tags: Option<BTreeSet<Tag>>,
+    harness_tags: BTreeSet<Tag>,
 
     done_first_call: bool,
 
@@ -147,8 +153,8 @@ enum Auth {
 
 impl Ctx {
     fn filter(&self) -> Result<(), Ignored> {
-        match &self.harness_tags {
-            Some(filter) if !filter.is_subset(&self.current_test_tags) => return Err(Ignored),
+        match self.harness_tags.is_empty() {
+            false if !self.harness_tags.is_subset(&self.current_test_tags) => Err(Ignored),
             _ => Ok(()),
         }
     }
@@ -158,13 +164,12 @@ impl Ctx {
     /// This MUST be done before any JSON-RPC method calls,
     /// and SHOULD NOT be conditional.
     #[allow(private_bounds)]
-    pub fn tag(&mut self, tags: impl TagCtx) -> &mut Self {
+    pub fn tag(&mut self, tags: impl TagCtx) {
         assert!(
             !self.done_first_call,
             "Ctx::tag must be called before any method calls"
         );
         tags.tag_ctx(&mut self.current_test_tags);
-        self
     }
 
     /// [`Self::call`]s after this will use a longer timeout.
@@ -189,6 +194,9 @@ impl Ctx {
     /// [`Self::call`]s after this will have malformed authorisation.
     pub fn bad_auth(&mut self) {
         self.auth_mode = Auth::Bad
+    }
+    pub fn log(&mut self, msg: impl fmt::Display) {
+        self.log.push(Log::User(msg.to_string()))
     }
 
     /// Call a JSON-RPC method.
@@ -217,7 +225,7 @@ impl Ctx {
             )),
             id: Some(request_id.clone()),
         };
-        debug!(target: { target::INFRA },?request);
+        self.log.push(Log::Request(request.clone()));
         let builder = self
             .client
             .post(&self.url)
@@ -230,11 +238,11 @@ impl Ctx {
         let mut resp = match self.auth_mode {
             Auth::None => builder,
             Auth::Bad => builder.bearer_auth(&self.harness_auth_bad),
-            Auth::Good => builder.bearer_auth(&self.harness_auth_good),
+            Auth::Good => builder,
         }
         .send()
         .context("couldn't send HTTP request")?;
-        let mut body = BString::default();
+        let mut body = vec![];
         resp.read_to_end(&mut body)
             .context("couldn't collect HTTP response body from server")?;
         match (
@@ -243,15 +251,16 @@ impl Ctx {
                 .context("invalid JSON-RPC response from server"),
         ) {
             (Err(e), _) | (_, Err(e)) => {
-                debug!(target: { target::INFRA }, ?body);
+                self.log.push(Log::Body(body));
                 Err(e)
             }
             (_, Ok(response)) => {
-                debug!(target: { target::INFRA }, ?response);
+                self.log.push(Log::Response(response.clone()));
                 if request_id != response.id {
                     fail!("server violated the JSON-RPC protocol (member `id` does not match)")
                 }
                 let o = response.result.context("JSON-RPC call returned an error")?;
+                dbg!(&o);
                 let o = T::deserialize(o).context(format!(
                     "couldn't deserialize JSON-RPC response into a {}",
                     type_name::<T>()
@@ -262,22 +271,30 @@ impl Ctx {
     }
 }
 
+#[derive(clap::Parser)]
 pub struct Args {
     /// Only run the test with the given name.
+    #[arg(long)]
     pub name: Option<String>,
     /// If [`Some`], only run [`Test`]s which contain all of the given [`Tag`]s.
-    pub tags: Option<BTreeSet<Tag>>,
+    #[arg(long)]
+    pub tags: Vec<Tag>,
+    #[arg(long)]
     pub url: String,
-    pub default_timeout: Duration,
-    pub long_timeout: Duration,
+    #[arg(long, default_value = "60")]
+    pub default_timeout: f64,
+    #[arg(long, default_value = "120")]
+    pub long_timeout: f64,
+    #[arg(long)]
     pub auth: String,
+    #[arg(long, default_value = "not-a-token")]
     pub bad_auth: String,
 }
 
 /// Run the given test cases.
 ///
 /// This SHOULD only be called once, unconditionally.
-pub fn run<'a>(tests: impl IntoIterator<Item = Test<'a>>, args: Args) {
+pub fn run<'a>(tests: impl IntoIterator<Item = Test<'a>>, args: Args) -> anyhow::Result<()> {
     let mut tests = tests.into_iter().collect::<Vec<_>>();
     tests.sort_by_cached_key(|it| it.name.clone());
 
@@ -309,53 +326,58 @@ pub fn run<'a>(tests: impl IntoIterator<Item = Test<'a>>, args: Args) {
 
         id: 0,
         current_test_tags: BTreeSet::new(),
-        harness_tags: tags,
+        harness_tags: tags.into_iter().collect(),
         done_first_call: false,
 
         timeout_mode: Timeout::Default,
-        harness_timeout_default: default_timeout,
-        harness_timeout_long: long_timeout,
+        harness_timeout_default: Duration::from_secs_f64(default_timeout),
+        harness_timeout_long: Duration::from_secs_f64(long_timeout),
 
         auth_mode: Auth::Good,
         harness_auth_bad: bad_auth,
         harness_auth_good: auth,
     };
 
+    let stdout = &mut anstream::AutoStream::auto(io::stdout());
+    let mut failed_logs = vec![];
+
     // TODO(aatifsyed): siphon off a backtrace and log it
     panic::set_hook(Box::new(|_| {}));
-    for Test { name, runner } in tests {
-        let _span = info_span!(target: { target::RUNTIME }, "test", %name).entered();
+    for (ix, Test { name, runner }) in tests.into_iter().enumerate() {
+        write!(
+            stdout,
+            "{}\t{}{}",
+            ix.dimmed(),
+            name.white(),
+            "... ".dimmed()
+        )?;
         let res = match &filter_name {
             Some(filter_name) => match name == *filter_name {
-                true => {
-                    info!(target: { target::RUNTIME }, "start");
-                    panic::catch_unwind(AssertUnwindSafe(|| runner(&mut ctx)))
-                }
+                true => panic::catch_unwind(AssertUnwindSafe(|| runner(&mut ctx))),
                 false => {
-                    info!(target: { target::RUNTIME }, "skipped (name)");
+                    writeln!(stdout, "{}", "skipped (name)".yellow())?;
                     skipped += 1;
                     continue;
                 }
             },
-            None => {
-                info!(target: { target::RUNTIME }, "start");
-                panic::catch_unwind(AssertUnwindSafe(|| runner(&mut ctx)))
-            }
+            None => panic::catch_unwind(AssertUnwindSafe(|| runner(&mut ctx))),
         };
         match res {
             Ok(Ok(())) => {
-                info!(target: { target::RUNTIME }, "succeeded");
+                writeln!(stdout, "{}", "passed".green())?;
                 succeeded += 1;
             }
             Ok(Err(TestFailure(e))) => match e.downcast_ref::<Ignored>() {
                 Some(_) => {
-                    info!(target: { target::RUNTIME }, "skipped (tag)");
+                    writeln!(stdout, "{}", "skipped (tag)".yellow())?;
                     skipped += 1
                 }
                 None => {
-                    let errors = e.chain().map(ToString::to_string).collect::<Vec<_>>();
-                    info!(target: { target::RUNTIME }, ?errors, "failed");
-                    failed += 1
+                    writeln!(stdout, "{}", "failed".red())?;
+                    failed += 1;
+                    ctx.log.push(Log::Errors(e));
+                    write_logs(&mut *stdout, &ctx.log)?;
+                    failed_logs.push((name, mem::take(&mut ctx.log)));
                 }
             },
             Err(panic) => {
@@ -365,19 +387,38 @@ pub fn run<'a>(tests: impl IntoIterator<Item = Test<'a>>, args: Args) {
                     (_, Some(s)) => s,
                     _ => "Box<dyn Any>",
                 };
-                info!(target: { target::RUNTIME }, %panic_msg, "failed");
-                failed += 1
+                writeln!(stdout, "{}", "failed".red())?;
+                failed += 1;
+                ctx.log
+                    .push(Log::Errors(anyhow::Error::msg(panic_msg.to_string())));
+                write_logs(&mut *stdout, &ctx.log)?;
+                failed_logs.push((name, mem::take(&mut ctx.log)));
             }
         }
 
         ctx.current_test_tags.clear();
+        ctx.log.clear();
         ctx.done_first_call = false;
         ctx.auth_mode = Auth::Good;
         ctx.timeout_mode = Timeout::Default;
     }
     let _unregister = panic::take_hook();
 
-    todo!()
+    for (ix, (name, logs)) in failed_logs.into_iter().enumerate() {
+        writeln!(stdout, "failure {} ({})", ix, name)?;
+        write_logs(&mut *stdout, &logs)?;
+    }
+
+    writeln!(
+        stdout,
+        "{} skipped, {} succeeded, {} failed",
+        skipped, succeeded, failed
+    )?;
+
+    match failed {
+        0 => process::exit(0),
+        _ => process::exit(1),
+    }
 }
 
 #[derive(thiserror::Error, Debug)]
@@ -426,10 +467,45 @@ enum Log {
     User(String),
     Request(jsonrpc::Request),
     Response(jsonrpc::Response),
-    Body(BString),
+    Body(Vec<u8>),
+    Errors(anyhow::Error),
 }
 
-mod target {
-    pub const RUNTIME: &str = "runtime";
-    pub const INFRA: &str = "infra";
+fn write_logs<'a>(
+    mut writer: impl io::Write,
+    logs: impl IntoIterator<Item = &'a Log>,
+) -> anyhow::Result<()> {
+    let w = &mut writer;
+    for (ix, log) in logs.into_iter().enumerate() {
+        match log {
+            Log::User(msg) => writeln!(w, "\t{ix}\t{}\t{msg}", msg.blue())?,
+            Log::Request(it) => {
+                let it = serde_json::to_string_pretty(it)?;
+                writeln!(w, "\t{ix}\t{}", "req".blue())?;
+                for line in it.lines() {
+                    writeln!(w, "\t{}", line)?
+                }
+            }
+            Log::Response(it) => {
+                let it = serde_json::to_string_pretty(it)?;
+                writeln!(w, "\t{ix}\t{}", "resp".blue())?;
+                for line in it.lines() {
+                    writeln!(w, "\t{}", line)?
+                }
+            }
+            Log::Body(it) => {
+                writeln!(w, "\t{ix}\t{}", "body".blue())?;
+                for line in String::from_utf8_lossy(it).lines() {
+                    writeln!(w, "\t{}", line)?
+                }
+            }
+            Log::Errors(e) => {
+                writeln!(w, "\t{ix}\t{}", "err".blue())?;
+                for err in e.chain() {
+                    writeln!(w, "\t{}", err)?
+                }
+            }
+        }
+    }
+    Ok(())
 }

@@ -1,67 +1,70 @@
-#![allow(clippy::to_string_trait_impl)]
+#![allow(clippy::to_string_trait_impl, clippy::clone_on_copy)]
 use super::TestFailure;
 use serde::{Deserialize, Serialize};
 #[allow(non_snake_case, unused)]
 impl super::Ctx {
-    fn Filecoin_ChainGetMessage(&mut self, msg_cid: &Cid) -> Result<Message, TestFailure> {
+    pub fn Filecoin_ChainGetMessage(&mut self, msg_cid: &Cid) -> Result<Message, TestFailure> {
         self.call("Filecoin.ChainGetMessage", (msg_cid,))
     }
-    fn Filecoin_ChainGetParentMessages(
+    pub fn Filecoin_ChainGetParentMessages(
         &mut self,
         block_cid: &Cid,
     ) -> Result<Option<Vec<ApiMessage>>, TestFailure> {
         self.call("Filecoin.ChainGetParentMessages", (block_cid,))
     }
-    fn Filecoin_ChainReadObj(&mut self, cid: &Cid) -> Result<Base64String, TestFailure> {
+    pub fn Filecoin_ChainReadObj(&mut self, cid: &Cid) -> Result<Base64String, TestFailure> {
         self.call("Filecoin.ChainReadObj", (cid,))
     }
-    fn Filecoin_ChainHasObj(&mut self, cid: &Cid) -> Result<bool, TestFailure> {
+    pub fn Filecoin_ChainHasObj(&mut self, cid: &Cid) -> Result<bool, TestFailure> {
         self.call("Filecoin.ChainHasObj", (cid,))
     }
-    fn Filecoin_ChainGetPath(
+    pub fn Filecoin_ChainGetPath(
         &mut self,
         from: &NonEmptyArrayOfCid,
         to: &NonEmptyArrayOfCid,
     ) -> Result<Option<Vec<PathChangeForTipset>>, TestFailure> {
         self.call("Filecoin.ChainGetPath", (from, to))
     }
-    fn Filecoin_ChainGetTipSetByHeight(
+    pub fn Filecoin_ChainGetTipSetByHeight(
         &mut self,
         height: i64,
         tsk: Option<&Vec<Cid>>,
     ) -> Result<Tipset, TestFailure> {
         self.call("Filecoin.ChainGetTipSetByHeight", (height, tsk))
     }
-    fn Filecoin_ChainGetTipSetAfterHeight(
+    pub fn Filecoin_ChainGetTipSetAfterHeight(
         &mut self,
         height: i64,
         tsk: Option<&Vec<Cid>>,
     ) -> Result<Tipset, TestFailure> {
         self.call("Filecoin.ChainGetTipSetAfterHeight", (height, tsk))
     }
-    fn Filecoin_ChainHead(&mut self) -> Result<Tipset, TestFailure> {
+    pub fn Filecoin_ChainHead(&mut self) -> Result<Tipset, TestFailure> {
         self.call("Filecoin.ChainHead", ())
     }
-    fn Filecoin_ChainGetBlock(&mut self, cid: &Cid) -> Result<BlockHeader, TestFailure> {
+    pub fn Filecoin_ChainGetBlock(&mut self, cid: &Cid) -> Result<BlockHeader, TestFailure> {
         self.call("Filecoin.ChainGetBlock", (cid,))
     }
-    fn Filecoin_ChainGetTipSet(&mut self, tsk: Option<&Vec<Cid>>) -> Result<Tipset, TestFailure> {
+    pub fn Filecoin_ChainGetTipSet(
+        &mut self,
+        tsk: Option<&Vec<Cid>>,
+    ) -> Result<Tipset, TestFailure> {
         self.call("Filecoin.ChainGetTipSet", (tsk,))
     }
-    fn Filecoin_ChainTipSetWeight(
+    pub fn Filecoin_ChainTipSetWeight(
         &mut self,
         tsk: Option<&Vec<Cid>>,
     ) -> Result<BigInt, TestFailure> {
         self.call("Filecoin.ChainTipSetWeight", (tsk,))
     }
-    fn Filecoin_GasEstimateGasLimit(
+    pub fn Filecoin_GasEstimateGasLimit(
         &mut self,
         msg: &Message,
         tsk: Option<&Vec<Cid>>,
     ) -> Result<i64, TestFailure> {
         self.call("Filecoin.GasEstimateGasLimit", (msg, tsk))
     }
-    fn Filecoin_GasEstimateMessageGas(
+    pub fn Filecoin_GasEstimateMessageGas(
         &mut self,
         msg: &Message,
         spec: Option<&MessageSendSpec>,
@@ -69,7 +72,7 @@ impl super::Ctx {
     ) -> Result<Message, TestFailure> {
         self.call("Filecoin.GasEstimateMessageGas", (msg, spec, tsk))
     }
-    fn Filecoin_GasEstimateFeeCap(
+    pub fn Filecoin_GasEstimateFeeCap(
         &mut self,
         message: &Message,
         max_queue_blocks: i64,
@@ -80,7 +83,7 @@ impl super::Ctx {
             (message, max_queue_blocks, tipset_key),
         )
     }
-    fn Filecoin_GasEstimateGasPremium(
+    pub fn Filecoin_GasEstimateGasPremium(
         &mut self,
         nblocksincl: u64,
         sender: &Address,
@@ -92,13 +95,13 @@ impl super::Ctx {
             (nblocksincl, sender, gas_limit, tipset_key),
         )
     }
-    fn Filecoin_MinerCreateBlock(
+    pub fn Filecoin_MinerCreateBlock(
         &mut self,
         block_template: &BlockTemplate,
     ) -> Result<BlockMessage, TestFailure> {
         self.call("Filecoin.MinerCreateBlock", (block_template,))
     }
-    fn Filecoin_MinerGetBaseInfo(
+    pub fn Filecoin_MinerGetBaseInfo(
         &mut self,
         address: &Address,
         epoch: i64,
@@ -106,61 +109,61 @@ impl super::Ctx {
     ) -> Result<Option<MiningBaseInfo>, TestFailure> {
         self.call("Filecoin.MinerGetBaseInfo", (address, epoch, tsk))
     }
-    fn Filecoin_MpoolGetNonce(&mut self, address: &Address) -> Result<u64, TestFailure> {
+    pub fn Filecoin_MpoolGetNonce(&mut self, address: &Address) -> Result<u64, TestFailure> {
         self.call("Filecoin.MpoolGetNonce", (address,))
     }
-    fn Filecoin_MpoolPending(
+    pub fn Filecoin_MpoolPending(
         &mut self,
         tsk: Option<&Vec<Cid>>,
     ) -> Result<Vec<SignedMessage>, TestFailure> {
         self.call("Filecoin.MpoolPending", (tsk,))
     }
-    fn Filecoin_MpoolSelect(
+    pub fn Filecoin_MpoolSelect(
         &mut self,
         tipset_key: Option<&Vec<Cid>>,
         ticket_quality: f64,
     ) -> Result<Option<Vec<SignedMessage>>, TestFailure> {
         self.call("Filecoin.MpoolSelect", (tipset_key, ticket_quality))
     }
-    fn Filecoin_MpoolPush(&mut self, msg: &SignedMessage) -> Result<Cid, TestFailure> {
+    pub fn Filecoin_MpoolPush(&mut self, msg: &SignedMessage) -> Result<Cid, TestFailure> {
         self.call("Filecoin.MpoolPush", (msg,))
     }
-    fn Filecoin_MpoolPushMessage(
+    pub fn Filecoin_MpoolPushMessage(
         &mut self,
         usmg: &Message,
         spec: Option<&MessageSendSpec>,
     ) -> Result<SignedMessage, TestFailure> {
         self.call("Filecoin.MpoolPushMessage", (usmg, spec))
     }
-    fn Filecoin_NetAddrsListen(&mut self) -> Result<AddrInfo, TestFailure> {
+    pub fn Filecoin_NetAddrsListen(&mut self) -> Result<AddrInfo, TestFailure> {
         self.call("Filecoin.NetAddrsListen", ())
     }
-    fn Filecoin_NetPeers(&mut self) -> Result<Option<Vec<AddrInfo>>, TestFailure> {
+    pub fn Filecoin_NetPeers(&mut self) -> Result<Option<Vec<AddrInfo>>, TestFailure> {
         self.call("Filecoin.NetPeers", ())
     }
-    fn Filecoin_NetConnect(&mut self, info: &AddrInfo) -> Result<(), TestFailure> {
+    pub fn Filecoin_NetConnect(&mut self, info: &AddrInfo) -> Result<(), TestFailure> {
         self.call("Filecoin.NetConnect", (info,))
     }
-    fn Filecoin_NetDisconnect(&mut self, id: &str) -> Result<(), TestFailure> {
+    pub fn Filecoin_NetDisconnect(&mut self, id: &str) -> Result<(), TestFailure> {
         self.call("Filecoin.NetDisconnect", (id,))
     }
-    fn Filecoin_NetAgentVersion(&mut self, id: &str) -> Result<String, TestFailure> {
+    pub fn Filecoin_NetAgentVersion(&mut self, id: &str) -> Result<String, TestFailure> {
         self.call("Filecoin.NetAgentVersion", (id,))
     }
-    fn Filecoin_NetProtectAdd(&mut self, acl: &str) -> Result<(), TestFailure> {
+    pub fn Filecoin_NetProtectAdd(&mut self, acl: &str) -> Result<(), TestFailure> {
         self.call("Filecoin.NetProtectAdd", (acl,))
     }
-    fn Filecoin_StateCall(
+    pub fn Filecoin_StateCall(
         &mut self,
         message: &Message,
         tsk: Option<&Vec<Cid>>,
     ) -> Result<ApiInvocResult, TestFailure> {
         self.call("Filecoin.StateCall", (message, tsk))
     }
-    fn Filecoin_StateGetBeaconEntry(&mut self, epoch: i64) -> Result<BeaconEntry, TestFailure> {
+    pub fn Filecoin_StateGetBeaconEntry(&mut self, epoch: i64) -> Result<BeaconEntry, TestFailure> {
         self.call("Filecoin.StateGetBeaconEntry", (epoch,))
     }
-    fn Filecoin_StateListMessages(
+    pub fn Filecoin_StateListMessages(
         &mut self,
         message_filter: &MessageFilter,
         tipset_key: Option<&Vec<Cid>>,
@@ -171,17 +174,17 @@ impl super::Ctx {
             (message_filter, tipset_key, max_height),
         )
     }
-    fn Filecoin_StateGetNetworkParams(&mut self) -> Result<NetworkParams, TestFailure> {
+    pub fn Filecoin_StateGetNetworkParams(&mut self) -> Result<NetworkParams, TestFailure> {
         self.call("Filecoin.StateGetNetworkParams", ())
     }
-    fn Filecoin_StateReplay(
+    pub fn Filecoin_StateReplay(
         &mut self,
         tipset_key: Option<&Vec<Cid>>,
         message_cid: &Cid,
     ) -> Result<ApiInvocResult, TestFailure> {
         self.call("Filecoin.StateReplay", (tipset_key, message_cid))
     }
-    fn Filecoin_StateSectorGetInfo(
+    pub fn Filecoin_StateSectorGetInfo(
         &mut self,
         miner_address: &Address,
         sector_number: u64,
@@ -192,7 +195,7 @@ impl super::Ctx {
             (miner_address, sector_number, tipset_key),
         )
     }
-    fn Filecoin_StateSectorPreCommitInfo(
+    pub fn Filecoin_StateSectorPreCommitInfo(
         &mut self,
         miner_address: &Address,
         sector_number: u64,
@@ -203,49 +206,49 @@ impl super::Ctx {
             (miner_address, sector_number, tipset_key),
         )
     }
-    fn Filecoin_StateAccountKey(
+    pub fn Filecoin_StateAccountKey(
         &mut self,
         address: &Address,
         tipset_key: Option<&Vec<Cid>>,
     ) -> Result<Address, TestFailure> {
         self.call("Filecoin.StateAccountKey", (address, tipset_key))
     }
-    fn Filecoin_StateLookupID(
+    pub fn Filecoin_StateLookupID(
         &mut self,
         address: &Address,
         tipset_key: Option<&Vec<Cid>>,
     ) -> Result<Address, TestFailure> {
         self.call("Filecoin.StateLookupID", (address, tipset_key))
     }
-    fn Filecoin_StateGetActor(
+    pub fn Filecoin_StateGetActor(
         &mut self,
         address: &Address,
         tipset_key: Option<&Vec<Cid>>,
     ) -> Result<Option<ActorState>, TestFailure> {
         self.call("Filecoin.StateGetActor", (address, tipset_key))
     }
-    fn Filecoin_StateMinerInfo(
+    pub fn Filecoin_StateMinerInfo(
         &mut self,
         address: &Address,
         tipset_key: Option<&Vec<Cid>>,
     ) -> Result<MinerInfo, TestFailure> {
         self.call("Filecoin.StateMinerInfo", (address, tipset_key))
     }
-    fn Filecoin_StateMinerActiveSectors(
+    pub fn Filecoin_StateMinerActiveSectors(
         &mut self,
         address: &Address,
         tipset_key: Option<&Vec<Cid>>,
     ) -> Result<Option<Vec<SectorOnChainInfo>>, TestFailure> {
         self.call("Filecoin.StateMinerActiveSectors", (address, tipset_key))
     }
-    fn Filecoin_StateMinerAllocated(
+    pub fn Filecoin_StateMinerAllocated(
         &mut self,
         address: &Address,
         tipset_key: Option<&Vec<Cid>>,
     ) -> Result<BitField, TestFailure> {
         self.call("Filecoin.StateMinerAllocated", (address, tipset_key))
     }
-    fn Filecoin_StateMinerPartitions(
+    pub fn Filecoin_StateMinerPartitions(
         &mut self,
         address: &Address,
         deadline_index: u64,
@@ -256,7 +259,7 @@ impl super::Ctx {
             (address, deadline_index, tipset_key),
         )
     }
-    fn Filecoin_StateMinerSectors(
+    pub fn Filecoin_StateMinerSectors(
         &mut self,
         address: &Address,
         sectors: Option<&BitField>,
@@ -264,14 +267,14 @@ impl super::Ctx {
     ) -> Result<Option<Vec<SectorOnChainInfo>>, TestFailure> {
         self.call("Filecoin.StateMinerSectors", (address, sectors, tipset_key))
     }
-    fn Filecoin_StateMinerSectorCount(
+    pub fn Filecoin_StateMinerSectorCount(
         &mut self,
         address: &Address,
         tipset_key: Option<&Vec<Cid>>,
     ) -> Result<MinerSectors, TestFailure> {
         self.call("Filecoin.StateMinerSectorCount", (address, tipset_key))
     }
-    fn Filecoin_StateMinerSectorAllocated(
+    pub fn Filecoin_StateMinerSectorAllocated(
         &mut self,
         miner_address: &Address,
         sector_number: u64,
@@ -282,49 +285,49 @@ impl super::Ctx {
             (miner_address, sector_number, tipset_key),
         )
     }
-    fn Filecoin_StateMinerPower(
+    pub fn Filecoin_StateMinerPower(
         &mut self,
         address: &Address,
         tipset_key: Option<&Vec<Cid>>,
     ) -> Result<MinerPower, TestFailure> {
         self.call("Filecoin.StateMinerPower", (address, tipset_key))
     }
-    fn Filecoin_StateMinerDeadlines(
+    pub fn Filecoin_StateMinerDeadlines(
         &mut self,
         address: &Address,
         tipset_key: Option<&Vec<Cid>>,
     ) -> Result<Option<Vec<ApiDeadline>>, TestFailure> {
         self.call("Filecoin.StateMinerDeadlines", (address, tipset_key))
     }
-    fn Filecoin_StateMinerProvingDeadline(
+    pub fn Filecoin_StateMinerProvingDeadline(
         &mut self,
         address: &Address,
         tipset_key: Option<&Vec<Cid>>,
     ) -> Result<ApiDeadlineInfo, TestFailure> {
         self.call("Filecoin.StateMinerProvingDeadline", (address, tipset_key))
     }
-    fn Filecoin_StateMinerFaults(
+    pub fn Filecoin_StateMinerFaults(
         &mut self,
         address: &Address,
         tipset_key: Option<&Vec<Cid>>,
     ) -> Result<BitField, TestFailure> {
         self.call("Filecoin.StateMinerFaults", (address, tipset_key))
     }
-    fn Filecoin_StateMinerRecoveries(
+    pub fn Filecoin_StateMinerRecoveries(
         &mut self,
         address: &Address,
         tipset_key: Option<&Vec<Cid>>,
     ) -> Result<BitField, TestFailure> {
         self.call("Filecoin.StateMinerRecoveries", (address, tipset_key))
     }
-    fn Filecoin_StateMinerAvailableBalance(
+    pub fn Filecoin_StateMinerAvailableBalance(
         &mut self,
         address: &Address,
         tipset_key: Option<&Vec<Cid>>,
     ) -> Result<BigInt, TestFailure> {
         self.call("Filecoin.StateMinerAvailableBalance", (address, tipset_key))
     }
-    fn Filecoin_StateMinerInitialPledgeCollateral(
+    pub fn Filecoin_StateMinerInitialPledgeCollateral(
         &mut self,
         address: &Address,
         sector_pre_commit_info: &SectorPreCommitInfo,
@@ -335,7 +338,7 @@ impl super::Ctx {
             (address, sector_pre_commit_info, tipset_key),
         )
     }
-    fn Filecoin_StateGetRandomnessFromTickets(
+    pub fn Filecoin_StateGetRandomnessFromTickets(
         &mut self,
         personalization: i64,
         rand_epoch: i64,
@@ -347,7 +350,7 @@ impl super::Ctx {
             (personalization, rand_epoch, entropy, tipset_key),
         )
     }
-    fn Filecoin_StateGetRandomnessFromBeacon(
+    pub fn Filecoin_StateGetRandomnessFromBeacon(
         &mut self,
         personalization: i64,
         rand_epoch: i64,
@@ -359,64 +362,64 @@ impl super::Ctx {
             (personalization, rand_epoch, entropy, tipset_key),
         )
     }
-    fn Filecoin_StateReadState(
+    pub fn Filecoin_StateReadState(
         &mut self,
         address: &Address,
         tipset_key: Option<&Vec<Cid>>,
     ) -> Result<ApiActorState, TestFailure> {
         self.call("Filecoin.StateReadState", (address, tipset_key))
     }
-    fn Filecoin_StateCirculatingSupply(
+    pub fn Filecoin_StateCirculatingSupply(
         &mut self,
         tipset_key: Option<&Vec<Cid>>,
     ) -> Result<BigInt, TestFailure> {
         self.call("Filecoin.StateCirculatingSupply", (tipset_key,))
     }
-    fn Filecoin_StateVerifiedClientStatus(
+    pub fn Filecoin_StateVerifiedClientStatus(
         &mut self,
         address: &Address,
         tipset_key: Option<&Vec<Cid>>,
     ) -> Result<Option<BigInt>, TestFailure> {
         self.call("Filecoin.StateVerifiedClientStatus", (address, tipset_key))
     }
-    fn Filecoin_StateVMCirculatingSupplyInternal(
+    pub fn Filecoin_StateVMCirculatingSupplyInternal(
         &mut self,
         tipset_key: Option<&Vec<Cid>>,
     ) -> Result<CirculatingSupply, TestFailure> {
         self.call("Filecoin.StateVMCirculatingSupplyInternal", (tipset_key,))
     }
-    fn Filecoin_StateListMiners(
+    pub fn Filecoin_StateListMiners(
         &mut self,
         tipset_key: Option<&Vec<Cid>>,
     ) -> Result<Option<Vec<Address>>, TestFailure> {
         self.call("Filecoin.StateListMiners", (tipset_key,))
     }
-    fn Filecoin_StateListActors(
+    pub fn Filecoin_StateListActors(
         &mut self,
         tipset_key: Option<&Vec<Cid>>,
     ) -> Result<Option<Vec<Address>>, TestFailure> {
         self.call("Filecoin.StateListActors", (tipset_key,))
     }
-    fn Filecoin_StateMarketBalance(
+    pub fn Filecoin_StateMarketBalance(
         &mut self,
         address: &Address,
         tipset_key: Option<&Vec<Cid>>,
     ) -> Result<MarketBalance, TestFailure> {
         self.call("Filecoin.StateMarketBalance", (address, tipset_key))
     }
-    fn Filecoin_StateMarketParticipants(
+    pub fn Filecoin_StateMarketParticipants(
         &mut self,
         tipset_key: Option<&Vec<Cid>>,
     ) -> Result<std::collections::HashMap<String, MarketBalance>, TestFailure> {
         self.call("Filecoin.StateMarketParticipants", (tipset_key,))
     }
-    fn Filecoin_StateMarketDeals(
+    pub fn Filecoin_StateMarketDeals(
         &mut self,
         tipset_key: Option<&Vec<Cid>>,
     ) -> Result<std::collections::HashMap<String, ApiMarketDeal>, TestFailure> {
         self.call("Filecoin.StateMarketDeals", (tipset_key,))
     }
-    fn Filecoin_StateDealProviderCollateralBounds(
+    pub fn Filecoin_StateDealProviderCollateralBounds(
         &mut self,
         size: u64,
         verified: bool,
@@ -427,14 +430,14 @@ impl super::Ctx {
             (size, verified, tipset_key),
         )
     }
-    fn Filecoin_StateMarketStorageDeal(
+    pub fn Filecoin_StateMarketStorageDeal(
         &mut self,
         deal_id: u64,
         tipset_key: Option<&Vec<Cid>>,
     ) -> Result<ApiMarketDeal, TestFailure> {
         self.call("Filecoin.StateMarketStorageDeal", (deal_id, tipset_key))
     }
-    fn Filecoin_StateWaitMsg(
+    pub fn Filecoin_StateWaitMsg(
         &mut self,
         message_cid: &Cid,
         confidence: i64,
@@ -446,10 +449,13 @@ impl super::Ctx {
             (message_cid, confidence, look_back_limit, allow_replaced),
         )
     }
-    fn Filecoin_StateSearchMsg(&mut self, message_cid: &Cid) -> Result<MessageLookup, TestFailure> {
+    pub fn Filecoin_StateSearchMsg(
+        &mut self,
+        message_cid: &Cid,
+    ) -> Result<MessageLookup, TestFailure> {
         self.call("Filecoin.StateSearchMsg", (message_cid,))
     }
-    fn Filecoin_StateMinerPreCommitDepositForPower(
+    pub fn Filecoin_StateMinerPreCommitDepositForPower(
         &mut self,
         address: &Address,
         sector_pre_commit_info: &SectorPreCommitInfo,
@@ -460,14 +466,14 @@ impl super::Ctx {
             (address, sector_pre_commit_info, tipset_key),
         )
     }
-    fn Filecoin_StateVerifierStatus(
+    pub fn Filecoin_StateVerifierStatus(
         &mut self,
         address: &Address,
         tipset_key: Option<&Vec<Cid>>,
     ) -> Result<Option<BigInt>, TestFailure> {
         self.call("Filecoin.StateVerifierStatus", (address, tipset_key))
     }
-    fn Filecoin_StateGetClaim(
+    pub fn Filecoin_StateGetClaim(
         &mut self,
         address: &Address,
         claim_id: u64,
@@ -475,14 +481,14 @@ impl super::Ctx {
     ) -> Result<Option<ClaimLotusJson>, TestFailure> {
         self.call("Filecoin.StateGetClaim", (address, claim_id, tipset_key))
     }
-    fn Filecoin_StateGetClaims(
+    pub fn Filecoin_StateGetClaims(
         &mut self,
         address: &Address,
         tipset_key: Option<&Vec<Cid>>,
     ) -> Result<std::collections::HashMap<String, ClaimLotusJson>, TestFailure> {
         self.call("Filecoin.StateGetClaims", (address, tipset_key))
     }
-    fn Filecoin_StateGetAllocation(
+    pub fn Filecoin_StateGetAllocation(
         &mut self,
         address: &Address,
         allocation_id: u64,
@@ -493,14 +499,14 @@ impl super::Ctx {
             (address, allocation_id, tipset_key),
         )
     }
-    fn Filecoin_StateGetAllocations(
+    pub fn Filecoin_StateGetAllocations(
         &mut self,
         address: &Address,
         tipset_key: Option<&Vec<Cid>>,
     ) -> Result<std::collections::HashMap<String, Allocation>, TestFailure> {
         self.call("Filecoin.StateGetAllocations", (address, tipset_key))
     }
-    fn Filecoin_StateSectorExpiration(
+    pub fn Filecoin_StateSectorExpiration(
         &mut self,
         miner_address: &Address,
         sector_number: u64,
@@ -511,7 +517,7 @@ impl super::Ctx {
             (miner_address, sector_number, tipset_key),
         )
     }
-    fn Filecoin_StateSectorPartition(
+    pub fn Filecoin_StateSectorPartition(
         &mut self,
         miner_address: &Address,
         sector_number: u64,
@@ -522,16 +528,16 @@ impl super::Ctx {
             (miner_address, sector_number, tipset_key),
         )
     }
-    fn Filecoin_WalletBalance(&mut self, address: &Address) -> Result<BigInt, TestFailure> {
+    pub fn Filecoin_WalletBalance(&mut self, address: &Address) -> Result<BigInt, TestFailure> {
         self.call("Filecoin.WalletBalance", (address,))
     }
-    fn Filecoin_WalletHas(&mut self, address: &Address) -> Result<bool, TestFailure> {
+    pub fn Filecoin_WalletHas(&mut self, address: &Address) -> Result<bool, TestFailure> {
         self.call("Filecoin.WalletHas", (address,))
     }
-    fn Filecoin_WalletList(&mut self) -> Result<Option<Vec<Address>>, TestFailure> {
+    pub fn Filecoin_WalletList(&mut self) -> Result<Option<Vec<Address>>, TestFailure> {
         self.call("Filecoin.WalletList", ())
     }
-    fn Filecoin_WalletSign(
+    pub fn Filecoin_WalletSign(
         &mut self,
         address: &Address,
         message: &Base64String,

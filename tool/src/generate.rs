@@ -76,7 +76,7 @@ pub fn generate(mut doc: openrpc_types::resolved::OpenRPC) -> anyhow::Result<Tok
                 .collect::<Result<Vec<_>, _>>()?;
             match ret {
                 Some(ret) => acc.extend(quote! {
-                    fn #fn_name(&mut self, #(#params),*) -> Result<#ret, TestFailure> {
+                    pub fn #fn_name(&mut self, #(#params),*) -> Result<#ret, TestFailure> {
                         self.call(#name, (#(#vars,)*))
                     }
                 }),
