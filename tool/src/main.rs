@@ -247,20 +247,7 @@ fn main() -> anyhow::Result<()> {
                     } => play(header, remote, keep_going).await,
                 }
             }),
-        Args::Test(args) => {
-            let resp = reqwest::blocking::Client::new()
-                .post("http://127.0.0.1:2345")
-                .json(&ez_jsonrpc::types::Request {
-                    method: "Filecoin.ChainHead".into(),
-                    params: Some(RequestParameters::<Value>::ByPosition(vec![])),
-                    id: Some(ez_jsonrpc::types::Id::Number(1.into())),
-                })
-                .send()?
-                .json::<ez_jsonrpc::types::Response>()?;
-            dbg!(resp);
-            test::run(test_suite::test_suite(), args)?;
-            Ok(())
-        }
+        Args::Test(args) => test::run(test_suite::test_suite(), args),
     }
 }
 
