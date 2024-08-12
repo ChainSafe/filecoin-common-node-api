@@ -798,10 +798,12 @@
       "SignatureTypeLotusJson": {
         "anyOf": [
           {
-            "$ref": "#/components/schemas/SignatureType"
+            "type": "integer",
+            "format": "uint8",
+            "minimum": 0.0
           },
           {
-            "type": "string"
+            "$ref": "#/components/schemas/SignatureType"
           }
         ]
       },
