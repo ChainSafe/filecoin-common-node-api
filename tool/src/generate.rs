@@ -108,7 +108,7 @@ struct Method {
 
 fn extract(s: &str) -> anyhow::Result<&str> {
     let (_whole, grp) = lazy_regex::regex_captures!("^#/components/schemas/(.*)", s)
-        .context(format!("unsupported reference format for `{}`", s))?;
+        .context(format!("unsupported reference format in `{}`", s))?;
     Ok(grp)
 }
 
