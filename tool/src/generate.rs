@@ -93,7 +93,7 @@ pub fn generate(mut doc: openrpc_types::resolved::OpenRPC) -> anyhow::Result<Tok
         use serde::{Serialize, Deserialize};
 
         #[allow(non_snake_case, unused)]
-        impl super::Ctx {
+        impl super::RunTest {
             #method_code
         }
         #space

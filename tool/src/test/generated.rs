@@ -2,7 +2,7 @@
 use super::TestFailure;
 use serde::{Deserialize, Serialize};
 #[allow(non_snake_case, unused)]
-impl super::Ctx {
+impl super::RunTest {
     pub fn Filecoin_AuthNew(
         &mut self,
         params: &AuthNewParams,

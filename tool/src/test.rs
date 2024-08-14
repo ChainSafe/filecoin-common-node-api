@@ -50,10 +50,11 @@ use serde::de::DeserializeOwned;
 ///
 /// `name` SHOULD:
 /// - be unique.
+/// - NOT contain tabs.
 /// - fit on a single line, with no punctuation.
 pub fn test<'a>(
     name: impl Into<String>,
-    f: impl FnOnce(ConfigTest) -> Result<(), TestFailure> + 'a,
+    f: impl FnOnce(ConfigTest) -> Result<RunTest, TestFailure> + 'a,
 ) -> Test<'a> {
     Test {
         name: name.into(),
@@ -65,7 +66,7 @@ pub fn test<'a>(
 pub struct Test<'a> {
     name: String,
     #[allow(clippy::type_complexity)]
-    runner: Box<dyn FnOnce(ConfigTest) -> Result<(), TestFailure> + 'a>,
+    runner: Box<dyn FnOnce(ConfigTest) -> Result<RunTest, TestFailure> + 'a>,
 }
 
 /// Represents that a single test has failed - the runner may stop running.
@@ -84,9 +85,8 @@ impl TestFailure {
     pub fn context(self, msg: impl fmt::Display) -> Self {
         Self(self.0.context(msg.to_string()))
     }
-    /// See the documentation on [`Ctx::call`].
-    pub fn as_rpc_error(&self) -> Option<&jsonrpc::Error> {
-        self.0.downcast_ref()
+    pub fn into_rpc_error(self) -> Result<jsonrpc::Error, TestFailure> {
+        self.0.downcast().map_err(TestFailure)
     }
     #[doc(hidden)]
     #[deprecated = "not public API"]
@@ -138,6 +138,8 @@ enum ConfigRequest {
     Write,
     Admin,
     Wrong,
+    V0,
+    V1,
 }
 
 impl ConfigTest {
@@ -172,7 +174,7 @@ impl ConfigTest {
         self
     }
     /// End configuration, possibly [cancelling](Cancelled) this test
-    /// (if required resources were not loaded, or the test was filtered out).
+    /// (if required resources are not loaded, or the test was filtered out).
     pub fn begin_test(self) -> Result<RunTest, Cancelled> {
         let Self {
             per_run,
@@ -195,7 +197,7 @@ impl ConfigTest {
                 _ => {}
             }
         }
-        if !tags.is_subset(&per_run.tag_filter) {
+        if !per_run.tag_filter.is_empty() && !tags.is_subset(&per_run.tag_filter) {
             return Err(Cancelled(()));
         }
         Ok(RunTest {
@@ -487,10 +489,17 @@ pub fn run<'a>(tests: impl IntoIterator<Item = Test<'a>>, args: Args) -> anyhow:
         };
         let mut logs = log_rx.try_iter().collect::<Vec<_>>();
         match res {
-            Ok(Ok(())) => {
-                writeln!(stdout, "{}", "passed".green())?;
-                succeeded += 1;
-            }
+            Ok(Ok(run)) => match !run.requested.is_empty() && !run.used.is_empty() {
+                true => {
+                    writeln!(stdout, "{}", "failed".red())?;
+                    failed += 1;
+                    writeln!(stderr, "\tunused resources: {:?}", run.used)?
+                }
+                false => {
+                    writeln!(stdout, "{}", "passed".green())?;
+                    succeeded += 1;
+                }
+            },
             Ok(Err(TestFailure(e))) => match e.downcast_ref::<Cancelled>() {
                 Some(_) => {
                     writeln!(stdout, "{}", "skipped".yellow())?;
