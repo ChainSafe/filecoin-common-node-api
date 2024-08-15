@@ -2,7 +2,7 @@ mod capture;
 mod check;
 mod gc;
 mod generate;
-mod test;
+mod test_harness;
 mod test_suite;
 
 use anyhow::{bail, Context as _};
@@ -18,6 +18,7 @@ use openrpc_types::{
     resolved::{ExamplePairing, Method},
     ParamStructure,
 };
+use schemars::schema_for;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use serde_json::Value;
 use std::{
@@ -27,6 +28,7 @@ use std::{
     hash::BuildHasher,
     io::{self, IsTerminal as _},
     net::SocketAddr,
+    ops::ControlFlow,
     path::{Path, PathBuf},
     str::FromStr,
 };
@@ -45,7 +47,8 @@ enum Args {
     },
     #[command(subcommand)]
     JsonRpc(JsonRpc),
-    Test(test::Args),
+    #[command(subcommand)]
+    Test(Test),
 }
 
 /// Subommands related to processing OpenRPC documents.
@@ -131,6 +134,17 @@ enum JsonRpc {
         #[arg(long)]
         keep_going: bool,
     },
+}
+
+/// Run the RPC test suite.
+#[derive(Parser)]
+enum Test {
+    /// List all tests and their tags, tab-separated to stdout.
+    List,
+    /// Run the tests, loading the given config file.
+    Run { config: PathBuf },
+    /// Print the JSON-Schema for the test config file to stdout.
+    ConfigSchema,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -247,7 +261,25 @@ fn main() -> anyhow::Result<()> {
                     } => play(header, remote, keep_going).await,
                 }
             }),
-        Args::Test(args) => test::run(test_suite::test_suite(), args),
+        Args::Test(Test::List) => {
+            for test in test_suite::test_suite() {
+                println!(
+                    "{}\t{}",
+                    test.name().replace(|c| c == '\n' || c == '\t', " "),
+                    test.tags().join("\t")
+                );
+            }
+            Ok(())
+        }
+        Args::Test(Test::ConfigSchema) => Ok(serde_json::to_writer(
+            io::stdout(),
+            &schema_for!(test_harness::Config),
+        )?),
+        Args::Test(Test::Run { config }) => test_harness::run(
+            test_suite::test_suite(),
+            serde_json::from_reader(File::open(config)?)?,
+            |_, _| ControlFlow::Continue(()),
+        ),
     }
 }
 
