@@ -25,7 +25,7 @@ use std::{
     fmt,
     io::{self, Read as _, Write as _},
     ops::ControlFlow,
-    panic::{self, AssertUnwindSafe},
+    panic::{self, AssertUnwindSafe, Location},
     process,
     sync::mpsc,
     time::Duration,
@@ -40,62 +40,81 @@ use serde::{de::DeserializeOwned, Deserialize};
 
 #[allow(unused)]
 pub mod prelude {
-    pub use super::{v0admin, v0read, v0write, Context as _, Tag, Test};
+    pub(crate) use super::fail;
+    pub use super::{v0admin, v0none, v0read, v0write, Context as _, Tag, Test};
+    pub use ::std::prelude::rust_2021::*;
+    pub use assert2::{assert, check, let_assert};
     pub use bindings::v0::{self, Api as _};
 }
 
 pub use config::Harness as Config;
 
-/// Create a test case that is provided with a [`V0Client`] with a `read` token.
+/// Create a test case that is provided with a [`V0Client`],
+/// with no authorization token.
 ///
 /// `name` SHOULD:
 /// - be unique.
 /// - NOT contain tabs.
 /// - fit on a single line, with no punctuation.
+// track_caller allows us to grab where the test was defined
+#[track_caller]
+pub fn v0none<'a>(
+    name: impl Into<String>,
+    tags: impl IntoIterator<Item = Tag>,
+    f: impl FnOnce(&mut V0Client) -> Result<(), TestFailure> + 'a,
+) -> Test<'a> {
+    Test::new(name, tags, TestInner::V0None(Box::new(f)))
+}
+/// Like [`v0none`], but with a `read` token.
+#[track_caller]
 pub fn v0read<'a>(
     name: impl Into<String>,
     tags: impl IntoIterator<Item = Tag>,
     f: impl FnOnce(&mut V0Client) -> Result<(), TestFailure> + 'a,
 ) -> Test<'a> {
-    Test {
-        name: name.into(),
-        tags: tags.into_iter().collect(),
-        inner: TestInner::V0Read(Box::new(f)),
-    }
+    Test::new(name, tags, TestInner::V0Read(Box::new(f)))
 }
-/// Like [`v0read`], but with a `write` token.
+/// Like [`v0none`], but with a `write` token.
+#[track_caller]
 pub fn v0write<'a>(
     name: impl Into<String>,
     tags: impl IntoIterator<Item = Tag>,
     f: impl FnOnce(&mut V0Client) -> Result<(), TestFailure> + 'a,
 ) -> Test<'a> {
-    Test {
-        name: name.into(),
-        tags: tags.into_iter().collect(),
-        inner: TestInner::V0Write(Box::new(f)),
-    }
+    Test::new(name, tags, TestInner::V0Write(Box::new(f)))
 }
-/// Like [`v0read`], but with an `admin` token.
+/// Like [`v0none`], but with an `admin` token.
+#[track_caller]
 pub fn v0admin<'a>(
     name: impl Into<String>,
     tags: impl IntoIterator<Item = Tag>,
     f: impl FnOnce(&mut V0Client) -> Result<(), TestFailure> + 'a,
 ) -> Test<'a> {
-    Test {
-        name: name.into(),
-        tags: tags.into_iter().collect(),
-        inner: TestInner::V0Admin(Box::new(f)),
-    }
+    Test::new(name, tags, TestInner::V0Admin(Box::new(f)))
 }
 
 /// A dynamic test case, created by free functions in this module.
 pub struct Test<'a> {
     name: String,
     tags: BTreeSet<Tag>,
+    definition_site: &'static Location<'static>,
     inner: TestInner<'a>,
 }
 
-impl Test<'_> {
+impl<'a> Test<'a> {
+    #[track_caller]
+    fn new(
+        name: impl Into<String>,
+        tags: impl IntoIterator<Item = Tag>,
+        inner: TestInner<'a>,
+    ) -> Self {
+        Self {
+            name: name.into(),
+            tags: tags.into_iter().collect(),
+            definition_site: Location::caller(),
+            inner,
+        }
+    }
     pub fn name(&self) -> &str {
         &self.name
     }
@@ -170,9 +189,10 @@ where
     }
 }
 
-/// We support a small number of test scenarios.
+/// We support a closed set of test scenarios.
 #[allow(clippy::type_complexity, clippy::enum_variant_names)]
 enum TestInner<'a> {
+    V0None(Box<dyn FnOnce(&mut V0Client) -> Result<(), TestFailure> + 'a>),
     V0Read(Box<dyn FnOnce(&mut V0Client) -> Result<(), TestFailure> + 'a>),
     V0Write(Box<dyn FnOnce(&mut V0Client) -> Result<(), TestFailure> + 'a>),
     V0Admin(Box<dyn FnOnce(&mut V0Client) -> Result<(), TestFailure> + 'a>),
@@ -193,6 +213,7 @@ mod config {
     #[derive(Deserialize, Default, JsonSchema)]
     pub struct Client {
         pub(super) url: String,
+        pub(super) none_token: Option<String>,
         pub(super) read_token: Option<String>,
         pub(super) write_token: Option<String>,
         pub(super) admin_token: Option<String>,
@@ -210,6 +231,7 @@ mod config {
 }
 
 struct RunnerClients {
+    v0none: Option<V0Client>,
     v0read: Option<V0Client>,
     v0write: Option<V0Client>,
     v0admin: Option<V0Client>,
@@ -230,6 +252,7 @@ impl RunnerClients {
             })
         };
         Self {
+            v0none: mk(v0, AuthMode::None).map(V0Client),
             v0read: mk(v0, AuthMode::Read).map(V0Client),
             v0write: mk(v0, AuthMode::Write).map(V0Client),
             v0admin: mk(v0, AuthMode::Admin).map(V0Client),
@@ -269,6 +292,7 @@ impl Client {
     ) -> Option<Self> {
         let config::Client {
             url,
+            none_token,
             read_token,
             write_token,
             admin_token,
@@ -279,7 +303,7 @@ impl Client {
                 AuthMode::Read => Some(read_token.clone()?),
                 AuthMode::Write => Some(write_token.clone()?),
                 AuthMode::Admin => Some(admin_token.clone()?),
-                AuthMode::None => None,
+                AuthMode::None => none_token.clone(),
             },
             url: url.clone(),
             id: 0,
@@ -395,7 +419,16 @@ pub fn run<'a>(
     let mut failed_logs = vec![];
 
     panic::set_hook(Box::new(|_| {})); // TODO(aatifsyed): siphon off a backtrace and log it
-    for (ix, Test { name, tags, inner }) in tests.into_iter().enumerate() {
+    for (
+        ix,
+        Test {
+            name,
+            tags,
+            inner,
+            definition_site,
+        },
+    ) in tests.into_iter().enumerate()
+    {
         write!(stdout, "{}\t{}\t", ix.dimmed(), name.white())?;
 
         if filter(&name, &tags).is_break() {
@@ -405,6 +438,13 @@ pub fn run<'a>(
         }
         let res = match (inner, &mut runner_clients) {
             (
+                TestInner::V0None(runme),
+                RunnerClients {
+                    v0none: Some(client),
+                    ..
+                },
+            )
+            | (
                 TestInner::V0Read(runme),
                 RunnerClients {
                     v0read: Some(client),
@@ -443,6 +483,7 @@ pub fn run<'a>(
                 failed += 1;
 
                 logs.push(LogEvent::Errors(e));
+                logs.push(LogEvent::Location(definition_site));
                 write_logs(&mut *stderr, &logs)?;
                 failed_logs.push((name, logs));
             }
@@ -457,6 +498,7 @@ pub fn run<'a>(
                     _ => "Box<dyn Any>",
                 };
                 logs.push(LogEvent::Errors(anyhow::Error::msg(panic_msg.to_string())));
+                logs.push(LogEvent::Location(definition_site));
                 write_logs(&mut *stderr, &logs)?;
                 failed_logs.push((name, logs));
             }
@@ -546,6 +588,7 @@ enum LogEvent {
     Response(jsonrpc::Response),
     Body(Vec<u8>),
     Errors(anyhow::Error),
+    Location(&'static Location<'static>),
 }
 
 /// `writer` will receive (ANSI) colored reports
@@ -583,6 +626,7 @@ fn write_logs<'a>(
                     writeln!(w, "\t{}", err)?
                 }
             }
+            LogEvent::Location(it) => writeln!(w, "\t{ix}\t{}", it.blue())?,
         }
     }
     Ok(())

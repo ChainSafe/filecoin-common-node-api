@@ -8,6 +8,7 @@ publish = false
 anstream = "0.6.15"
 anyhow = "1.0.86"
 ascii = "1.1.0"
+assert2 = "0.3.14"
 axum = "0.7.5"
 bindings = { path = "bindings" }
 bstr = "1.9.1"
