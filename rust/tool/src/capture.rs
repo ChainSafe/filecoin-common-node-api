@@ -3,7 +3,7 @@ use anyhow::Context as _;
 use axum::response::IntoResponse as _;
 use bstr::ByteSlice as _;
 use bytes::Bytes;
-use ez_jsonrpc_types as jsonrpc;
+use ez_jsonrpc::types as jsonrpc;
 use fluent_uri::UriRef;
 use futures::FutureExt as _;
 use http_body_util::BodyExt as _;

@@ -1,12 +1,13 @@
 mod capture;
 mod check;
 mod gc;
+mod generate;
 
 use anyhow::{bail, Context as _};
 use ascii::AsciiChar;
 use check::CheckMethod;
 use clap::Parser;
-use ez_jsonrpc_types::{self as jsonrpc, Id, RequestParameters};
+use ez_jsonrpc::types::{self as jsonrpc, Id, RequestParameters};
 use fluent_uri::UriRef;
 use futures::TryFutureExt as _;
 use itertools::Itertools as _;
@@ -44,7 +45,7 @@ enum Args {
     JsonRpc(JsonRpc),
 }
 
-/// Subommands related to processing OpenRPC documents.
+/// Subcommands related to processing OpenRPC documents.
 #[derive(Parser)]
 enum Openrpc {
     /// Performs validation of the spec, including FIP-specific validation.
@@ -76,9 +77,12 @@ enum Openrpc {
         #[arg(long)]
         overwrite_version: Option<String>,
     },
+    /// Read an OpenRPC specification from stdin,
+    /// and print Rust code for a client trait.
+    Generate { trait_name: String },
 }
 
-/// Interact with JSON-RPC endpoints.
+/// Subcommands for interacting with JSON-RPC endpoints.
 #[derive(Parser)]
 enum JsonRpc {
     /// Start a HTTP server, forwarding all requests to a single URI.
@@ -139,7 +143,7 @@ pub struct Dialogue {
 #[serde(rename_all = "lowercase")]
 enum DialogueResponse {
     Result(Value),
-    Error(ez_jsonrpc_types::Error),
+    Error(ez_jsonrpc::types::Error),
 }
 
 fn main() -> anyhow::Result<()> {
@@ -206,6 +210,14 @@ fn main() -> anyhow::Result<()> {
             serde_json::to_writer_pretty(io::stdout(), &openrpc)?;
             Ok(())
         }
+        Args::Openrpc(Openrpc::Generate { trait_name }) => {
+            let tokens = generate::generate(
+                resolve_within(serde_json::from_reader(io::stdin())?)?,
+                syn::parse_str(&trait_name)?,
+            )?;
+            println!("{}", tokens);
+            Ok(())
+        }
         Args::Csv2json {
             delimiter: Char(delimiter),
         } => {
@@ -263,10 +275,10 @@ async fn play(header: Vec<Header>, remote: String, keep_going: bool) -> anyhow::
                 params,
                 response: _,
             }) => {
-                let request = ez_jsonrpc_types::Request {
+                let request = ez_jsonrpc::types::Request {
                     method,
                     params,
-                    id: Some(ez_jsonrpc_types::Id::Number(ix.into())),
+                    id: Some(ez_jsonrpc::types::Id::Number(ix.into())),
                 };
                 let res = client
                     .post(&remote)
@@ -285,7 +297,7 @@ async fn play(header: Vec<Header>, remote: String, keep_going: bool) -> anyhow::
                         match body.trim().is_empty() {
                             true => Ok(None),
                             false => {
-                                let ez_jsonrpc_types::Response { result, id: _ } =
+                                let ez_jsonrpc::types::Response { result, id: _ } =
                                     serde_json::from_str(&body).context(
                                         "couldn't deserialize HTTP response as JSON-RPC",
                                     )?;
@@ -680,40 +692,6 @@ impl FromStr for Header {
 
 #[test]
 fn doc() {
-    use stack_list::Node;
-
-    fn write(buf: &mut String, tail: &Node<&str>, cmd: &clap::Command) {
-        if !matches!(tail, Node::Root) {
-            buf.push('\n');
-        }
-        let path = Node::Head {
-            data: cmd.get_name(),
-            tail,
-        };
-        for _ in 0..path.count() {
-            buf.push('#')
-        }
-        path.for_each_rev(|component| {
-            buf.push_str(" `");
-            buf.push_str(component);
-            buf.push('`');
-        });
-        buf.push('\n');
-        let mut cmd = cmd
-            .clone()
-            .disable_help_subcommand(true)
-            .disable_help_flag(true);
-        std::fmt::write(buf, format_args!("\n```\n{}\n```", cmd.render_long_help())).unwrap();
-        for sub in cmd.get_subcommands() {
-            write(buf, &path, sub)
-        }
-    }
-
-    let mut buf = String::new();
-    write(
-        &mut buf,
-        &Node::Root,
-        &<Args as clap::CommandFactory>::command(),
-    );
-    expect_test::expect_file!["../README.md"].assert_eq(&buf);
+    expect_test::expect_file!["../README.md"]
+        .assert_eq(&util::markdown(&<Args as clap::CommandFactory>::command()));
 }

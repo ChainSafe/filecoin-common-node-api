@@ -1,8 +1,8 @@
 {
   "openrpc": "1.3.2",
   "info": {
-    "title": "common-node-api",
-    "version": "0.0.0"
+    "title": "forest",
+    "version": "0.19.0"
   },
   "methods": [
     {
@@ -54,6 +54,33 @@
       "paramStructure": "by-position"
     },
     {
+      "name": "Filecoin.ChainGetParentReceipts",
+      "description": "Returns the message receipts included in the blocks of the parent tipset",
+      "params": [
+        {
+          "name": "block_cid",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Cid"
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.ChainGetParentReceipts::Result",
+        "required": false,
+        "schema": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/components/schemas/ApiReceipt"
+          }
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
       "name": "Filecoin.ChainReadObj",
       "description": "Reads IPLD nodes referenced by the specified CID from chain blockstore and returns raw bytes.",
       "params": [
@@ -91,6 +118,27 @@
         "required": true,
         "schema": {
           "type": "boolean"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.ChainGetBlockMessages",
+      "description": "Returns all message from the specified block",
+      "params": [
+        {
+          "name": "cid",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Cid"
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.ChainGetBlockMessages::Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/BlockMessages"
         }
       },
       "paramStructure": "by-position"
@@ -157,41 +205,6 @@
       ],
       "result": {
         "name": "Filecoin.ChainGetTipSetByHeight::Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/Tipset"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.ChainGetTipSetAfterHeight",
-      "description": "Looks back for a tipset at the specified epoch. If there are no blocks at the specified epoch, the first non-nil tipset at a later epoch will be returned. A fork can be specified, or null for the heaviest chain",
-      "params": [
-        {
-          "name": "height",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "format": "int64"
-          }
-        },
-        {
-          "name": "tsk",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.ChainGetTipSetAfterHeight::Result",
         "required": true,
         "schema": {
           "$ref": "#/components/schemas/Tipset"
@@ -649,6 +662,27 @@
       "paramStructure": "by-position"
     },
     {
+      "name": "Filecoin.MpoolPushUntrusted",
+      "description": "Adds a message to the message pool with verification checks",
+      "params": [
+        {
+          "name": "msg",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/SignedMessage"
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.MpoolPushUntrusted::Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Cid"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
       "name": "Filecoin.MpoolPushMessage",
       "description": "Assigns a nonce, signs, and pushes a message to the mempool",
       "params": [
@@ -833,28 +867,6 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.StateGetBeaconEntry",
-      "description": "Returns the claim for a given address and claim ID",
-      "params": [
-        {
-          "name": "epoch",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateGetBeaconEntry::Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/BeaconEntry"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
       "name": "Filecoin.StateListMessages",
       "description": "looks back and returns all messages with a matching to or from address, stopping at the given height.",
       "params": [
@@ -990,56 +1002,6 @@
           "anyOf": [
             {
               "$ref": "#/components/schemas/SectorOnChainInfo"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateSectorPreCommitInfo",
-      "description": "Returns the PreCommit info for the specified miner's sector. Returns null and no error if the sector isn't precommitted. Note that the sector number may be allocated while PreCommitInfo is nil. This means that either allocated sector numbers were compacted, and the sector number was marked as allocated in order to reduce size of the allocated sectors bitfield, or that the sector was precommitted, but the precommit has expired.",
-      "params": [
-        {
-          "name": "miner_address",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Address"
-          }
-        },
-        {
-          "name": "sector_number",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "format": "uint64",
-            "minimum": 0.0
-          }
-        },
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateSectorPreCommitInfo::Result",
-        "required": false,
-        "schema": {
-          "anyOf": [
-            {
-              "$ref": "#/components/schemas/SectorPreCommitOnChainInfo"
             },
             {
               "type": "null"
@@ -1228,40 +1190,6 @@
           "items": {
             "$ref": "#/components/schemas/SectorOnChainInfo"
           }
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateMinerAllocated",
-      "description": "Returns info about sectors that a given miner is actively proving",
-      "params": [
-        {
-          "name": "address",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Address"
-          }
-        },
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateMinerAllocated::Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/BitField"
         }
       },
       "paramStructure": "by-position"
@@ -2166,50 +2094,6 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.StateWaitMsg",
-      "description": "https://github.com/filecoin-project/lotus/blob/286fadaca4d2af81bedf4213daebfbbdbcd5e337/api/api_full.go#L448-L466",
-      "params": [
-        {
-          "name": "message_cid",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Cid"
-          }
-        },
-        {
-          "name": "confidence",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "format": "int64"
-          }
-        },
-        {
-          "name": "look_back_limit",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "format": "int64"
-          }
-        },
-        {
-          "name": "allow_replaced",
-          "required": true,
-          "schema": {
-            "type": "boolean"
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateWaitMsg::Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/MessageLookup"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
       "name": "Filecoin.StateSearchMsg",
       "description": "https://github.com/filecoin-project/lotus/blob/286fadaca4d2af81bedf4213daebfbbdbcd5e337/api/api_full.go#L431-L447",
       "params": [
@@ -2266,6 +2150,33 @@
         "required": true,
         "schema": {
           "$ref": "#/components/schemas/BigInt"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateVerifiedRegistryRootKey",
+      "description": "returns the address of the Verified Registry's root key",
+      "params": [
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateVerifiedRegistryRootKey::Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Address"
         }
       },
       "paramStructure": "by-position"
@@ -2399,6 +2310,36 @@
       "paramStructure": "by-position"
     },
     {
+      "name": "Filecoin.StateGetAllClaims",
+      "description": "returns the all the claims available in verified registry actor",
+      "params": [
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateGetAllClaims::Result",
+        "required": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/components/schemas/ClaimLotusJson"
+          }
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
       "name": "Filecoin.StateGetAllocation",
       "description": "Returns the allocation for a given address and allocation ID.",
       "params": [
@@ -2475,6 +2416,36 @@
       ],
       "result": {
         "name": "Filecoin.StateGetAllocations::Result",
+        "required": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/components/schemas/Allocation"
+          }
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateGetAllAllocations",
+      "description": "returns the all the allocations available in verified registry actor",
+      "params": [
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateGetAllAllocations::Result",
         "required": true,
         "schema": {
           "type": "object",
@@ -2656,6 +2627,34 @@
         "required": true,
         "schema": {
           "$ref": "#/components/schemas/Signature"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.WalletSignMessage",
+      "description": "signs the given message using the given address.",
+      "params": [
+        {
+          "name": "address",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        {
+          "name": "message",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Message"
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.WalletSignMessage::Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/SignedMessage"
         }
       },
       "paramStructure": "by-position"
@@ -2963,6 +2962,31 @@
           }
         }
       },
+      "ApiReceipt": {
+        "type": "object",
+        "required": [
+          "EventsRoot",
+          "ExitCode",
+          "GasUsed",
+          "Return"
+        ],
+        "properties": {
+          "EventsRoot": {
+            "$ref": "#/components/schemas/Nullable_Cid"
+          },
+          "ExitCode": {
+            "$ref": "#/components/schemas/ExitCode"
+          },
+          "GasUsed": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          },
+          "Return": {
+            "$ref": "#/components/schemas/Base64String"
+          }
+        }
+      },
       "ApiState": {
         "type": "object",
         "required": [
@@ -3120,6 +3144,25 @@
           },
           "SecpkMessages": {
             "$ref": "#/components/schemas/Nullable_Array_of_Cid"
+          }
+        }
+      },
+      "BlockMessages": {
+        "type": "object",
+        "required": [
+          "BlsMessages",
+          "Cids",
+          "SecpkMessages"
+        ],
+        "properties": {
+          "BlsMessages": {
+            "$ref": "#/components/schemas/Nullable_Array_of_Message"
+          },
+          "Cids": {
+            "$ref": "#/components/schemas/Nullable_Array_of_Cid"
+          },
+          "SecpkMessages": {
+            "$ref": "#/components/schemas/Nullable_Array_of_SignedMessage"
           }
         }
       },
@@ -3379,6 +3422,7 @@
           "UpgradeThunderHeight",
           "UpgradeTrustHeight",
           "UpgradeTurboHeight",
+          "UpgradeWaffleHeight",
           "UpgradeWatermelonHeight"
         ],
         "properties": {
@@ -3483,6 +3527,10 @@
             "format": "int64"
           },
           "UpgradeTurboHeight": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "UpgradeWaffleHeight": {
             "type": "integer",
             "format": "int64"
           },
@@ -4029,6 +4077,15 @@
           "$ref": "#/components/schemas/ExecutionTrace"
         }
       },
+      "Nullable_Array_of_Message": {
+        "type": [
+          "array",
+          "null"
+        ],
+        "items": {
+          "$ref": "#/components/schemas/Message"
+        }
+      },
       "Nullable_Array_of_PoStProof": {
         "type": [
           "array",
@@ -4456,26 +4513,6 @@
           }
         }
       },
-      "SectorPreCommitOnChainInfo": {
-        "type": "object",
-        "required": [
-          "Info",
-          "PreCommitDeposit",
-          "PreCommitEpoch"
-        ],
-        "properties": {
-          "Info": {
-            "$ref": "#/components/schemas/SectorPreCommitInfo"
-          },
-          "PreCommitDeposit": {
-            "$ref": "#/components/schemas/BigInt"
-          },
-          "PreCommitEpoch": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      },
       "SectorSize": {
         "type": "integer",
         "format": "uint64",
@@ -4492,7 +4529,7 @@
             "$ref": "#/components/schemas/Base64String"
           },
           "Type": {
-            "$ref": "#/components/schemas/SignatureType"
+            "$ref": "#/components/schemas/SignatureTypeLotusJson"
           }
         }
       },
@@ -4503,6 +4540,18 @@
           "Secp256k1",
           "Bls",
           "Delegated"
+        ]
+      },
+      "SignatureTypeLotusJson": {
+        "anyOf": [
+          {
+            "type": "integer",
+            "format": "uint8",
+            "minimum": 0.0
+          },
+          {
+            "$ref": "#/components/schemas/SignatureType"
+          }
         ]
       },
       "SignedMessage": {
