@@ -29,8 +29,6 @@ use std::{
     str::FromStr,
 };
 
-const USER_AGENT: &str = concat!(env!("CARGO_PKG_NAME"), "/", env!("CARGO_PKG_VERSION"));
-
 /// Utilities for creating, interacting with, and testing against the Filecoin
 /// Common Node API.
 #[derive(Parser)]
@@ -254,7 +252,11 @@ fn main() -> anyhow::Result<()> {
 async fn play(header: Vec<Header>, remote: String, keep_going: bool) -> anyhow::Result<()> {
     let mut errs = ErrorEmitter::new(io::stderr());
     let client = reqwest::Client::builder()
-        .user_agent(USER_AGENT)
+        .user_agent(concat!(
+            env!("CARGO_PKG_NAME"),
+            "/",
+            env!("CARGO_PKG_VERSION")
+        ))
         .default_headers(
             header
                 .into_iter()

@@ -9,8 +9,6 @@ mod tests;
 // for dead code analysis
 pub use harness::V0Client;
 
-const USER_AGENT: &str = concat!(env!("CARGO_PKG_NAME"), "/", env!("CARGO_PKG_VERSION"));
-
 /// Filecoin RPC test suite.
 #[derive(Parser)]
 enum Args {
@@ -317,7 +315,11 @@ mod harness {
 
             // Shared client for conneciton pooling
             let client = reqwest::blocking::Client::builder()
-                .user_agent(crate::USER_AGENT)
+                .user_agent(concat!(
+                    env!("CARGO_PKG_NAME"),
+                    "/",
+                    env!("CARGO_PKG_VERSION")
+                ))
                 .build()
                 .expect("couldn't initialize client");
             let mk = |config: &Option<config::Client>, auth_mode| {
