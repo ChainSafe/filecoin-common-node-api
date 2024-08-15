@@ -63,9 +63,9 @@ dependencies = [
 
 [[package]]
 name = "anstyle"
-version = "1.0.7"
+version = "1.0.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "038dfcf04a5feb68e9c60b21c9625a54c2c0616e79b72b0fd87075a056ae1d1b"
+checksum = "1bec1de6f59aedf83baf9ff929c98f2ad654b97c9510f4e70cf6f661d49fd5b1"
 
 [[package]]
 name = "anstyle-parse"
@@ -315,9 +315,9 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
 name = "clap"
-version = "4.5.4"
+version = "4.5.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "90bc066a67923782aa8515dbaea16946c5bcc5addbd668bb80af688e53e548a0"
+checksum = "11d8838454fda655dafd3accb2b6e2bea645b9e4078abe84a22ceb947235c5cc"
 dependencies = [
  "clap_builder",
  "clap_derive",
@@ -325,9 +325,9 @@ dependencies = [
 
 [[package]]
 name = "clap_builder"
-version = "4.5.2"
+version = "4.5.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ae129e2e766ae0ec03484e609954119f123cc1fe650337e155d03b022f24f7b4"
+checksum = "216aec2b177652e3846684cbfe25c9964d18ec45234f0f5da5157b207ed1aab6"
 dependencies = [
  "anstream",
  "anstyle",
@@ -337,9 +337,9 @@ dependencies = [
 
 [[package]]
 name = "clap_derive"
-version = "4.5.4"
+version = "4.5.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "528131438037fd55894f62d6e9f068b8f45ac57ffa77517819645d10aed04f64"
+checksum = "501d359d5f3dcaf6ecdeee48833ae73ec6e42723a1e52419c79abf9507eec0a0"
 dependencies = [
  "heck",
  "proc-macro2",
@@ -522,54 +522,6 @@ name = "fastrand"
 version = "2.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9fc0510504f03c51ada170672ac806f1f105a88aa97a5281117e1ddc3368e51a"
-
-[[package]]
-name = "filecoin-common-node-api-tool"
-version = "0.1.0"
-dependencies = [
- "anstream",
- "anyhow",
- "ascii",
- "assert2",
- "axum",
- "bindings",
- "bstr",
- "bytes",
- "clap",
- "csv",
- "derive_more",
- "either",
- "expect-test",
- "ez-jsonrpc",
- "fluent-uri",
- "futures",
- "http",
- "http-body-util",
- "humantime-serde",
- "indexmap",
- "itertools",
- "jsonschema",
- "lazy-regex",
- "nunny",
- "openrpc-types",
- "owo-colors",
- "proc-macro2",
- "quote",
- "regex",
- "reqwest",
- "schemars",
- "serde",
- "serde_json",
- "serde_path_to_error",
- "stack_list",
- "strum",
- "syn 2.0.72",
- "tokio",
- "tower",
- "tracing",
- "typify",
- "uuid",
-]
 
 [[package]]
 name = "fluent-uri"
@@ -1713,9 +1665,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.124"
+version = "1.0.125"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "66ad62847a56b3dba58cc891acd13884b9c61138d330c0d7b6181713d4fce38d"
+checksum = "83c8e735a073ccf5be70aa8066aa984eaf2fa000db6c8d0100ae605b366d31ed"
 dependencies = [
  "itoa",
  "memchr",
@@ -1905,6 +1857,28 @@ dependencies = [
 ]
 
 [[package]]
+name = "test-suite"
+version = "0.1.0"
+dependencies = [
+ "anstream",
+ "anyhow",
+ "assert2",
+ "bindings",
+ "clap",
+ "derive_more",
+ "ez-jsonrpc",
+ "humantime-serde",
+ "itertools",
+ "owo-colors",
+ "reqwest",
+ "schemars",
+ "serde",
+ "serde_json",
+ "serde_path_to_error",
+ "strum",
+]
+
+[[package]]
 name = "thiserror"
 version = "1.0.63"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2029,6 +2003,49 @@ dependencies = [
  "futures-sink",
  "pin-project-lite",
  "tokio",
+]
+
+[[package]]
+name = "tool"
+version = "0.1.0"
+dependencies = [
+ "anstream",
+ "anyhow",
+ "ascii",
+ "axum",
+ "bstr",
+ "bytes",
+ "clap",
+ "csv",
+ "either",
+ "expect-test",
+ "ez-jsonrpc",
+ "fluent-uri",
+ "futures",
+ "http",
+ "http-body-util",
+ "indexmap",
+ "itertools",
+ "jsonschema",
+ "lazy-regex",
+ "nunny",
+ "openrpc-types",
+ "proc-macro2",
+ "quote",
+ "regex",
+ "reqwest",
+ "schemars",
+ "serde",
+ "serde_json",
+ "serde_path_to_error",
+ "stack_list",
+ "strum",
+ "syn 2.0.72",
+ "tokio",
+ "tower",
+ "tracing",
+ "typify",
+ "uuid",
 ]
 
 [[package]]

@@ -1,0 +1,23 @@
+[package]
+name = "test-suite"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+clap = { version = "4.5.15", features = ["derive"] }
+ez-jsonrpc = "0.2.0"
+owo-colors = "4.0.0"
+serde = { version = "1.0.207", features = ["derive"] }
+bindings = { path = "../bindings" }
+strum = "0.26.3"
+derive_more = "1.0.0"
+anyhow = "1.0.86"
+schemars = { version = "0.8.21", features = ["derive"] }
+reqwest = "0.12.5"
+humantime-serde = "1.1.1"
+serde_path_to_error = "0.1.16"
+anstream = "0.6.15"
+serde_json = "1.0.125"
+assert2 = "0.3.14"
+itertools = "0.13.0"
