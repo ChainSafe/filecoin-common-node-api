@@ -33,6 +33,8 @@ use std::{
     str::FromStr,
 };
 
+pub use test_harness::V0Client;
+
 const USER_AGENT: &str = concat!(env!("CARGO_PKG_NAME"), "/", env!("CARGO_PKG_VERSION"));
 
 /// Utilities for creating, interacting with, and testing against the Filecoin

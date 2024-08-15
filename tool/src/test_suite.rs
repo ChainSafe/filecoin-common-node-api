@@ -1,5 +1,9 @@
-use crate::test_harness::{v0read, Context as _, Tag, Test};
+use crate::test_harness::prelude::*;
 
 pub fn test_suite() -> Vec<Test<'static>> {
-    [].into()
+    [v0read("chain head", [Tag::SchemaCoverage], |client| {
+        client.Filecoin_ChainHead()?;
+        Ok(())
+    })]
+    .into()
 }

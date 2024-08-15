@@ -38,6 +38,12 @@ use ez_jsonrpc::{
 use owo_colors::OwoColorize as _;
 use serde::{de::DeserializeOwned, Deserialize};
 
+#[allow(unused)]
+pub mod prelude {
+    pub use super::{v0admin, v0read, v0write, Context as _, Tag, Test};
+    pub use bindings::v0::{self, Api as _};
+}
+
 pub use config::Harness as Config;
 
 /// Create a test case that is provided with a [`V0Client`] with a `read` token.
@@ -49,12 +55,36 @@ pub use config::Harness as Config;
 pub fn v0read<'a>(
     name: impl Into<String>,
     tags: impl IntoIterator<Item = Tag>,
-    f: impl FnOnce(V0Client) -> Result<(), TestFailure> + 'a,
+    f: impl FnOnce(&mut V0Client) -> Result<(), TestFailure> + 'a,
 ) -> Test<'a> {
     Test {
         name: name.into(),
         tags: tags.into_iter().collect(),
         inner: TestInner::V0Read(Box::new(f)),
+    }
+}
+/// Like [`v0read`], but with a `write` token.
+pub fn v0write<'a>(
+    name: impl Into<String>,
+    tags: impl IntoIterator<Item = Tag>,
+    f: impl FnOnce(&mut V0Client) -> Result<(), TestFailure> + 'a,
+) -> Test<'a> {
+    Test {
+        name: name.into(),
+        tags: tags.into_iter().collect(),
+        inner: TestInner::V0Write(Box::new(f)),
+    }
+}
+/// Like [`v0read`], but with an `admin` token.
+pub fn v0admin<'a>(
+    name: impl Into<String>,
+    tags: impl IntoIterator<Item = Tag>,
+    f: impl FnOnce(&mut V0Client) -> Result<(), TestFailure> + 'a,
+) -> Test<'a> {
+    Test {
+        name: name.into(),
+        tags: tags.into_iter().collect(),
+        inner: TestInner::V0Admin(Box::new(f)),
     }
 }
 
@@ -85,8 +115,21 @@ pub enum Tag {
     SchemaCoverage,
 }
 
-#[derive(Debug)]
+// These Deref impls allow the user to set timeouts and make logs.
+#[derive(Debug, derive_more::Deref, derive_more::DerefMut)]
 pub struct V0Client(Client);
+
+impl bindings::v0::Api for V0Client {
+    type Error = TestFailure;
+
+    fn call<T: DeserializeOwned>(
+        &mut self,
+        method: impl Into<String>,
+        params: impl ez_jsonrpc::params::SerializePositional,
+    ) -> Result<T, Self::Error> {
+        self.0.call(method, params)
+    }
+}
 
 /// Represents that a single test has failed - the runner may stop running.
 ///
@@ -128,8 +171,11 @@ where
 }
 
 /// We support a small number of test scenarios.
+#[allow(clippy::type_complexity, clippy::enum_variant_names)]
 enum TestInner<'a> {
-    V0Read(Box<dyn FnOnce(V0Client) -> Result<(), TestFailure> + 'a>),
+    V0Read(Box<dyn FnOnce(&mut V0Client) -> Result<(), TestFailure> + 'a>),
+    V0Write(Box<dyn FnOnce(&mut V0Client) -> Result<(), TestFailure> + 'a>),
+    V0Admin(Box<dyn FnOnce(&mut V0Client) -> Result<(), TestFailure> + 'a>),
 }
 
 /// On-disk config for the harness.
@@ -142,7 +188,6 @@ mod config {
     pub struct Harness {
         pub(super) v0: Option<Client>,
         pub(super) timeouts: Option<Timeout>,
-        pub(super) exclude: Option<Vec<String>>,
     }
 
     #[derive(Deserialize, Default, JsonSchema)]
@@ -165,7 +210,9 @@ mod config {
 }
 
 struct RunnerClients {
-    v0read: Option<Client>,
+    v0read: Option<V0Client>,
+    v0write: Option<V0Client>,
+    v0admin: Option<V0Client>,
 }
 
 impl RunnerClients {
@@ -177,16 +224,21 @@ impl RunnerClients {
             .user_agent(crate::USER_AGENT)
             .build()
             .expect("couldn't initialize client");
+        let mk = |config: &Option<config::Client>, auth_mode| {
+            config.as_ref().and_then(|config| {
+                Client::from_config(&client, log, config, timeouts.as_ref(), auth_mode)
+            })
+        };
         Self {
-            v0read: v0.as_ref().and_then(|config| {
-                Client::from_config(&client, log, config, timeouts.as_ref(), AuthMode::Read)
-            }),
+            v0read: mk(v0, AuthMode::Read).map(V0Client),
+            v0write: mk(v0, AuthMode::Write).map(V0Client),
+            v0admin: mk(v0, AuthMode::Admin).map(V0Client),
         }
     }
 }
 
 #[derive(Debug, Clone)]
-struct Client {
+pub struct Client {
     client: reqwest::blocking::Client,
     token: Option<String>,
     url: String,
@@ -199,6 +251,15 @@ struct Client {
 }
 
 impl Client {
+    pub fn long_timeout(&mut self) {
+        self.timeout_mode = TimeoutMode::Long
+    }
+    pub fn default_timeout(&mut self) {
+        self.timeout_mode = TimeoutMode::Default
+    }
+    pub fn log(&mut self, log: impl fmt::Display) {
+        self.log.log(LogEvent::User(log.to_string()))
+    }
     fn from_config(
         client: &reqwest::blocking::Client,
         log: &LogSender,
@@ -228,7 +289,7 @@ impl Client {
                 .and_then(|it| it.default)
                 .unwrap_or(Duration::from_secs(30)),
             timeout_long: timeouts
-                .and_then(|it| it.default)
+                .and_then(|it| it.long)
                 .unwrap_or(Duration::from_secs(90)),
         })
     }
@@ -323,7 +384,7 @@ pub fn run<'a>(
     let (log_tx, log_rx) = mpsc::channel();
     let log = LogSender(log_tx);
 
-    let runner_clients = RunnerClients::from_config(&config, &log);
+    let mut runner_clients = RunnerClients::from_config(&config, &log);
 
     let mut skipped = 0;
     let mut succeeded = 0;
@@ -342,14 +403,28 @@ pub fn run<'a>(
             skipped += 1;
             continue;
         }
-        let res = match (inner, &runner_clients) {
+        let res = match (inner, &mut runner_clients) {
             (
                 TestInner::V0Read(runme),
                 RunnerClients {
                     v0read: Some(client),
                     ..
                 },
-            ) => panic::catch_unwind(AssertUnwindSafe(|| runme(V0Client(client.clone())))),
+            )
+            | (
+                TestInner::V0Write(runme),
+                RunnerClients {
+                    v0write: Some(client),
+                    ..
+                },
+            )
+            | (
+                TestInner::V0Admin(runme),
+                RunnerClients {
+                    v0admin: Some(client),
+                    ..
+                },
+            ) => panic::catch_unwind(AssertUnwindSafe(|| runme(client))),
             _ => {
                 writeln!(stdout, "{}", "skipped (harness)".yellow())?;
                 skipped += 1;
