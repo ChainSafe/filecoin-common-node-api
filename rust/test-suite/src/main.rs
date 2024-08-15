@@ -6,15 +6,22 @@ use serde_json::json;
 
 mod tests;
 
+// for dead code analysis
+pub use harness::V0Client;
+
 const USER_AGENT: &str = concat!(env!("CARGO_PKG_NAME"), "/", env!("CARGO_PKG_VERSION"));
 
 /// Filecoin RPC test suite.
 #[derive(Parser)]
-enum Test {
+enum Args {
     /// Print each test as a line of JSON to stdout.
     List,
     /// Run the tests, loading the given config file.
     Run {
+        /// The config file should match the schema given by the `config-schema`
+        /// subcommand.
+        ///
+        /// Tests will only run if the required config is available.
         config: PathBuf,
         /// If supplied, only run tests with this name.
         include: Vec<String>,
@@ -24,8 +31,8 @@ enum Test {
 }
 
 fn main() -> anyhow::Result<()> {
-    match Test::parse() {
-        Test::List => {
+    match Args::parse() {
+        Args::List => {
             for test in tests::all() {
                 let j = json!({
                     "name": test.name(),
@@ -35,8 +42,8 @@ fn main() -> anyhow::Result<()> {
                 serde_json::to_writer(io::stdout(), &j)?;
             }
         }
-        Test::ConfigSchema => serde_json::to_writer(io::stdout(), &schema_for!(harness::Config))?,
-        Test::Run { config, include } => {
+        Args::ConfigSchema => serde_json::to_writer(io::stdout(), &schema_for!(harness::Config))?,
+        Args::Run { config, include } => {
             let include = include.into_iter().collect::<BTreeSet<_>>();
             harness::run(
                 tests::all(),
@@ -177,7 +184,7 @@ mod harness {
             &self.tags
         }
         pub fn definition_site(&self) -> &Location<'_> {
-            &self.definition_site
+            self.definition_site
         }
     }
 
@@ -698,4 +705,10 @@ mod harness {
         }
         Ok(())
     }
+}
+
+#[test]
+fn doc() {
+    expect_test::expect_file!["../README.md"]
+        .assert_eq(&util::markdown(&<Args as clap::CommandFactory>::command()));
 }

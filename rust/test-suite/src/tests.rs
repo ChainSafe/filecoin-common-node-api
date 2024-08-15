@@ -7,8 +7,6 @@
 //! a v0 RPC API.
 //!
 //! Tests are free to [`panic!`], [`assert!`], [`fail!`], or [propogate errors](crate::harness::Context).
-//!
-//!
 
 pub use crate::harness::prelude::*;
 pub use assert2::assert;

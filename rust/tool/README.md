@@ -1,29 +1,30 @@
-# `filecoin-common-node-api-tool`
+# `tool`
 
 ```
 Utilities for creating, interacting with, and testing against the Filecoin Common Node API
 
-Usage: filecoin-common-node-api-tool <COMMAND>
+Usage: tool <COMMAND>
 
 Commands:
-  openrpc   Subommands related to processing OpenRPC documents
+  openrpc   Subcommands related to processing OpenRPC documents
   csv2json  Interpret stdin as a `delimiter`-separated series of lines, with a header, and print JSON
-  json-rpc  Interact with JSON-RPC endpoints
+  json-rpc  Subcommands for interacting with JSON-RPC endpoints
 
 ```
-## `filecoin-common-node-api-tool` `openrpc`
+## `tool` `openrpc`
 
 ```
-Subommands related to processing OpenRPC documents
+Subcommands related to processing OpenRPC documents
 
 Usage: openrpc <COMMAND>
 
 Commands:
   validate  Performs validation of the spec, including FIP-specific validation
   select    Interpret `select` as a json document of methods to include in `openrpc`
+  generate  Read an OpenRPC specification from stdin, and print Rust code for a client trait
 
 ```
-### `filecoin-common-node-api-tool` `openrpc` `validate`
+### `tool` `openrpc` `validate`
 
 ```
 Performs validation of the spec, including FIP-specific validation.
@@ -44,7 +45,7 @@ Arguments:
   <SPEC>
 
 ```
-### `filecoin-common-node-api-tool` `openrpc` `select`
+### `tool` `openrpc` `select`
 
 ```
 Interpret `select` as a json document of methods to include in `openrpc`.
@@ -68,7 +69,18 @@ Options:
           Specify a new version for the schema
 
 ```
-## `filecoin-common-node-api-tool` `csv2json`
+### `tool` `openrpc` `generate`
+
+```
+Read an OpenRPC specification from stdin, and print Rust code for a client trait
+
+Usage: generate <TRAIT_NAME>
+
+Arguments:
+  <TRAIT_NAME>
+
+```
+## `tool` `csv2json`
 
 ```
 Interpret stdin as a `delimiter`-separated series of lines, with a header, and print JSON
@@ -80,10 +92,10 @@ Options:
           [default: "\t"]
 
 ```
-## `filecoin-common-node-api-tool` `json-rpc`
+## `tool` `json-rpc`
 
 ```
-Interact with JSON-RPC endpoints
+Subcommands for interacting with JSON-RPC endpoints
 
 Usage: json-rpc <COMMAND>
 
@@ -92,7 +104,7 @@ Commands:
   play     Receive's stdin's concatenated JSON summaries of JSON-RPC dialogue (as output by the `json-rpc capture` command)
 
 ```
-### `filecoin-common-node-api-tool` `json-rpc` `capture`
+### `tool` `json-rpc` `capture`
 
 ```
 Start a HTTP server, forwarding all requests to a single URI.
@@ -117,7 +129,7 @@ Options:
           The remote URI to forward requests to
 
 ```
-### `filecoin-common-node-api-tool` `json-rpc` `play`
+### `tool` `json-rpc` `play`
 
 ```
 Receive's stdin's concatenated JSON summaries of JSON-RPC dialogue (as output by the `json-rpc capture` command).

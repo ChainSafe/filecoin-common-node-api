@@ -690,40 +690,6 @@ impl FromStr for Header {
 
 #[test]
 fn doc() {
-    use stack_list::Node;
-
-    fn write(buf: &mut String, tail: &Node<&str>, cmd: &clap::Command) {
-        if !matches!(tail, Node::Root) {
-            buf.push('\n');
-        }
-        let path = Node::Head {
-            data: cmd.get_name(),
-            tail,
-        };
-        for _ in 0..path.count() {
-            buf.push('#')
-        }
-        path.for_each_rev(|component| {
-            buf.push_str(" `");
-            buf.push_str(component);
-            buf.push('`');
-        });
-        buf.push('\n');
-        let mut cmd = cmd
-            .clone()
-            .disable_help_subcommand(true)
-            .disable_help_flag(true);
-        std::fmt::write(buf, format_args!("\n```\n{}\n```", cmd.render_long_help())).unwrap();
-        for sub in cmd.get_subcommands() {
-            write(buf, &path, sub)
-        }
-    }
-
-    let mut buf = String::new();
-    write(
-        &mut buf,
-        &Node::Root,
-        &<Args as clap::CommandFactory>::command(),
-    );
-    expect_test::expect_file!["../README.md"].assert_eq(&buf);
+    expect_test::expect_file!["../README.md"]
+        .assert_eq(&util::markdown(&<Args as clap::CommandFactory>::command()));
 }
