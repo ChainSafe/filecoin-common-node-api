@@ -1,0 +1,9 @@
+[package]
+name = "bindings"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+ez-jsonrpc = "0.2.0"
+serde = { version = "1.0.207", features = ["derive"] }
