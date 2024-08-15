@@ -21,7 +21,7 @@ $ cargo run --manifest-path ./rust/Cargo.toml --package test-suite -- list
 
 Capture JSON-RPC calls
 ```console
-$ cargo run --manifest-path ./rust/Cargo.toml --package tool -- jsonrpc capture --help
+$ cargo run --manifest-path ./rust/Cargo.toml --package tool -- json-rpc capture --help
 ```
 
 Validate the spec, and perhaps captured calls
