@@ -7,7 +7,10 @@ use schemars::schema::{
 };
 use syn::Ident;
 
-pub fn generate(mut doc: openrpc_types::resolved::OpenRPC) -> anyhow::Result<TokenStream> {
+pub fn generate(
+    mut doc: openrpc_types::resolved::OpenRPC,
+    trait_name: Ident,
+) -> anyhow::Result<TokenStream> {
     if let Some(components_schemas) = doc.components.as_mut().and_then(|it| it.schemas.as_mut()) {
         for schema in components_schemas.values_mut() {
             rewrite_references(schema, |it| {
@@ -76,7 +79,7 @@ pub fn generate(mut doc: openrpc_types::resolved::OpenRPC) -> anyhow::Result<Tok
                 .collect::<Result<Vec<_>, _>>()?;
             match ret {
                 Some(ret) => acc.extend(quote! {
-                    pub fn #fn_name(&mut self, #(#params),*) -> Result<#ret, TestFailure> {
+                    fn #fn_name(&mut self, #(#params),*) -> Result<#ret, Self::Error> {
                         self.call(#name, (#(#vars,)*))
                     }
                 }),
@@ -88,14 +91,19 @@ pub fn generate(mut doc: openrpc_types::resolved::OpenRPC) -> anyhow::Result<Tok
 
     Ok(quote! {
         #![allow(clippy::to_string_trait_impl, clippy::clone_on_copy)]
-
-        use super::TestFailure;
-        use serde::{Serialize, Deserialize};
+        use serde::{Serialize, Deserialize, de::DeserializeOwned};
 
         #[allow(non_snake_case, unused)]
-        impl super::RunTest {
+        pub trait #trait_name {
+            type Error;
+            fn call<T: DeserializeOwned>(
+                &mut self,
+                method: impl Into<String>,
+                params: impl ez_jsonrpc::params::SerializePositional
+            ) -> Result<T, Self::Error>;
             #method_code
         }
+
         #space
     })
 }

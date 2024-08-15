@@ -174,11 +174,7 @@ impl RunnerClients {
 
         // Shared client for conneciton pooling
         let client = reqwest::blocking::Client::builder()
-            .user_agent(concat!(
-                env!("CARGO_PKG_NAME"),
-                "/",
-                env!("CARGO_PKG_VERSION")
-            ))
+            .user_agent(crate::USER_AGENT)
             .build()
             .expect("couldn't initialize client");
         Self {

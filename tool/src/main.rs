@@ -33,6 +33,8 @@ use std::{
     str::FromStr,
 };
 
+const USER_AGENT: &str = concat!(env!("CARGO_PKG_NAME"), "/", env!("CARGO_PKG_VERSION"));
+
 /// Utilities for creating, interacting with, and testing against the Filecoin
 /// Common Node API.
 #[derive(Parser)]
@@ -51,7 +53,7 @@ enum Args {
     Test(Test),
 }
 
-/// Subommands related to processing OpenRPC documents.
+/// Subcommands related to processing OpenRPC documents.
 #[derive(Parser)]
 enum Openrpc {
     /// Performs validation of the spec, including FIP-specific validation.
@@ -69,9 +71,7 @@ enum Openrpc {
     ///
     /// If there is only a single dialogue, and it fails to validate,
     /// more detailed errors will be emitted.
-    Validate {
-        spec: PathBuf,
-    },
+    Validate { spec: PathBuf },
     /// Interpret `select` as a json document of methods to include in `openrpc`.
     ///
     /// A new schema with only the selected methods is printed to stdout.
@@ -85,10 +85,12 @@ enum Openrpc {
         #[arg(long)]
         overwrite_version: Option<String>,
     },
-    Generate,
+    /// Read an OpenRPC specification from stdin,
+    /// and print Rust code for a client trait.
+    Generate { trait_name: String },
 }
 
-/// Interact with JSON-RPC endpoints.
+/// Subcommands for interacting with JSON-RPC endpoints.
 #[derive(Parser)]
 enum JsonRpc {
     /// Start a HTTP server, forwarding all requests to a single URI.
@@ -136,7 +138,7 @@ enum JsonRpc {
     },
 }
 
-/// Run the RPC test suite.
+/// Subcommands for running the RPC test suite.
 #[derive(Parser)]
 enum Test {
     /// List all tests and their tags, tab-separated to stdout.
@@ -227,9 +229,11 @@ fn main() -> anyhow::Result<()> {
             serde_json::to_writer_pretty(io::stdout(), &openrpc)?;
             Ok(())
         }
-        Args::Openrpc(Openrpc::Generate) => {
-            let tokens =
-                generate::generate(resolve_within(serde_json::from_reader(io::stdin())?)?)?;
+        Args::Openrpc(Openrpc::Generate { trait_name }) => {
+            let tokens = generate::generate(
+                resolve_within(serde_json::from_reader(io::stdin())?)?,
+                syn::parse_str(&trait_name)?,
+            )?;
             println!("{}", tokens);
             Ok(())
         }
@@ -286,11 +290,7 @@ fn main() -> anyhow::Result<()> {
 async fn play(header: Vec<Header>, remote: String, keep_going: bool) -> anyhow::Result<()> {
     let mut errs = ErrorEmitter::new(io::stderr());
     let client = reqwest::Client::builder()
-        .user_agent(concat!(
-            env!("CARGO_PKG_NAME"),
-            "/",
-            env!("CARGO_PKG_VERSION")
-        ))
+        .user_agent(USER_AGENT)
         .default_headers(
             header
                 .into_iter()
