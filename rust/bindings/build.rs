@@ -1,3 +1,6 @@
+//! This crate interprets all '*.json' files in `/specs` as OpenRPC documents,
+//! and generates corresponding modules based on the filename.
+
 use anyhow::{bail, Context as _};
 use proc_macro2::TokenStream;
 use quote::quote;
@@ -7,10 +10,68 @@ use schemars::schema::{
 };
 use syn::Ident;
 
-pub fn generate(
-    mut doc: openrpc_types::resolved::OpenRPC,
-    trait_name: Ident,
-) -> anyhow::Result<TokenStream> {
+use std::{
+    env,
+    ffi::OsStr,
+    fs::{self, File},
+    path::Path,
+};
+
+fn main() -> anyhow::Result<()> {
+    let dir = concat!(env!("CARGO_MANIFEST_DIR"), "/specs/");
+    println!("cargo::rerun-if-changed={}", dir);
+
+    let mut modules = TokenStream::new();
+    for entry in fs::read_dir(dir)? {
+        let entry = entry?;
+        let path = entry.path();
+        if entry.metadata()?.is_file()
+            && path.extension().is_some_and(|it| it == "json")
+            && path
+                .file_name()
+                .is_some_and(|it| !it.to_string_lossy().starts_with('.'))
+        {
+            modules.extend(
+                file2module(&path).context(format!("couldn't process file {}", path.display()))?,
+            )
+        }
+    }
+
+    let pretty = prettyplease::unparse(&syn::parse2(modules).context("internal codegen error")?);
+    let mut out = env::var_os("OUT_DIR").context("invalid build script environment")?;
+    out.push("/bindings.rs");
+    fs::write(out, pretty).context("couldn't write generated code")?;
+
+    Ok(())
+}
+
+fn file2module(path: &Path) -> anyhow::Result<TokenStream> {
+    let file_stem = path
+        .file_stem()
+        .and_then(OsStr::to_str)
+        .context("bad or no file name")?;
+    let mod_name = syn::parse_str::<syn::Ident>(
+        file_stem
+            .split_once(char::is_whitespace)
+            .map(|(before, _after)| before)
+            .unwrap_or(file_stem),
+    )
+    .context("filename must of the form `IDENT` or `IDENT + WHITESPACE + IGNORED`")?;
+    let doc = openrpc_types::resolve_within(
+        serde_json::from_reader(File::open(path).context("couldn't open file")?)
+            .context("couldn't parse file as OpenRPC document")?,
+    )
+    .context("couldn't resolve OpenRPC references")?;
+    let code = doc2code(doc).context("couldn't generate code")?;
+    Ok(quote! {
+        pub mod #mod_name {
+            #code
+        }
+    })
+}
+
+/// Generates a `trait Api { .. }`, and associated types
+fn doc2code(mut doc: openrpc_types::resolved::OpenRPC) -> anyhow::Result<TokenStream> {
     if let Some(components_schemas) = doc.components.as_mut().and_then(|it| it.schemas.as_mut()) {
         for schema in components_schemas.values_mut() {
             rewrite_references(schema, |it| {
@@ -94,7 +155,7 @@ pub fn generate(
         use serde::{Serialize, Deserialize, de::DeserializeOwned};
 
         #[allow(non_snake_case, unused)]
-        pub trait #trait_name {
+        pub trait Api {
             type Error;
             fn call<T: DeserializeOwned>(
                 &mut self,
