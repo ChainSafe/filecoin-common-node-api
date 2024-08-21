@@ -45,6 +45,7 @@ fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
+/// Generate a `pub mod $ident { trait Api { .. } .. }` for a file at the given path.
 fn file2module(path: &Path) -> anyhow::Result<TokenStream> {
     let file_stem = path
         .file_stem()
@@ -56,7 +57,7 @@ fn file2module(path: &Path) -> anyhow::Result<TokenStream> {
             .map(|(before, _after)| before)
             .unwrap_or(file_stem),
     )
-    .context("filename must of the form `IDENT` or `IDENT + WHITESPACE + IGNORED`")?;
+    .context("filename must of the form `IDENT` or `IDENT + WHITESPACE + IGNORED`, e.g `v0 some-ignored-comment.json`")?;
     let doc = openrpc_types::resolve_within(
         serde_json::from_reader(File::open(path).context("couldn't open file")?)
             .context("couldn't parse file as OpenRPC document")?,
@@ -254,7 +255,10 @@ fn rewrite_references(
     Ok(())
 }
 
-// break trait solver cycles
+/// Recursive functions which accept a trait can end up in a trait solver cycle
+/// for e.g `&mut &mut ... FnMut`.
+///
+/// Break that cycle by going with dynamic dispatch.
 fn cast<U>(f: &mut impl FnMut(&mut String) -> U) -> &mut dyn FnMut(&mut String) -> U {
     f as _
 }
