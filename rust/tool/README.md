@@ -21,7 +21,6 @@ Usage: openrpc <COMMAND>
 Commands:
   validate  Performs validation of the spec, including FIP-specific validation
   select    Interpret `select` as a json document of methods to include in `openrpc`
-  generate  Read an OpenRPC specification from stdin, and print Rust code for a client trait
 
 ```
 ### `tool` `openrpc` `validate`
@@ -67,17 +66,6 @@ Options:
 
       --overwrite-version <OVERWRITE_VERSION>
           Specify a new version for the schema
-
-```
-### `tool` `openrpc` `generate`
-
-```
-Read an OpenRPC specification from stdin, and print Rust code for a client trait
-
-Usage: generate <TRAIT_NAME>
-
-Arguments:
-  <TRAIT_NAME>
 
 ```
 ## `tool` `csv2json`
