@@ -202,6 +202,7 @@ fn rewrite_references(
             .as_deref_mut()
             .iter_mut()
             .flat_map(
+                // descend into the "array" member of the JSON Schema.
                 |ArrayValidation {
                      items,
                      additional_items,
@@ -218,6 +219,7 @@ fn rewrite_references(
                 },
             )
             .chain(object.as_deref_mut().iter_mut().flat_map(
+                // descend into the "object" member of the JSON Schema.
                 |ObjectValidation {
                      properties,
                      pattern_properties,
@@ -233,6 +235,7 @@ fn rewrite_references(
                 },
             ))
             .chain(subschemas.as_deref_mut().into_iter().flat_map(
+                // descend into the "anyOf"/"oneOf" etc. members of the JSON Schema.
                 |SubschemaValidation {
                      all_of,
                      any_of,
