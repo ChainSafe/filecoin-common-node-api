@@ -73,6 +73,88 @@
       "paramStructure": "by-position"
     },
     {
+      "name": "Filecoin.ChainExport",
+      "params": [
+        {
+          "name": "params",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/ChainExportParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.ChainExport.Result",
+        "required": false,
+        "schema": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.ChainGetBlock",
+      "params": [
+        {
+          "name": "cid",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Cid"
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.ChainGetBlock.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/BlockHeader"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.ChainGetBlockMessages",
+      "params": [
+        {
+          "name": "cid",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Cid"
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.ChainGetBlockMessages.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/BlockMessages"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.ChainGetGenesis",
+      "params": [],
+      "result": {
+        "name": "Filecoin.ChainGetGenesis.Result",
+        "required": false,
+        "schema": {
+          "anyOf": [
+            {
+              "$ref": "#/components/schemas/Tipset"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
       "name": "Filecoin.ChainGetMessage",
       "params": [
         {
@@ -88,6 +170,60 @@
         "required": true,
         "schema": {
           "$ref": "#/components/schemas/Message"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.ChainGetMessagesInTipset",
+      "params": [
+        {
+          "name": "tsk",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.ChainGetMessagesInTipset.Result",
+        "required": false,
+        "schema": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/components/schemas/ApiMessage"
+          }
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.ChainGetMinBaseFee",
+      "params": [
+        {
+          "name": "lookback",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "uint32",
+            "minimum": 0.0
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.ChainGetMinBaseFee.Result",
+        "required": true,
+        "schema": {
+          "type": "string"
         }
       },
       "paramStructure": "by-position"
@@ -145,155 +281,6 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.ChainGetMessagesInTipset",
-      "params": [
-        {
-          "name": "tsk",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.ChainGetMessagesInTipset.Result",
-        "required": false,
-        "schema": {
-          "type": [
-            "array",
-            "null"
-          ],
-          "items": {
-            "$ref": "#/components/schemas/ApiMessage"
-          }
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.ChainExport",
-      "params": [
-        {
-          "name": "params",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/ChainExportParams"
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.ChainExport.Result",
-        "required": false,
-        "schema": {
-          "type": [
-            "string",
-            "null"
-          ]
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.ChainReadObj",
-      "params": [
-        {
-          "name": "cid",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Cid"
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.ChainReadObj.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/Base64String"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.ChainHasObj",
-      "params": [
-        {
-          "name": "cid",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Cid"
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.ChainHasObj.Result",
-        "required": true,
-        "schema": {
-          "type": "boolean"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.ChainStatObj",
-      "params": [
-        {
-          "name": "obj_cid",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Cid"
-          }
-        },
-        {
-          "name": "base_cid",
-          "required": true,
-          "schema": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/Cid"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.ChainStatObj.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/ObjStat"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.ChainGetBlockMessages",
-      "params": [
-        {
-          "name": "cid",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Cid"
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.ChainGetBlockMessages.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/BlockMessages"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
       "name": "Filecoin.ChainGetPath",
       "params": [
         {
@@ -322,6 +309,32 @@
           "items": {
             "$ref": "#/components/schemas/PathChange_for_Tipset"
           }
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.ChainGetTipSet",
+      "params": [
+        {
+          "name": "tsk",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.ChainGetTipSet.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Tipset"
         }
       },
       "paramStructure": "by-position"
@@ -361,20 +374,21 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.ChainGetGenesis",
-      "params": [],
+      "name": "Filecoin.ChainHasObj",
+      "params": [
+        {
+          "name": "cid",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Cid"
+          }
+        }
+      ],
       "result": {
-        "name": "Filecoin.ChainGetGenesis.Result",
-        "required": false,
+        "name": "Filecoin.ChainHasObj.Result",
+        "required": true,
         "schema": {
-          "anyOf": [
-            {
-              "$ref": "#/components/schemas/Tipset"
-            },
-            {
-              "type": "null"
-            }
-          ]
+          "type": "boolean"
         }
       },
       "paramStructure": "by-position"
@@ -392,7 +406,7 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.ChainGetBlock",
+      "name": "Filecoin.ChainReadObj",
       "params": [
         {
           "name": "cid",
@@ -403,36 +417,10 @@
         }
       ],
       "result": {
-        "name": "Filecoin.ChainGetBlock.Result",
+        "name": "Filecoin.ChainReadObj.Result",
         "required": true,
         "schema": {
-          "$ref": "#/components/schemas/BlockHeader"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.ChainGetTipSet",
-      "params": [
-        {
-          "name": "tsk",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.ChainGetTipSet.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/Tipset"
+          "$ref": "#/components/schemas/Base64String"
         }
       },
       "paramStructure": "by-position"
@@ -464,23 +452,35 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.ChainGetMinBaseFee",
+      "name": "Filecoin.ChainStatObj",
       "params": [
         {
-          "name": "lookback",
+          "name": "obj_cid",
           "required": true,
           "schema": {
-            "type": "integer",
-            "format": "uint32",
-            "minimum": 0.0
+            "$ref": "#/components/schemas/Cid"
+          }
+        },
+        {
+          "name": "base_cid",
+          "required": true,
+          "schema": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Cid"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         }
       ],
       "result": {
-        "name": "Filecoin.ChainGetMinBaseFee.Result",
+        "name": "Filecoin.ChainStatObj.Result",
         "required": true,
         "schema": {
-          "type": "string"
+          "$ref": "#/components/schemas/ObjStat"
         }
       },
       "paramStructure": "by-position"
@@ -525,18 +525,6 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.Version",
-      "params": [],
-      "result": {
-        "name": "Filecoin.Version.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/PublicVersion"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
       "name": "Filecoin.Shutdown",
       "params": [],
       "result": {
@@ -557,87 +545,6 @@
         "schema": {
           "type": "string",
           "format": "date-time"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.GasEstimateGasLimit",
-      "params": [
-        {
-          "name": "msg",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Message"
-          }
-        },
-        {
-          "name": "tsk",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.GasEstimateGasLimit.Result",
-        "required": true,
-        "schema": {
-          "type": "integer",
-          "format": "int64"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.GasEstimateMessageGas",
-      "params": [
-        {
-          "name": "msg",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Message"
-          }
-        },
-        {
-          "name": "spec",
-          "required": true,
-          "schema": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/MessageSendSpec"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        },
-        {
-          "name": "tsk",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.GasEstimateMessageGas.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/Message"
         }
       },
       "paramStructure": "by-position"
@@ -679,6 +586,40 @@
         "required": true,
         "schema": {
           "type": "string"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.GasEstimateGasLimit",
+      "params": [
+        {
+          "name": "msg",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Message"
+          }
+        },
+        {
+          "name": "tsk",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.GasEstimateGasLimit.Result",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "format": "int64"
         }
       },
       "paramStructure": "by-position"
@@ -729,6 +670,53 @@
         "required": true,
         "schema": {
           "type": "string"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.GasEstimateMessageGas",
+      "params": [
+        {
+          "name": "msg",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Message"
+          }
+        },
+        {
+          "name": "spec",
+          "required": true,
+          "schema": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MessageSendSpec"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        {
+          "name": "tsk",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.GasEstimateMessageGas.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Message"
         }
       },
       "paramStructure": "by-position"
@@ -802,6 +790,70 @@
       "paramStructure": "by-position"
     },
     {
+      "name": "Filecoin.MpoolBatchPush",
+      "params": [
+        {
+          "name": "msgs",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/SignedMessage"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.MpoolBatchPush.Result",
+        "required": false,
+        "schema": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/components/schemas/Cid"
+          }
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.MpoolBatchPushUntrusted",
+      "params": [
+        {
+          "name": "msgs",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/SignedMessage"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.MpoolBatchPushUntrusted.Result",
+        "required": false,
+        "schema": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/components/schemas/Cid"
+          }
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
       "name": "Filecoin.MpoolGetNonce",
       "params": [
         {
@@ -853,46 +905,6 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.MpoolSelect",
-      "params": [
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        },
-        {
-          "name": "ticket_quality",
-          "required": true,
-          "schema": {
-            "type": "number",
-            "format": "double"
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.MpoolSelect.Result",
-        "required": false,
-        "schema": {
-          "type": [
-            "array",
-            "null"
-          ],
-          "items": {
-            "$ref": "#/components/schemas/SignedMessage"
-          }
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
       "name": "Filecoin.MpoolPush",
       "params": [
         {
@@ -905,26 +917,6 @@
       ],
       "result": {
         "name": "Filecoin.MpoolPush.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/Cid"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.MpoolPushUntrusted",
-      "params": [
-        {
-          "name": "msg",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/SignedMessage"
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.MpoolPushUntrusted.Result",
         "required": true,
         "schema": {
           "$ref": "#/components/schemas/Cid"
@@ -962,6 +954,66 @@
         "required": true,
         "schema": {
           "$ref": "#/components/schemas/SignedMessage"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.MpoolPushUntrusted",
+      "params": [
+        {
+          "name": "msg",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/SignedMessage"
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.MpoolPushUntrusted.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Cid"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.MpoolSelect",
+      "params": [
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        },
+        {
+          "name": "ticket_quality",
+          "required": true,
+          "schema": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.MpoolSelect.Result",
+        "required": false,
+        "schema": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/components/schemas/SignedMessage"
+          }
         }
       },
       "paramStructure": "by-position"
@@ -1130,31 +1182,33 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.NetPeers",
-      "params": [],
-      "result": {
-        "name": "Filecoin.NetPeers.Result",
-        "required": false,
-        "schema": {
-          "type": [
-            "array",
-            "null"
-          ],
-          "items": {
-            "$ref": "#/components/schemas/AddrInfo"
+      "name": "Filecoin.NetAgentVersion",
+      "params": [
+        {
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
           }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.NetAgentVersion.Result",
+        "required": true,
+        "schema": {
+          "type": "string"
         }
       },
       "paramStructure": "by-position"
     },
     {
-      "name": "Forest.NetInfo",
+      "name": "Filecoin.NetAutoNatStatus",
       "params": [],
       "result": {
-        "name": "Forest.NetInfo.Result",
+        "name": "Filecoin.NetAutoNatStatus.Result",
         "required": true,
         "schema": {
-          "$ref": "#/components/schemas/NetInfoResult"
+          "$ref": "#/components/schemas/NatStatusResult"
         }
       },
       "paramStructure": "by-position"
@@ -1200,58 +1254,6 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.NetAgentVersion",
-      "params": [
-        {
-          "name": "id",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.NetAgentVersion.Result",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.NetAutoNatStatus",
-      "params": [],
-      "result": {
-        "name": "Filecoin.NetAutoNatStatus.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/NatStatusResult"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.NetProtectAdd",
-      "params": [
-        {
-          "name": "acl",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.NetProtectAdd.Result",
-        "required": true,
-        "schema": {
-          "type": "null"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
       "name": "Filecoin.NetFindPeer",
       "params": [
         {
@@ -1272,84 +1274,22 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.NodeStatus",
+      "name": "Forest.NetInfo",
       "params": [],
       "result": {
-        "name": "Filecoin.NodeStatus.Result",
+        "name": "Forest.NetInfo.Result",
         "required": true,
         "schema": {
-          "$ref": "#/components/schemas/NodeStatusResult"
+          "$ref": "#/components/schemas/NetInfoResult"
         }
       },
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.StateCall",
-      "params": [
-        {
-          "name": "message",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Message"
-          }
-        },
-        {
-          "name": "tsk",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
+      "name": "Filecoin.NetPeers",
+      "params": [],
       "result": {
-        "name": "Filecoin.StateCall.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/ApiInvocResult"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateListMessages",
-      "params": [
-        {
-          "name": "message_filter",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/MessageFilter"
-          }
-        },
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        },
-        {
-          "name": "max_height",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateListMessages.Result",
+        "name": "Filecoin.NetPeers.Result",
         "required": false,
         "schema": {
           "type": [
@@ -1357,156 +1297,78 @@
             "null"
           ],
           "items": {
-            "$ref": "#/components/schemas/Cid"
+            "$ref": "#/components/schemas/AddrInfo"
           }
         }
       },
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.StateGetNetworkParams",
-      "params": [],
-      "result": {
-        "name": "Filecoin.StateGetNetworkParams.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/NetworkParams"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateNetworkName",
-      "params": [],
-      "result": {
-        "name": "Filecoin.StateNetworkName.Result",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateReplay",
+      "name": "Filecoin.NetProtectAdd",
       "params": [
         {
-          "name": "tipset_key",
+          "name": "peer_id",
           "required": true,
           "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        },
-        {
-          "name": "message_cid",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Cid"
+            "type": "string"
           }
         }
       ],
       "result": {
-        "name": "Filecoin.StateReplay.Result",
+        "name": "Filecoin.NetProtectAdd.Result",
         "required": true,
         "schema": {
-          "$ref": "#/components/schemas/ApiInvocResult"
+          "type": "null"
         }
       },
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.StateSectorGetInfo",
-      "params": [
-        {
-          "name": "miner_address",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Address"
-          }
-        },
-        {
-          "name": "sector_number",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "format": "uint64",
-            "minimum": 0.0
-          }
-        },
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
+      "name": "Filecoin.NetProtectList",
+      "params": [],
       "result": {
-        "name": "Filecoin.StateSectorGetInfo.Result",
+        "name": "Filecoin.NetProtectList.Result",
         "required": false,
         "schema": {
-          "anyOf": [
-            {
-              "$ref": "#/components/schemas/SectorOnChainInfo"
-            },
-            {
-              "type": "null"
-            }
-          ]
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
         }
       },
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.StateSectorPreCommitInfoV0",
+      "name": "Filecoin.NetProtectRemove",
       "params": [
         {
-          "name": "miner_address",
+          "name": "peer_id",
           "required": true,
           "schema": {
-            "$ref": "#/components/schemas/Address"
-          }
-        },
-        {
-          "name": "sector_number",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "format": "uint64",
-            "minimum": 0.0
-          }
-        },
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
+            "type": "string"
           }
         }
       ],
       "result": {
-        "name": "Filecoin.StateSectorPreCommitInfoV0.Result",
+        "name": "Filecoin.NetProtectRemove.Result",
         "required": true,
         "schema": {
-          "$ref": "#/components/schemas/SectorPreCommitOnChainInfo"
+          "type": "null"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.NodeStatus",
+      "params": [],
+      "result": {
+        "name": "Filecoin.NodeStatus.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/NodeStatusResult"
         }
       },
       "paramStructure": "by-position"
@@ -1545,17 +1407,17 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.StateLookupID",
+      "name": "Filecoin.StateCall",
       "params": [
         {
-          "name": "address",
+          "name": "message",
           "required": true,
           "schema": {
-            "$ref": "#/components/schemas/Address"
+            "$ref": "#/components/schemas/Message"
           }
         },
         {
-          "name": "tipset_key",
+          "name": "tsk",
           "required": true,
           "schema": {
             "type": [
@@ -1569,706 +1431,10 @@
         }
       ],
       "result": {
-        "name": "Filecoin.StateLookupID.Result",
+        "name": "Filecoin.StateCall.Result",
         "required": true,
         "schema": {
-          "$ref": "#/components/schemas/Address"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateGetActor",
-      "params": [
-        {
-          "name": "address",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Address"
-          }
-        },
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateGetActor.Result",
-        "required": false,
-        "schema": {
-          "anyOf": [
-            {
-              "$ref": "#/components/schemas/ActorState"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateMinerInfo",
-      "params": [
-        {
-          "name": "address",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Address"
-          }
-        },
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateMinerInfo.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/MinerInfo"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateMinerActiveSectors",
-      "params": [
-        {
-          "name": "address",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Address"
-          }
-        },
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateMinerActiveSectors.Result",
-        "required": false,
-        "schema": {
-          "type": [
-            "array",
-            "null"
-          ],
-          "items": {
-            "$ref": "#/components/schemas/SectorOnChainInfo"
-          }
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateMinerPartitions",
-      "params": [
-        {
-          "name": "address",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Address"
-          }
-        },
-        {
-          "name": "deadline_index",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "format": "uint64",
-            "minimum": 0.0
-          }
-        },
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateMinerPartitions.Result",
-        "required": false,
-        "schema": {
-          "type": [
-            "array",
-            "null"
-          ],
-          "items": {
-            "$ref": "#/components/schemas/MinerPartitions"
-          }
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateMinerSectors",
-      "params": [
-        {
-          "name": "address",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Address"
-          }
-        },
-        {
-          "name": "sectors",
-          "required": true,
-          "schema": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/BitField"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        },
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateMinerSectors.Result",
-        "required": false,
-        "schema": {
-          "type": [
-            "array",
-            "null"
-          ],
-          "items": {
-            "$ref": "#/components/schemas/SectorOnChainInfo"
-          }
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateMinerSectorCount",
-      "params": [
-        {
-          "name": "address",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Address"
-          }
-        },
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateMinerSectorCount.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/MinerSectors"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateMinerSectorAllocated",
-      "params": [
-        {
-          "name": "miner_address",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Address"
-          }
-        },
-        {
-          "name": "sector_number",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "format": "uint64",
-            "minimum": 0.0
-          }
-        },
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateMinerSectorAllocated.Result",
-        "required": true,
-        "schema": {
-          "type": "boolean"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateMinerPower",
-      "params": [
-        {
-          "name": "address",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Address"
-          }
-        },
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateMinerPower.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/MinerPower"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateMinerDeadlines",
-      "params": [
-        {
-          "name": "address",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Address"
-          }
-        },
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateMinerDeadlines.Result",
-        "required": false,
-        "schema": {
-          "type": [
-            "array",
-            "null"
-          ],
-          "items": {
-            "$ref": "#/components/schemas/ApiDeadline"
-          }
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateMinerProvingDeadline",
-      "params": [
-        {
-          "name": "address",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Address"
-          }
-        },
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateMinerProvingDeadline.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/ApiDeadlineInfo"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateMinerFaults",
-      "params": [
-        {
-          "name": "address",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Address"
-          }
-        },
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateMinerFaults.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/BitField"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateMinerRecoveries",
-      "params": [
-        {
-          "name": "address",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Address"
-          }
-        },
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateMinerRecoveries.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/BitField"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateMinerAvailableBalance",
-      "params": [
-        {
-          "name": "address",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Address"
-          }
-        },
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateMinerAvailableBalance.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/BigInt"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateMinerInitialPledgeCollateral",
-      "params": [
-        {
-          "name": "address",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Address"
-          }
-        },
-        {
-          "name": "sector_pre_commit_info",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/SectorPreCommitInfo"
-          }
-        },
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateMinerInitialPledgeCollateral.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/BigInt"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateGetReceipt",
-      "params": [
-        {
-          "name": "cid",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Cid"
-          }
-        },
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateGetReceipt.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/Receipt"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateGetRandomnessFromTickets",
-      "params": [
-        {
-          "name": "personalization",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "format": "int64"
-          }
-        },
-        {
-          "name": "rand_epoch",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "format": "int64"
-          }
-        },
-        {
-          "name": "entropy",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Base64String"
-          }
-        },
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateGetRandomnessFromTickets.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/Base64String"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateGetRandomnessFromBeacon",
-      "params": [
-        {
-          "name": "personalization",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "format": "int64"
-          }
-        },
-        {
-          "name": "rand_epoch",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "format": "int64"
-          }
-        },
-        {
-          "name": "entropy",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Base64String"
-          }
-        },
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateGetRandomnessFromBeacon.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/Base64String"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateReadState",
-      "params": [
-        {
-          "name": "address",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Address"
-          }
-        },
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateReadState.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/ApiActorState"
+          "$ref": "#/components/schemas/ApiInvocResult"
         }
       },
       "paramStructure": "by-position"
@@ -2300,250 +1466,22 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.StateVerifiedClientStatus",
+      "name": "Forest.StateCompute",
       "params": [
         {
-          "name": "address",
+          "name": "epoch",
           "required": true,
           "schema": {
-            "$ref": "#/components/schemas/Address"
-          }
-        },
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
+            "type": "integer",
+            "format": "int64"
           }
         }
       ],
       "result": {
-        "name": "Filecoin.StateVerifiedClientStatus.Result",
-        "required": false,
-        "schema": {
-          "anyOf": [
-            {
-              "$ref": "#/components/schemas/BigInt"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateVMCirculatingSupplyInternal",
-      "params": [
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateVMCirculatingSupplyInternal.Result",
+        "name": "Forest.StateCompute.Result",
         "required": true,
         "schema": {
-          "$ref": "#/components/schemas/CirculatingSupply"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateListMiners",
-      "params": [
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateListMiners.Result",
-        "required": false,
-        "schema": {
-          "type": [
-            "array",
-            "null"
-          ],
-          "items": {
-            "$ref": "#/components/schemas/Address"
-          }
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateListActors",
-      "params": [
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateListActors.Result",
-        "required": false,
-        "schema": {
-          "type": [
-            "array",
-            "null"
-          ],
-          "items": {
-            "$ref": "#/components/schemas/Address"
-          }
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateNetworkVersion",
-      "params": [
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateNetworkVersion.Result",
-        "required": true,
-        "schema": {
-          "type": "integer",
-          "format": "uint32",
-          "minimum": 0.0
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateMarketBalance",
-      "params": [
-        {
-          "name": "address",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Address"
-          }
-        },
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateMarketBalance.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/MarketBalance"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateMarketParticipants",
-      "params": [
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateMarketParticipants.Result",
-        "required": true,
-        "schema": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/components/schemas/MarketBalance"
-          }
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateMarketDeals",
-      "params": [
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateMarketDeals.Result",
-        "required": true,
-        "schema": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/components/schemas/ApiMarketDeal"
-          }
+          "$ref": "#/components/schemas/Cid"
         }
       },
       "paramStructure": "by-position"
@@ -2591,117 +1529,6 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.StateMarketStorageDeal",
-      "params": [
-        {
-          "name": "deal_id",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "format": "uint64",
-            "minimum": 0.0
-          }
-        },
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateMarketStorageDeal.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/ApiMarketDeal"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateWaitMsgV0",
-      "params": [
-        {
-          "name": "message_cid",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Cid"
-          }
-        },
-        {
-          "name": "confidence",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateWaitMsgV0.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/MessageLookup"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateSearchMsg",
-      "params": [
-        {
-          "name": "message_cid",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Cid"
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateSearchMsg.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/MessageLookup"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateSearchMsgLimited",
-      "params": [
-        {
-          "name": "message_cid",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Cid"
-          }
-        },
-        {
-          "name": "look_back_limit",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateSearchMsgLimited.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/MessageLookup"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
       "name": "Forest.StateFetchRoot",
       "params": [
         {
@@ -2732,94 +1559,7 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Forest.StateCompute",
-      "params": [
-        {
-          "name": "epoch",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      ],
-      "result": {
-        "name": "Forest.StateCompute.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/Cid"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateMinerPreCommitDepositForPower",
-      "params": [
-        {
-          "name": "address",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Address"
-          }
-        },
-        {
-          "name": "sector_pre_commit_info",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/SectorPreCommitInfo"
-          }
-        },
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateMinerPreCommitDepositForPower.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/BigInt"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateVerifiedRegistryRootKey",
-      "params": [
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateVerifiedRegistryRootKey.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/Address"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateVerifierStatus",
+      "name": "Filecoin.StateGetActor",
       "params": [
         {
           "name": "address",
@@ -2843,12 +1583,12 @@
         }
       ],
       "result": {
-        "name": "Filecoin.StateVerifierStatus.Result",
+        "name": "Filecoin.StateGetActor.Result",
         "required": false,
         "schema": {
           "anyOf": [
             {
-              "$ref": "#/components/schemas/BigInt"
+              "$ref": "#/components/schemas/ActorState"
             },
             {
               "type": "null"
@@ -2859,24 +1599,8 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.StateGetClaim",
+      "name": "Filecoin.StateGetAllAllocations",
       "params": [
-        {
-          "name": "address",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Address"
-          }
-        },
-        {
-          "name": "claim_id",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "format": "uint64",
-            "minimum": 0.0
-          }
-        },
         {
           "name": "tipset_key",
           "required": true,
@@ -2892,52 +1616,12 @@
         }
       ],
       "result": {
-        "name": "Filecoin.StateGetClaim.Result",
-        "required": false,
-        "schema": {
-          "anyOf": [
-            {
-              "$ref": "#/components/schemas/ClaimLotusJson"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateGetClaims",
-      "params": [
-        {
-          "name": "address",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Address"
-          }
-        },
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateGetClaims.Result",
+        "name": "Filecoin.StateGetAllAllocations.Result",
         "required": true,
         "schema": {
           "type": "object",
           "additionalProperties": {
-            "$ref": "#/components/schemas/ClaimLotusJson"
+            "$ref": "#/components/schemas/Allocation"
           }
         }
       },
@@ -3058,7 +1742,235 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.StateGetAllAllocations",
+      "name": "Filecoin.StateGetClaim",
+      "params": [
+        {
+          "name": "address",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        {
+          "name": "claim_id",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateGetClaim.Result",
+        "required": false,
+        "schema": {
+          "anyOf": [
+            {
+              "$ref": "#/components/schemas/ClaimLotusJson"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateGetClaims",
+      "params": [
+        {
+          "name": "address",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateGetClaims.Result",
+        "required": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/components/schemas/ClaimLotusJson"
+          }
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateGetNetworkParams",
+      "params": [],
+      "result": {
+        "name": "Filecoin.StateGetNetworkParams.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/NetworkParams"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateGetRandomnessFromBeacon",
+      "params": [
+        {
+          "name": "personalization",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        {
+          "name": "rand_epoch",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        {
+          "name": "entropy",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Base64String"
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateGetRandomnessFromBeacon.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Base64String"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateGetRandomnessFromTickets",
+      "params": [
+        {
+          "name": "personalization",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        {
+          "name": "rand_epoch",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        {
+          "name": "entropy",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Base64String"
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateGetRandomnessFromTickets.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Base64String"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateGetReceipt",
+      "params": [
+        {
+          "name": "cid",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Cid"
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateGetReceipt.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Receipt"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateListActors",
       "params": [
         {
           "name": "tipset_key",
@@ -3075,13 +1987,940 @@
         }
       ],
       "result": {
-        "name": "Filecoin.StateGetAllAllocations.Result",
+        "name": "Filecoin.StateListActors.Result",
+        "required": false,
+        "schema": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/components/schemas/Address"
+          }
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateListMessages",
+      "params": [
+        {
+          "name": "message_filter",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/MessageFilter"
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        },
+        {
+          "name": "max_height",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateListMessages.Result",
+        "required": false,
+        "schema": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/components/schemas/Cid"
+          }
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateListMiners",
+      "params": [
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateListMiners.Result",
+        "required": false,
+        "schema": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/components/schemas/Address"
+          }
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateLookupID",
+      "params": [
+        {
+          "name": "address",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateLookupID.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Address"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateMarketBalance",
+      "params": [
+        {
+          "name": "address",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateMarketBalance.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/MarketBalance"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateMarketDeals",
+      "params": [
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateMarketDeals.Result",
         "required": true,
         "schema": {
           "type": "object",
           "additionalProperties": {
-            "$ref": "#/components/schemas/Allocation"
+            "$ref": "#/components/schemas/ApiMarketDeal"
           }
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateMarketParticipants",
+      "params": [
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateMarketParticipants.Result",
+        "required": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/components/schemas/MarketBalance"
+          }
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateMarketStorageDeal",
+      "params": [
+        {
+          "name": "deal_id",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateMarketStorageDeal.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/ApiMarketDeal"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateMinerActiveSectors",
+      "params": [
+        {
+          "name": "address",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateMinerActiveSectors.Result",
+        "required": false,
+        "schema": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/components/schemas/SectorOnChainInfo"
+          }
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateMinerAvailableBalance",
+      "params": [
+        {
+          "name": "address",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateMinerAvailableBalance.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/BigInt"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateMinerDeadlines",
+      "params": [
+        {
+          "name": "address",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateMinerDeadlines.Result",
+        "required": false,
+        "schema": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/components/schemas/ApiDeadline"
+          }
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateMinerFaults",
+      "params": [
+        {
+          "name": "address",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateMinerFaults.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/BitField"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateMinerInfo",
+      "params": [
+        {
+          "name": "address",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateMinerInfo.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/MinerInfo"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateMinerInitialPledgeCollateral",
+      "params": [
+        {
+          "name": "address",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        {
+          "name": "sector_pre_commit_info",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/SectorPreCommitInfo"
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateMinerInitialPledgeCollateral.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/BigInt"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateMinerPartitions",
+      "params": [
+        {
+          "name": "address",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        {
+          "name": "deadline_index",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateMinerPartitions.Result",
+        "required": false,
+        "schema": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/components/schemas/MinerPartitions"
+          }
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateMinerPower",
+      "params": [
+        {
+          "name": "address",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateMinerPower.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/MinerPower"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateMinerPreCommitDepositForPower",
+      "params": [
+        {
+          "name": "address",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        {
+          "name": "sector_pre_commit_info",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/SectorPreCommitInfo"
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateMinerPreCommitDepositForPower.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/BigInt"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateMinerProvingDeadline",
+      "params": [
+        {
+          "name": "address",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateMinerProvingDeadline.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/ApiDeadlineInfo"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateMinerRecoveries",
+      "params": [
+        {
+          "name": "address",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateMinerRecoveries.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/BitField"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateMinerSectorAllocated",
+      "params": [
+        {
+          "name": "miner_address",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        {
+          "name": "sector_number",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateMinerSectorAllocated.Result",
+        "required": true,
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateMinerSectorCount",
+      "params": [
+        {
+          "name": "address",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateMinerSectorCount.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/MinerSectors"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateMinerSectors",
+      "params": [
+        {
+          "name": "address",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        {
+          "name": "sectors",
+          "required": true,
+          "schema": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BitField"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateMinerSectors.Result",
+        "required": false,
+        "schema": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/components/schemas/SectorOnChainInfo"
+          }
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateNetworkName",
+      "params": [],
+      "result": {
+        "name": "Filecoin.StateNetworkName.Result",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateNetworkVersion",
+      "params": [
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateNetworkVersion.Result",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0.0
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateReadState",
+      "params": [
+        {
+          "name": "address",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateReadState.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/ApiActorState"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateReplay",
+      "params": [
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        },
+        {
+          "name": "message_cid",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Cid"
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateReplay.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/ApiInvocResult"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateSearchMsg",
+      "params": [
+        {
+          "name": "message_cid",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Cid"
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateSearchMsg.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/MessageLookup"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateSearchMsgLimited",
+      "params": [
+        {
+          "name": "message_cid",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Cid"
+          }
+        },
+        {
+          "name": "look_back_limit",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateSearchMsgLimited.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/MessageLookup"
         }
       },
       "paramStructure": "by-position"
@@ -3129,6 +2968,55 @@
       "paramStructure": "by-position"
     },
     {
+      "name": "Filecoin.StateSectorGetInfo",
+      "params": [
+        {
+          "name": "miner_address",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        {
+          "name": "sector_number",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateSectorGetInfo.Result",
+        "required": false,
+        "schema": {
+          "anyOf": [
+            {
+              "$ref": "#/components/schemas/SectorOnChainInfo"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
       "name": "Filecoin.StateSectorPartition",
       "params": [
         {
@@ -3166,6 +3054,208 @@
         "required": true,
         "schema": {
           "$ref": "#/components/schemas/SectorLocation"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateSectorPreCommitInfoV0",
+      "params": [
+        {
+          "name": "miner_address",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        {
+          "name": "sector_number",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateSectorPreCommitInfoV0.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/SectorPreCommitOnChainInfo"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateVerifiedClientStatus",
+      "params": [
+        {
+          "name": "address",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateVerifiedClientStatus.Result",
+        "required": false,
+        "schema": {
+          "anyOf": [
+            {
+              "$ref": "#/components/schemas/BigInt"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateVerifiedRegistryRootKey",
+      "params": [
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateVerifiedRegistryRootKey.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Address"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateVerifierStatus",
+      "params": [
+        {
+          "name": "address",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateVerifierStatus.Result",
+        "required": false,
+        "schema": {
+          "anyOf": [
+            {
+              "$ref": "#/components/schemas/BigInt"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateVMCirculatingSupplyInternal",
+      "params": [
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateVMCirculatingSupplyInternal.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/CirculatingSupply"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateWaitMsgV0",
+      "params": [
+        {
+          "name": "message_cid",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Cid"
+          }
+        },
+        {
+          "name": "confidence",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateWaitMsgV0.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/MessageLookup"
         }
       },
       "paramStructure": "by-position"
@@ -3277,6 +3367,26 @@
               "type": "null"
             }
           ]
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.WalletDelete",
+      "params": [
+        {
+          "name": "address",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Address"
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.WalletDelete.Result",
+        "required": true,
+        "schema": {
+          "type": "null"
         }
       },
       "paramStructure": "by-position"
@@ -3506,26 +3616,6 @@
         }
       },
       "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.WalletDelete",
-      "params": [
-        {
-          "name": "address",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Address"
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.WalletDelete.Result",
-        "required": true,
-        "schema": {
-          "type": "null"
-        }
-      },
-      "paramStructure": "by-position"
     }
   ],
   "components": {
@@ -3539,14 +3629,14 @@
           "Nonce"
         ],
         "properties": {
-          "Address": {
-            "$ref": "#/components/schemas/Nullable_Address"
-          },
           "Balance": {
             "$ref": "#/components/schemas/BigInt"
           },
           "Code": {
             "$ref": "#/components/schemas/Cid"
+          },
+          "DelegatedAddress": {
+            "$ref": "#/components/schemas/Nullable_Address"
           },
           "Head": {
             "$ref": "#/components/schemas/Cid"
@@ -5466,28 +5556,6 @@
           }
         }
       },
-      "PublicVersion": {
-        "description": "Represents the current version of the API.",
-        "type": "object",
-        "required": [
-          "APIVersion",
-          "BlockDelay",
-          "Version"
-        ],
-        "properties": {
-          "APIVersion": {
-            "$ref": "#/components/schemas/ShiftingVersion"
-          },
-          "BlockDelay": {
-            "type": "integer",
-            "format": "uint32",
-            "minimum": 0.0
-          },
-          "Version": {
-            "type": "string"
-          }
-        }
-      },
       "RPCSyncState": {
         "type": "object",
         "required": [
@@ -5731,12 +5799,6 @@
       "SectorSize": {
         "type": "integer",
         "format": "uint64",
-        "minimum": 0.0
-      },
-      "ShiftingVersion": {
-        "description": "Integer based value on version information. Highest order bits for Major, Mid order for Minor and lowest for Patch.",
-        "type": "integer",
-        "format": "uint32",
         "minimum": 0.0
       },
       "Signature": {
