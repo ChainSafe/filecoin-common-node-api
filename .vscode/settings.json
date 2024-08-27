@@ -4,5 +4,6 @@
     ],
     "files.associations": {
         "**/*.json.ignoreme": "jsonc"
-    }
+    },
+    "rust-analyzer.cargo.buildScripts.enable": true
 }

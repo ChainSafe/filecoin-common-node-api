@@ -1,7 +1,6 @@
 mod capture;
 mod check;
 mod gc;
-mod generate;
 
 use anyhow::{bail, Context as _};
 use ascii::AsciiChar;
@@ -77,9 +76,6 @@ enum Openrpc {
         #[arg(long)]
         overwrite_version: Option<String>,
     },
-    /// Read an OpenRPC specification from stdin,
-    /// and print Rust code for a client trait.
-    Generate { trait_name: String },
 }
 
 /// Subcommands for interacting with JSON-RPC endpoints.
@@ -208,14 +204,6 @@ fn main() -> anyhow::Result<()> {
                 openrpc.info.version = version
             }
             serde_json::to_writer_pretty(io::stdout(), &openrpc)?;
-            Ok(())
-        }
-        Args::Openrpc(Openrpc::Generate { trait_name }) => {
-            let tokens = generate::generate(
-                resolve_within(serde_json::from_reader(io::stdin())?)?,
-                syn::parse_str(&trait_name)?,
-            )?;
-            println!("{}", tokens);
             Ok(())
         }
         Args::Csv2json {
