@@ -350,12 +350,17 @@ mod harness {
     }
 
     impl Client {
+        /// RPC calls after this method has been called will use a longer timeout.
         pub fn long_timeout(&mut self) {
             self.timeout_mode = TimeoutMode::Long
         }
+        /// RPC calls after this method has been called will use the default timeout.
         pub fn default_timeout(&mut self) {
             self.timeout_mode = TimeoutMode::Default
         }
+        /// Add a log message.
+        ///
+        /// This is printed on failure.
         pub fn log(&mut self, log: impl fmt::Display) {
             self.log.log(LogEvent::User(log.to_string()))
         }
