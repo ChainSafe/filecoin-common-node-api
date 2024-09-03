@@ -1,0 +1,2077 @@
+[
+  {
+    "Comment": "Blockstore info can vary accross clients",
+    "Description": "Returns some basic information about the blockstore",
+    "Group": "Chain",
+    "Include": "Exclude",
+    "Method": "ChainBlockstoreInfo"
+  },
+  {
+    "Comment": "Blockstore implementation varies accross implementations",
+    "Description": "performs an (asynchronous) health check on the chain/state blockstore if supported by the underlying implementation.",
+    "Group": "Chain",
+    "Include": "Exclude",
+    "Method": "ChainCheckBlockstore"
+  },
+  {
+    "Comment": "Destructive action, for advanced use only",
+    "Description": "Deletes node referenced by the given CID",
+    "Group": "Chain",
+    "Include": "Exclude",
+    "Method": "ChainDeleteObj"
+  },
+  {
+    "Comment": "Limited usage",
+    "Description": "returns a stream of bytes with CAR dump of chain data. The exported chain data includes the header chain from the given tipset back to genesis, the entire genesis state, and the most recent 'nroots' state trees. If oldmsgskip is set, messages from before the requested roots are also not included.",
+    "Group": "Chain",
+    "Include": "Exclude",
+    "Method": "ChainExport"
+  },
+  {
+    "Comment": "Limited usage",
+    "Description": "triggers the export of a chain CAR-snapshot directly to disk. It is similar to ChainExport, except, depending on options, the snapshot can include receipts,messages and state roots for the length between the specified head and tail, thus producing \"archival-grade\" snapshots that include all the on-chain data. The header chain is included back to genesis and these snapshots can be used to initialize Filecoin nodes.",
+    "Group": "Chain",
+    "Include": "Exclude",
+    "Method": "ChainExportRangeInternal"
+  },
+  {
+    "Category": "State query",
+    "Description": "Returns the block with the specified CID",
+    "Group": "Chain",
+    "Include": "Include",
+    "Method": "ChainGetBlock",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "State query",
+    "Comment": "ChainGetBlock includes messages, this is duplicate functionality",
+    "Description": "Returns all message from the specified block",
+    "Group": "Chain",
+    "Include": "Include",
+    "Method": "ChainGetBlockMessages"
+  },
+  {
+    "Category": "State query",
+    "Description": "Returns the events under an event AMT root CID",
+    "Group": "Chain",
+    "Include": "Include",
+    "Method": "ChainGetEvents",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Comment": "Equivalent to ChainGetTipset(0)",
+    "Description": "Returns the tipset at height 0",
+    "Group": "Chain",
+    "Include": "Exclude",
+    "Method": "ChainGetGenesis"
+  },
+  {
+    "Boost": "Yes",
+    "Category": "State query",
+    "Curio": "Yes",
+    "Description": "Returns the message with the specified CID",
+    "Group": "Chain",
+    "Include": "Include",
+    "Method": "ChainGetMessage",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Comment": "Duplicate functionality. ChainGetBlock or ChainGetBlockMessages can be used instead.",
+    "Description": "Returns all messages contained in the blocks of the specified tipset",
+    "Group": "Chain",
+    "Include": "Exclude",
+    "Method": "ChainGetMessagesInTipset"
+  },
+  {
+    "Comment": "No clear use case",
+    "Description": "Returns an arbitrary node in the blockchain data store.",
+    "GLIF": "Yes",
+    "Group": "Chain",
+    "Include": "Exclude",
+    "Method": "ChainGetNode"
+  },
+  {
+    "Category": "State query",
+    "Comment": "In use by W3M, should likely be deprecated in future",
+    "Description": "Returns the messages included in the blocks of the parent tipset",
+    "Group": "Chain",
+    "Include": "Include",
+    "Method": "ChainGetParentMessages",
+    "W3M": "Yes"
+  },
+  {
+    "Category": "State query",
+    "Comment": "ChainGetBlock or ChainGetBlockMessages should be able to provide this",
+    "Description": "Returns the message receipts included in the blocks of the parent tipset",
+    "Group": "Chain",
+    "Include": "Include",
+    "Method": "ChainGetParentReceipts"
+  },
+  {
+    "Category": "State query",
+    "Comment": "High usage from GLIF",
+    "Description": "Returns the path between the specified tipsets",
+    "GLIF": "Yes",
+    "Group": "Chain",
+    "Include": "Include",
+    "Method": "ChainGetPath"
+  },
+  {
+    "Category": "State query",
+    "Curio": "Yes",
+    "Description": "Returns the tipset with the specified CID",
+    "Group": "Chain",
+    "Include": "Include",
+    "Method": "ChainGetTipSet",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "State query",
+    "Comment": "Multiple calls to ChainGetTipSetByHeight should be sufficient. We may want to include this for now as it's used by Curio. Adding an optional parameter to ChainGetTipsetByHeight could also replace this",
+    "Curio": "Yes",
+    "Description": "Looks back for a tipset at the specified epoch. If there are no blocks at the specified epoch, the first non-nil tipset at a later epoch will be returned. A fork can be specified, or null for the heaviest chain",
+    "Group": "Chain",
+    "Include": "Include",
+    "Method": "ChainGetTipSetAfterHeight"
+  },
+  {
+    "Category": "State query",
+    "Curio": "Yes",
+    "Description": "Returns the tipset at the specified height",
+    "Group": "Chain",
+    "Include": "Include",
+    "Method": "ChainGetTipSetByHeight",
+    "Perms (lotus)": "Read",
+    "W3M": "Yes"
+  },
+  {
+    "Category": "State query",
+    "Curio": "Yes",
+    "Description": "checks if a given CID exists in the chain blockstore",
+    "Group": "Chain",
+    "Include": "Include",
+    "Method": "ChainHasObj",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Boost": "Yes",
+    "Category": "State query",
+    "Curio": "Yes",
+    "Description": "Returns the chain head (ie. the heaviest tipset)",
+    "Group": "Chain",
+    "Include": "Include",
+    "Method": "ChainHead",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Comment": "Implementation specific",
+    "Description": "does online (badger) GC on the hot store",
+    "Group": "Chain",
+    "Include": "Exclude",
+    "Method": "ChainHotGC"
+  },
+  {
+    "Category": "State query",
+    "Curio": "Yes",
+    "Description": "Subscribe to changes to the chain head",
+    "GLIF": "Yes",
+    "Group": "Chain",
+    "Include": "Include",
+    "Method": "ChainNotify",
+    "Perms (lotus)": "Read",
+    "W3M": "Yes"
+  },
+  {
+    "Description": "forces compaction on cold store and garbage collects",
+    "Group": "Chain",
+    "Include": "Exclude",
+    "Method": "ChainPrune"
+  },
+  {
+    "Comment": "Excluded because this doesn't actually work on Lotus",
+    "Curio": "Yes",
+    "Description": "Puts a given object into the block store",
+    "GLIF": "Yes",
+    "Group": "Chain",
+    "Include": "Exclude",
+    "Method": "ChainPutObj",
+    "Perms (lotus)": "Admin"
+  },
+  {
+    "Category": "State query",
+    "Curio": "Yes",
+    "Description": "Reads IPLD nodes referenced by the specified CID from chain blockstore and returns raw bytes.",
+    "Group": "Chain",
+    "Include": "Include",
+    "Method": "ChainReadObj",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Comment": "Potentially dangerous method, no clear use case",
+    "Description": "Sets the head to the specified tipset",
+    "Group": "Chain",
+    "Include": "Exclude",
+    "Method": "ChainSetHead"
+  },
+  {
+    "Description": "returns statistics about the graph referenced by 'obj'. If 'base' is also specified, then the returned stat will be a diff between the two objects.",
+    "Group": "Chain",
+    "Include": "Exclude",
+    "Method": "ChainStatObj"
+  },
+  {
+    "Category": "State query",
+    "Comment": "Weight should be included in ChainGetTipset. Consider modifying in next iteration",
+    "Curio": "Yes",
+    "Description": "Returns the weight of the specified tipset",
+    "Group": "Chain",
+    "Include": "Include",
+    "Method": "ChainTipSetWeight",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Comment": "All Client methods are deprecated from Lotus node",
+    "Group": "Client",
+    "Include": "Exclude",
+    "Method": "ClientCalcCommP"
+  },
+  {
+    "Comment": "All Client methods are deprecated from Lotus node",
+    "Group": "Client",
+    "Include": "Exclude",
+    "Method": "ClientCancelDataTransfer"
+  },
+  {
+    "Comment": "All Client methods are deprecated from Lotus node",
+    "Group": "Client",
+    "Include": "Exclude",
+    "Method": "ClientCancelRetrievalDeal"
+  },
+  {
+    "Comment": "All Client methods are deprecated from Lotus node",
+    "Group": "Client",
+    "Include": "Exclude",
+    "Method": "ClientDataTransferUpdates"
+  },
+  {
+    "Comment": "All Client methods are deprecated from Lotus node",
+    "Group": "Client",
+    "Include": "Exclude",
+    "Method": "ClientDealPieceCID"
+  },
+  {
+    "Comment": "All Client methods are deprecated from Lotus node",
+    "Group": "Client",
+    "Include": "Exclude",
+    "Method": "ClientDealSize"
+  },
+  {
+    "Comment": "All Client methods are deprecated from Lotus node",
+    "Group": "Client",
+    "Include": "Exclude",
+    "Method": "ClientExport"
+  },
+  {
+    "Comment": "All Client methods are deprecated from Lotus node",
+    "Group": "Client",
+    "Include": "Exclude",
+    "Method": "ClientFindData"
+  },
+  {
+    "Comment": "All Client methods are deprecated from Lotus node",
+    "Group": "Client",
+    "Include": "Exclude",
+    "Method": "ClientGenCar"
+  },
+  {
+    "Comment": "All Client methods are deprecated from Lotus node",
+    "Group": "Client",
+    "Include": "Exclude",
+    "Method": "ClientGetDealInfo"
+  },
+  {
+    "Comment": "All Client methods are deprecated from Lotus node",
+    "Group": "Client",
+    "Include": "Exclude",
+    "Method": "ClientGetDealStatus"
+  },
+  {
+    "Comment": "All Client methods are deprecated from Lotus node",
+    "Group": "Client",
+    "Include": "Exclude",
+    "Method": "ClientGetDealUpdates"
+  },
+  {
+    "Comment": "All Client methods are deprecated from Lotus node",
+    "Group": "Client",
+    "Include": "Exclude",
+    "Method": "ClientGetRetrievalUpdates"
+  },
+  {
+    "Comment": "All Client methods are deprecated from Lotus node",
+    "Group": "Client",
+    "Include": "Exclude",
+    "Method": "ClientHasLocal"
+  },
+  {
+    "Comment": "All Client methods are deprecated from Lotus node",
+    "Group": "Client",
+    "Include": "Exclude",
+    "Method": "ClientImport"
+  },
+  {
+    "Comment": "All Client methods are deprecated from Lotus node",
+    "Group": "Client",
+    "Include": "Exclude",
+    "Method": "ClientListDataTransfers"
+  },
+  {
+    "Comment": "All Client methods are deprecated from Lotus node",
+    "Group": "Client",
+    "Include": "Exclude",
+    "Method": "ClientListDeals"
+  },
+  {
+    "Comment": "All Client methods are deprecated from Lotus node",
+    "Group": "Client",
+    "Include": "Exclude",
+    "Method": "ClientListImports"
+  },
+  {
+    "Comment": "All Client methods are deprecated from Lotus node",
+    "Group": "Client",
+    "Include": "Exclude",
+    "Method": "ClientListRetrievals"
+  },
+  {
+    "Comment": "All Client methods are deprecated from Lotus node",
+    "Group": "Client",
+    "Include": "Exclude",
+    "Method": "ClientMinerQueryOffer"
+  },
+  {
+    "Comment": "All Client methods are deprecated from Lotus node",
+    "Group": "Client",
+    "Include": "Exclude",
+    "Method": "ClientQueryAsk"
+  },
+  {
+    "Comment": "All Client methods are deprecated from Lotus node",
+    "Group": "Client",
+    "Include": "Exclude",
+    "Method": "ClientRemoveImport"
+  },
+  {
+    "Comment": "All Client methods are deprecated from Lotus node",
+    "Group": "Client",
+    "Include": "Exclude",
+    "Method": "ClientRestartDataTransfer"
+  },
+  {
+    "Comment": "All Client methods are deprecated from Lotus node",
+    "Group": "Client",
+    "Include": "Exclude",
+    "Method": "ClientRetrieve"
+  },
+  {
+    "Comment": "All Client methods are deprecated from Lotus node",
+    "Group": "Client",
+    "Include": "Exclude",
+    "Method": "ClientRetrieveTryRestartInsufficientFunds"
+  },
+  {
+    "Comment": "All Client methods are deprecated from Lotus node",
+    "Group": "Client",
+    "Include": "Exclude",
+    "Method": "ClientRetrieveWait"
+  },
+  {
+    "Comment": "All Client methods are deprecated from Lotus node",
+    "Group": "Client",
+    "Include": "Exclude",
+    "Method": "ClientStartDeal"
+  },
+  {
+    "Comment": "All Client methods are deprecated from Lotus node",
+    "Group": "Client",
+    "Include": "Exclude",
+    "Method": "ClientStatelessDeal"
+  },
+  {
+    "Comment": "Auth is not a part of this spec, can be client specific. Might be worth posing to Curio for feedback",
+    "Description": "Generate a new authentication token",
+    "Group": "Common",
+    "Include": "Exclude",
+    "Method": "AuthNew"
+  },
+  {
+    "Comment": "Auth is not a part of this spec, can be client specific. Might be worth posing to Curio for feedback",
+    "Description": "Verify that an authentication token is valid",
+    "Group": "Common",
+    "Include": "Exclude",
+    "Method": "AuthVerify"
+  },
+  {
+    "Comment": "What does this do?",
+    "Group": "Common",
+    "Include": "Exclude",
+    "Method": "Closing"
+  },
+  {
+    "Comment": "Required by OpenRPC, don't need to re-specify, although we may want to mention it.",
+    "Description": "Return OpenRPC specification",
+    "GLIF": "Yes",
+    "Group": "Common",
+    "Include": "Exclude",
+    "Method": "Discover"
+  },
+  {
+    "Comment": "No clear use case",
+    "Description": "Return session ID",
+    "Group": "Common",
+    "Include": "Exclude",
+    "Method": "Session"
+  },
+  {
+    "Comment": "Implementation specific. We hsould decide if we want to include this",
+    "Description": "Initiate node shutdown",
+    "Group": "Common",
+    "Include": "Exclude",
+    "Method": "Shutdown"
+  },
+  {
+    "Boost": "Yes",
+    "Comment": "Included in Discover",
+    "Description": "Return API version",
+    "Group": "Common",
+    "Include": "Exclude",
+    "Method": "Version"
+  },
+  {
+    "Comment": "No clear use case",
+    "Group": "Create",
+    "Include": "Exclude",
+    "Method": "CreateBackup"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthAccounts"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthAddressToFilecoinAddress"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthBlockNumber"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthCall"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthChainId"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthEstimateGas"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthFeeHistory"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthGasPrice"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthGetBalance"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthGetBlockByHash"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthGetBlockByNumber"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthGetBlockTransactionCountByHash"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthGetBlockTransactionCountByNumber"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthGetCode"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthGetFilterChanges"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthGetFilterLogs"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthGetLogs"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthGetMessageCidByTransactionHash"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthGetStorageAt"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthGetTransactionByBlockHashAndIndex"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthGetTransactionByBlockNumberAndIndex"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthGetTransactionByHash"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthGetTransactionByHashLimited"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthGetTransactionCount"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthGetTransactionHashByCid"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthGetTransactionReceipt"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthGetTransactionReceiptLimited"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthMaxPriorityFeePerGas"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthNewBlockFilter"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthNewFilter"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthNewPendingTransactionFilter"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthProtocolVersion"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthSendRawTransaction"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthSubscribe"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthSyncing"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthTraceBlock"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthTraceReplayBlockTransactions"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthUninstallFilter"
+  },
+  {
+    "Comment": "All Eth methods are excluded in initial spec",
+    "Group": "Eth",
+    "Include": "Exclude",
+    "Method": "EthUnsubscribe"
+  },
+  {
+    "Comment": "Can be computed locally without any state.",
+    "Group": "Filecoin",
+    "Include": "Exclude",
+    "Method": "FilecoinAddressToEthAddress"
+  },
+  {
+    "Category": "Transactions",
+    "Curio": "Yes",
+    "Description": "Returns the estimated fee cap for the given parameters",
+    "Group": "Gas",
+    "Include": "Include",
+    "Method": "GasEstimateFeeCap",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "Transactions",
+    "Description": "Returns the estimated gas limit for the given parameters",
+    "Group": "Gas",
+    "Include": "Include",
+    "Method": "GasEstimateGasLimit",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "Transactions",
+    "Curio": "Yes",
+    "Description": "Returns the estimated gas premium for the given parameters",
+    "GLIF": "Yes",
+    "Group": "Gas",
+    "Include": "Include",
+    "Method": "GasEstimateGasPremium",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "Transactions",
+    "Curio": "Yes",
+    "Description": "Returns the estimated gas for the given parameters",
+    "GLIF": "Yes",
+    "Group": "Gas",
+    "Include": "Include",
+    "Method": "GasEstimateMessageGas",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "State query",
+    "Comment": "No clear use case",
+    "Description": "Returns all user-programmed and built-in actor events that match the given filter. This is a request/response API. Results available from this API may be limited by the MaxFilterResults and MaxFilterHeightRange configuration options and also the amount of historical data available in the node.",
+    "Group": "Get",
+    "Include": "Include",
+    "Method": "GetActorEventsRaw"
+  },
+  {
+    "Comment": "NetAddrsListen includes ID",
+    "Description": "Return node peer ID",
+    "Group": "I",
+    "Include": "Exclude",
+    "Method": "ID"
+  },
+  {
+    "Comment": "Implementation/administration specific",
+    "Description": "Return pending log alerts",
+    "Group": "Log",
+    "Include": "Exclude",
+    "Method": "LogAlerts"
+  },
+  {
+    "Comment": "Implementation/administration specific",
+    "Description": "Return all subsystems",
+    "Group": "Log",
+    "Include": "Exclude",
+    "Method": "LogList"
+  },
+  {
+    "Comment": "Implementation/administration specific",
+    "Description": "Set log level for a subsystem",
+    "Group": "Log",
+    "Include": "Exclude",
+    "Method": "LogSetLevel"
+  },
+  {
+    "Comment": "All Market methods are deprecated in Lotus",
+    "Group": "Market",
+    "Include": "Exclude",
+    "Method": "MarketAddBalance"
+  },
+  {
+    "Comment": "All Market methods are deprecated in Lotus",
+    "Group": "Market",
+    "Include": "Exclude",
+    "Method": "MarketGetReserved"
+  },
+  {
+    "Comment": "All Market methods are deprecated in Lotus",
+    "Group": "Market",
+    "Include": "Exclude",
+    "Method": "MarketReleaseFunds"
+  },
+  {
+    "Comment": "All Market methods are deprecated in Lotus",
+    "Group": "Market",
+    "Include": "Exclude",
+    "Method": "MarketReserveFunds"
+  },
+  {
+    "Comment": "All Market methods are deprecated in Lotus",
+    "Group": "Market",
+    "Include": "Exclude",
+    "Method": "MarketWithdraw"
+  },
+  {
+    "Category": "Miner operations",
+    "Curio": "Yes",
+    "Description": "Fill and sign a block template on behalf of the given miner, returning a suitable block header",
+    "Group": "Miner",
+    "Include": "Include",
+    "Method": "MinerCreateBlock",
+    "Perms (lotus)": "Write"
+  },
+  {
+    "Category": "Miner operations",
+    "Curio": "Yes",
+    "Description": "Looks up the Miner Actor at the given address (and tipset), returning basic information like their power, eligibility to mine etc",
+    "GLIF": "Yes",
+    "Group": "Miner",
+    "Include": "Include",
+    "Method": "MinerGetBaseInfo",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "Transactions",
+    "Comment": "MpoolPush should accept an array of messages in a future iteration.",
+    "Description": "Adds a set of signed messages to the message pool",
+    "Group": "Mpool",
+    "Include": "Include",
+    "Method": "MpoolBatchPush",
+    "Perms (lotus)": "Write"
+  },
+  {
+    "Comment": "Does not follow a good security model. Signing should not be the responsibility of a node",
+    "Description": "batch pushes a unsigned message to mempool",
+    "Group": "Mpool",
+    "Include": "Exclude",
+    "Method": "MpoolBatchPushMessage"
+  },
+  {
+    "Category": "Transactions",
+    "Description": "Adds a set of messages to the message pool with additional verification checks",
+    "Group": "Mpool",
+    "Include": "Include",
+    "Method": "MpoolBatchPushUntrusted"
+  },
+  {
+    "Comment": "Use case?",
+    "Description": "Performs logic checks for the provided messages.",
+    "Group": "Mpool",
+    "Include": "Exclude",
+    "Method": "MpoolCheckMessages"
+  },
+  {
+    "Comment": "Use case?",
+    "Description": "Performs a set of logical sets for all messages pending from a given actor",
+    "Group": "Mpool",
+    "Include": "Exclude",
+    "Method": "MpoolCheckPendingMessages"
+  },
+  {
+    "Comment": "Use case?",
+    "Description": "Performs a set of logical checks for related messages while performing a replacement.",
+    "Group": "Mpool",
+    "Include": "Exclude",
+    "Method": "MpoolCheckReplaceMessages"
+  },
+  {
+    "Comment": "Privledged method for advanced use cases only",
+    "Description": "Removes all message from the message pool",
+    "Group": "Mpool",
+    "Include": "Exclude",
+    "Method": "MpoolClear"
+  },
+  {
+    "Comment": "For configuration of the instance, not critical to clients",
+    "Description": "Returns local message pool configuration",
+    "Group": "Mpool",
+    "Include": "Exclude",
+    "Method": "MpoolGetConfig"
+  },
+  {
+    "Category": "Transactions",
+    "Curio": "Yes",
+    "Description": "Returns the current nonce for the specified address",
+    "GLIF": "Yes",
+    "Group": "Mpool",
+    "Include": "Include",
+    "Method": "MpoolGetNonce",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Boost": "Yes",
+    "Category": "Transactions",
+    "Description": "Returns the pending messages for a given tipset",
+    "Group": "Mpool",
+    "Include": "Include",
+    "Method": "MpoolPending",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "Transactions",
+    "Comment": "Assuming MpoolPushUntrusted can be used as a replacement in all cases",
+    "Curio": "Yes",
+    "Description": "Adds a signed message into the message pool",
+    "Group": "Mpool",
+    "Include": "Include",
+    "Method": "MpoolPush",
+    "Perms (lotus)": "Sign???"
+  },
+  {
+    "Category": "Miner Operations",
+    "Comment": "See MpoolBatchPushMessage",
+    "Curio": "Yes",
+    "Description": "Assigns a nonce, signs, and pushes a message to the mempool",
+    "Group": "Mpool",
+    "Include": "Include",
+    "Method": "MpoolPushMessage"
+  },
+  {
+    "Category": "Transactions",
+    "Description": "Adds a message to the message pool with verification checks",
+    "Group": "Mpool",
+    "Include": "Include",
+    "Method": "MpoolPushUntrusted",
+    "Perms (lotus)": "Write"
+  },
+  {
+    "Category": "Transactions",
+    "Comment": "What is Curio using this for?",
+    "Curio": "Yes",
+    "Description": "returns a list of pending messages for inclusion in the next block",
+    "Group": "Mpool",
+    "Include": "Include",
+    "Method": "MpoolSelect"
+  },
+  {
+    "Comment": "For configuration of the instance, not critical to clients",
+    "Description": "Set local message pool configuration",
+    "Group": "Mpool",
+    "Include": "Exclude",
+    "Method": "MpoolSetConfig"
+  },
+  {
+    "Comment": "Does this create a subscription for changes to mem pool? If yes, exclude",
+    "Group": "Mpool",
+    "Include": "Exclude",
+    "Method": "MpoolSub"
+  },
+  {
+    "Comment": "Exclude Msig methods for initial interface. ",
+    "Group": "Msig",
+    "Include": "Exclude",
+    "Method": "MsigAddApprove"
+  },
+  {
+    "Comment": "Exclude Msig methods for initial interface. ",
+    "Description": "Submit a message to cancel a multisig transition to add a new signer",
+    "Group": "Msig",
+    "Include": "Exclude",
+    "Method": "MsigAddCancel"
+  },
+  {
+    "Comment": "Exclude Msig methods for initial interface. ",
+    "Description": "Submit a message to propose a new multisig transition to add a new signer",
+    "Group": "Msig",
+    "Include": "Exclude",
+    "Method": "MsigAddPropose"
+  },
+  {
+    "Comment": "Exclude Msig methods for initial interface. ",
+    "Description": "Submit a message to approve a proposed multsig transaction",
+    "Group": "Msig",
+    "Include": "Exclude",
+    "Method": "MsigApprove"
+  },
+  {
+    "Comment": "Exclude Msig methods for initial interface. ",
+    "Group": "Msig",
+    "Include": "Exclude",
+    "Method": "MsigApproveTxnHash"
+  },
+  {
+    "Comment": "Exclude Msig methods for initial interface. ",
+    "Description": "Submit a message to cancel a proposed multisig transaction",
+    "Group": "Msig",
+    "Include": "Exclude",
+    "Method": "MsigCancel"
+  },
+  {
+    "Comment": "Exclude Msig methods for initial interface. ",
+    "Group": "Msig",
+    "Include": "Exclude",
+    "Method": "MsigCancelTxnHash"
+  },
+  {
+    "Comment": "Exclude Msig methods for initial interface. ",
+    "Description": "Submit a message to create a new multisig",
+    "Group": "Msig",
+    "Include": "Exclude",
+    "Method": "MsigCreate"
+  },
+  {
+    "Comment": "Exclude Msig methods for initial interface. ",
+    "Group": "Msig",
+    "Include": "Exclude",
+    "Method": "MsigGetAvailableBalance"
+  },
+  {
+    "Comment": "Exclude Msig methods for initial interface. ",
+    "Group": "Msig",
+    "Include": "Exclude",
+    "Method": "MsigGetPending"
+  },
+  {
+    "Comment": "Exclude Msig methods for initial interface. ",
+    "GLIF": "Yes",
+    "Group": "Msig",
+    "Include": "Exclude",
+    "Method": "MsigGetVested"
+  },
+  {
+    "Comment": "Exclude Msig methods for initial interface. ",
+    "GLIF": "Yes",
+    "Group": "Msig",
+    "Include": "Exclude",
+    "Method": "MsigGetVestingSchedule"
+  },
+  {
+    "Comment": "Exclude Msig methods for initial interface. ",
+    "Description": "Submit a message to propose a new multisig transaction",
+    "Group": "Msig",
+    "Include": "Exclude",
+    "Method": "MsigPropose"
+  },
+  {
+    "Comment": "Exclude Msig methods for initial interface. ",
+    "Description": "Submit a message to propose the removal of multisig signer",
+    "Group": "Msig",
+    "Include": "Exclude",
+    "Method": "MsigRemoveSigner"
+  },
+  {
+    "Comment": "Exclude Msig methods for initial interface. ",
+    "Group": "Msig",
+    "Include": "Exclude",
+    "Method": "MsigSwapApprove"
+  },
+  {
+    "Comment": "Exclude Msig methods for initial interface. ",
+    "Description": "Submit a message to cancel a multisig transition to swap a signer",
+    "Group": "Msig",
+    "Include": "Exclude",
+    "Method": "MsigSwapCancel"
+  },
+  {
+    "Comment": "Exclude Msig methods for initial interface. ",
+    "Description": "Submit a message to propose a new multisig transaction to swap an existing signer for a new signer",
+    "Group": "Msig",
+    "Include": "Exclude",
+    "Method": "MsigSwapPropose"
+  },
+  {
+    "Boost": "Yes",
+    "Category": "Node operation",
+    "Description": "Return list of listening addresses and peer ID",
+    "Group": "Net",
+    "Include": "Include",
+    "Method": "NetAddrsListen",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "Node operation",
+    "Description": "Returns agent version string",
+    "Group": "Net",
+    "Include": "Include",
+    "Method": "NetAgentVersion",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Comment": "Configuration detail. No use case to expose here",
+    "Group": "Net",
+    "Include": "Exclude",
+    "Method": "NetAutoNatStatus"
+  },
+  {
+    "Comment": "Implementation/administration specific",
+    "Group": "Net",
+    "Include": "Exclude",
+    "Method": "NetBandwidthStats"
+  },
+  {
+    "Comment": "Implementation/administration specific",
+    "Description": "Returns bandwidth usage per peer",
+    "Group": "Net",
+    "Include": "Exclude",
+    "Method": "NetBandwidthStatsByPeer"
+  },
+  {
+    "Comment": "Implementation/administration specific",
+    "Description": "Returns bandwidth usage per protocol",
+    "Group": "Net",
+    "Include": "Exclude",
+    "Method": "NetBandwidthStatsByProtocol"
+  },
+  {
+    "Comment": "Helper method. Can be exposed in other ways",
+    "Group": "Net",
+    "Include": "Exclude",
+    "Method": "NetBlockAdd"
+  },
+  {
+    "Comment": "Helper method. Can be exposed in other ways",
+    "Group": "Net",
+    "Include": "Exclude",
+    "Method": "NetBlockList"
+  },
+  {
+    "Comment": "Helper method. Can be exposed in other ways",
+    "Group": "Net",
+    "Include": "Exclude",
+    "Method": "NetBlockRemove"
+  },
+  {
+    "Boost": "Yes",
+    "Category": "Node operation",
+    "Comment": "Required for Boost",
+    "Description": "Connect to a specified peer",
+    "Group": "Net",
+    "Include": "Include",
+    "Method": "NetConnect",
+    "Perms (lotus)": "Write"
+  },
+  {
+    "Comment": "Helper method. Can use NetPeers",
+    "Group": "Net",
+    "Include": "Exclude",
+    "Method": "NetConnectedness"
+  },
+  {
+    "Category": "Node operation",
+    "Comment": "Complementary to NetConnect",
+    "Description": "Disconnect from the specified peer",
+    "Group": "Net",
+    "Include": "Include",
+    "Method": "NetDisconnect",
+    "Perms (lotus)": "Write"
+  },
+  {
+    "Category": "State query",
+    "Comment": "Required for input to NetConnect. Should probably be removed in next iteration by modifying NetConnect to accept only peerId",
+    "Description": "Returns dialable addresses for the specified peer",
+    "Group": "Net",
+    "Include": "Exclude",
+    "Method": "NetFindPeer",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Comment": "Returns configuration parameters. Potentiall client specific",
+    "Group": "Net",
+    "Include": "Exclude",
+    "Method": "NetLimit"
+  },
+  {
+    "Comment": "Part of ETH API, excluded in initial version",
+    "Group": "Net",
+    "Include": "Exclude",
+    "Method": "NetListening"
+  },
+  {
+    "Comment": "Provides internal info on peer. Unlikely to be consumed by external service https://github.com/filecoin-project/lotus/blob/fb3fc1f342cdc7be71fb02ae3000a707c80e77e6/api/types.go#L88",
+    "Description": "Return peer info for a specified peer",
+    "Group": "Net",
+    "Include": "Exclude",
+    "Method": "NetPeerInfo"
+  },
+  {
+    "Category": "Node operation",
+    "Comment": "Use case?",
+    "Description": "Return list of currently connected peers",
+    "Group": "Net",
+    "Include": "Include",
+    "Method": "NetPeers",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Comment": "Helper method.",
+    "Description": "Ping a specified peer",
+    "Group": "Net",
+    "Include": "Exclude",
+    "Method": "NetPing"
+  },
+  {
+    "Boost": "Yes",
+    "Category": "Node operation",
+    "Comment": "See libp2p docs https://pkg.go.dev/github.com/libp2p/go-libp2p/core/connmgr#ConnManager",
+    "Group": "Net",
+    "Include": "Include",
+    "Method": "NetProtectAdd",
+    "Perms (lotus)": "Admin"
+  },
+  {
+    "Category": "Node operation",
+    "Group": "Net",
+    "Include": "Include",
+    "Method": "NetProtectList",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "Node operation",
+    "Group": "Net",
+    "Include": "Include",
+    "Method": "NetProtectRemove",
+    "Perms (lotus)": "Admin"
+  },
+  {
+    "Comment": "Debug method. Usage is likely limited",
+    "Group": "Net",
+    "Include": "Exclude",
+    "Method": "NetPubsubScores"
+  },
+  {
+    "Comment": "Potentially client specific",
+    "Group": "Net",
+    "Include": "Exclude",
+    "Method": "NetSetLimit"
+  },
+  {
+    "Comment": "Returns internal stats. No clear use case.",
+    "Group": "Net",
+    "Include": "Exclude",
+    "Method": "NetStat"
+  },
+  {
+    "Comment": "Part of ETH API, excluded in initial version",
+    "Group": "Net",
+    "Include": "Exclude",
+    "Method": "NetVersion"
+  },
+  {
+    "Comment": "Metrics. Should be exposed through other means",
+    "Group": "Node",
+    "Include": "Exclude",
+    "Method": "NodeStatus"
+  },
+  {
+    "Comment": "Exclude Paych methods for initial interface",
+    "Group": "Paych",
+    "Include": "Exclude",
+    "Method": "PaychAllocateLane"
+  },
+  {
+    "Comment": "Exclude Paych methods for initial interface",
+    "Group": "Paych",
+    "Include": "Exclude",
+    "Method": "PaychAvailableFunds"
+  },
+  {
+    "Comment": "Exclude Paych methods for initial interface",
+    "Group": "Paych",
+    "Include": "Exclude",
+    "Method": "PaychAvailableFundsByFromTo"
+  },
+  {
+    "Comment": "Exclude Paych methods for initial interface",
+    "Group": "Paych",
+    "Include": "Exclude",
+    "Method": "PaychCollect"
+  },
+  {
+    "Comment": "Exclude Paych methods for initial interface",
+    "Group": "Paych",
+    "Include": "Exclude",
+    "Method": "PaychFund"
+  },
+  {
+    "Comment": "Exclude Paych methods for initial interface",
+    "Group": "Paych",
+    "Include": "Exclude",
+    "Method": "PaychGet"
+  },
+  {
+    "Comment": "Exclude Paych methods for initial interface",
+    "Group": "Paych",
+    "Include": "Exclude",
+    "Method": "PaychGetWaitReady"
+  },
+  {
+    "Comment": "Exclude Paych methods for initial interface",
+    "Group": "Paych",
+    "Include": "Exclude",
+    "Method": "PaychList"
+  },
+  {
+    "Comment": "Exclude Paych methods for initial interface",
+    "Group": "Paych",
+    "Include": "Exclude",
+    "Method": "PaychNewPayment"
+  },
+  {
+    "Comment": "Exclude Paych methods for initial interface",
+    "Group": "Paych",
+    "Include": "Exclude",
+    "Method": "PaychSettle"
+  },
+  {
+    "Comment": "Exclude Paych methods for initial interface",
+    "Group": "Paych",
+    "Include": "Exclude",
+    "Method": "PaychStatus"
+  },
+  {
+    "Comment": "Exclude Paych methods for initial interface",
+    "Group": "Paych",
+    "Include": "Exclude",
+    "Method": "PaychVoucherAdd"
+  },
+  {
+    "Comment": "Exclude Paych methods for initial interface",
+    "Group": "Paych",
+    "Include": "Exclude",
+    "Method": "PaychVoucherCheckSpendable"
+  },
+  {
+    "Comment": "Exclude Paych methods for initial interface",
+    "Group": "Paych",
+    "Include": "Exclude",
+    "Method": "PaychVoucherCheckValid"
+  },
+  {
+    "Comment": "Exclude Paych methods for initial interface",
+    "Group": "Paych",
+    "Include": "Exclude",
+    "Method": "PaychVoucherCreate"
+  },
+  {
+    "Comment": "Exclude Paych methods for initial interface",
+    "Group": "Paych",
+    "Include": "Exclude",
+    "Method": "PaychVoucherList"
+  },
+  {
+    "Comment": "Exclude Paych methods for initial interface",
+    "Group": "Paych",
+    "Include": "Exclude",
+    "Method": "PaychVoucherSubmit"
+  },
+  {
+    "Comment": "No clear use case.",
+    "Description": "Return latest start up time of node",
+    "Group": "Start",
+    "Include": "Exclude",
+    "Method": "StartTime"
+  },
+  {
+    "Boost": "Yes",
+    "Category": "State query",
+    "Curio": "Yes",
+    "Description": "Returns the public key address of the given ID address for secp and bls accounts",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateAccountKey",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Comment": "Should be provided as constants in consumer libs",
+    "Description": "returns the CIDs of all the builtin actors for the given network version",
+    "Group": "State",
+    "Include": "Exclude",
+    "Method": "StateActorCodeCIDs"
+  },
+  {
+    "Comment": "Should be provided as constant in consumer libs",
+    "Description": "returns the CID of the builtin actors manifest for the given network version",
+    "Group": "State",
+    "Include": "Exclude",
+    "Method": "StateActorManifestCID"
+  },
+  {
+    "Comment": "Unclear use case",
+    "Description": "returns all non-expired Faults that occur within lookback epochs of the given tipset",
+    "Group": "State",
+    "Include": "Exclude",
+    "Method": "StateAllMinerFaults"
+  },
+  {
+    "Boost": "Yes",
+    "Category": "State query",
+    "Description": "Runs the given message and returns its result without any persisted changes. StateCall applies the message to the tipset's parent state. The message is not applied on-top-of the messages in the passed-in tipset.",
+    "GLIF": "Yes",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateCall",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Comment": "Unclear use case",
+    "Description": "Returns all the actors whose states change between the two given state CIDs",
+    "Group": "State",
+    "Include": "Exclude",
+    "Method": "StateChangedActors"
+  },
+  {
+    "Category": "State query",
+    "Description": "Returns the exact circulating supply of Filecoin at the given tipset.",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateCirculatingSupply"
+  },
+  {
+    "Comment": "Not required for standard node operation. Should be provided as seperate tooling ",
+    "Description": "https://github.com/filecoin-project/lotus/blob/master/documentation/en/api-v1-unstable-methods.md#statecompute",
+    "Group": "State",
+    "Include": "Exclude",
+    "Method": "StateCompute"
+  },
+  {
+    "Comment": "Unclear use case",
+    "Description": "computes DataCID from a set of on-chain deals",
+    "Group": "State",
+    "Include": "Exclude",
+    "Method": "StateComputeDataCID"
+  },
+  {
+    "Boost": "Yes",
+    "Category": "State query",
+    "Description": "Returns the min and max collateral a storage provider can issue. It takes the deal size and verified status as parameters.",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateDealProviderCollateralBounds",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Comment": "Encoding/decoding should be done locally with a trusted version of actor state.",
+    "Description": "Attempts to decode the provided params, based on the recipient actor address and method number",
+    "GLIF": "Yes",
+    "Group": "State",
+    "Include": "Exclude",
+    "Method": "StateDecodeParams",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Comment": "Encoding/decoding should be done locally with a trusted version of actor state.",
+    "Description": "Attempts to encode the provided json params to the binary form",
+    "Group": "State",
+    "Include": "Exclude",
+    "Method": "StateEncodeParams",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Boost": "Yes",
+    "Category": "State query",
+    "Curio": "Yes",
+    "Description": "Returns the specified actor's nonce and balance.",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateGetActor",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "State query",
+    "Description": "returns the all the allocations available in verified registry actor",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateGetAllAllocations"
+  },
+  {
+    "Category": "State query",
+    "Description": "returns the all the claims available in verified registry actor",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateGetAllClaims"
+  },
+  {
+    "Boost": "Yes",
+    "Category": "State query",
+    "Curio": "Yes",
+    "Description": "Returns the allocation for a given address and allocation ID.",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateGetAllocation",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "State query",
+    "Curio": "Yes",
+    "Description": "Returns the allocation for the specified pending deal. Returns nil if pending allocation is not found.",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateGetAllocationForPendingDeal",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "State query",
+    "Curio": "Yes",
+    "Description": "Identical to StateGetAllocationForPendingDeal except it returns the allocation ID",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateGetAllocationIdForPendingDeal",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "State query",
+    "Description": "returns the all the allocations for a given client",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateGetAllocations"
+  },
+  {
+    "Category": "State query",
+    "Curio": "Yes",
+    "Description": "Returns the claim for a given address and claim ID",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateGetBeaconEntry",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Boost": "Yes",
+    "Category": "State query",
+    "Description": "Returns the claim for a given address and claim ID",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateGetClaim",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "State query",
+    "Description": "returns the all the claims for a given provider",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateGetClaims"
+  },
+  {
+    "Category": "State query",
+    "Description": "Returns current network params",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateGetNetworkParams"
+  },
+  {
+    "Category": "State query",
+    "Description": "samples the beacon for randomness",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateGetRandomnessDigestFromBeacon"
+  },
+  {
+    "Category": "State query",
+    "Description": "sample the chain for randomness",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateGetRandomnessDigestFromTickets"
+  },
+  {
+    "Category": "State query",
+    "Comment": "Should this not be a subscription?",
+    "Curio": "Yes",
+    "Description": "Returns the beacon entry for the given filecoin epoch. If the entry has not yet been produced, the call will block until the entry becomes available",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateGetRandomnessFromBeacon",
+    "Perms (lotus)": "Read",
+    "W3M": "Yes"
+  },
+  {
+    "Category": "State query",
+    "Curio": "Yes",
+    "Description": "sample the chain for randomness",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateGetRandomnessFromTickets",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "State query",
+    "Description": "returns the addresses of every actor in the state",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateListActors"
+  },
+  {
+    "Category": "State query",
+    "Description": "looks back and returns all messages with a matching to or from address, stopping at the given height.",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateListMessages",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "State query",
+    "Description": "Returns the addresses of every miner that has claimed power in the Power Actor",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateListMiners",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Boost": "Yes",
+    "Category": "State query",
+    "Comment": "What does this do? https://github.com/filecoin-project/lotus/blob/fb3fc1f342cdc7be71fb02ae3000a707c80e77e6/chain/stmgr/stmgr.go#L403",
+    "Curio": "Yes",
+    "Description": "retrieves the ID address of the given address",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateLookupID"
+  },
+  {
+    "Category": "State query",
+    "Description": "Returns the public key address of the given ID address for non-account addresses (multisig, miners etc)",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateLookupRobustAddress",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Boost": "Yes",
+    "Category": "State query",
+    "Description": "looks up the Escrow and Locked balances of the given address in the Storage Market",
+    "GLIF": "Yes",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateMarketBalance",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "State query",
+    "Description": "returns information about every deal in the Storage Market",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateMarketDeals",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "State query",
+    "Description": "returns the Escrow and Locked balances of every participant in the Storage Market",
+    "GLIF": "Yes",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateMarketParticipants",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Boost": "Yes",
+    "Category": "State query",
+    "Description": "returns information about the specified deal",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateMarketStorageDeal",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "State query",
+    "Curio": "Yes",
+    "Description": "Returns info about sectors that a given miner is actively proving",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateMinerActiveSectors",
+    "Perms (lotus)": "Read",
+    "W3M": "Yes"
+  },
+  {
+    "Category": "State query",
+    "Curio": "Yes",
+    "Description": "Returns info about sectors that a given miner is actively proving",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateMinerAllocated",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "State query",
+    "Description": "Returns the portion of a miner's balance that can be withdrawn or spent",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateMinerAvailableBalance",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "State query",
+    "Description": "Returns all the proving deadlines for the given miner",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateMinerDeadlines",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "State query",
+    "Description": "Returns a bitfield indicating the faulty sectors of the given miner",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateMinerFaults",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Boost": "Yes",
+    "Category": "State query",
+    "Curio": "Yes",
+    "Description": "returns info about the specified miner",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateMinerInfo",
+    "Perms (lotus)": "Read",
+    "W3M": "Yes"
+  },
+  {
+    "Category": "State query",
+    "Curio": "Yes",
+    "Description": "returns the initial pledge collateral for the specified miner's sector",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateMinerInitialPledgeCollateral",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "State query",
+    "Curio": "Yes",
+    "Description": "returns all partitions in the specified deadline",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateMinerPartitions",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "State query",
+    "Description": "returns the power of the indicated miner",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateMinerPower",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "State query",
+    "Curio": "Yes",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateMinerPreCommitDepositForPower",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "State query",
+    "Curio": "Yes",
+    "Description": "calculates the deadline at some epoch for a proving period and returns the deadline-related calculations.",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateMinerProvingDeadline",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "State query",
+    "Description": "returns a bitfield indicating the recovering sectors of the given miner",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateMinerRecoveries",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "State query",
+    "Description": "checks if a sector number is marked as allocated",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateMinerSectorAllocated"
+  },
+  {
+    "Category": "State query",
+    "Description": "returns the number of sectors in a miner's sector set and proving set",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateMinerSectorCount"
+  },
+  {
+    "Boost": "Yes",
+    "Category": "State query",
+    "Curio": "Yes",
+    "Description": "returns info about the given miner's sectors. If the filter bitfield is nil, all sectors are included",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateMinerSectors",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Comment": "Can be fetched with StateGetNetworkParams",
+    "Description": "returns the name of the network the node is synced to",
+    "Group": "State",
+    "Include": "Exclude",
+    "Method": "StateNetworkName"
+  },
+  {
+    "Boost": "Yes",
+    "Category": "State query",
+    "Comment": "Can be fetched with StateGetNetworkParams",
+    "Curio": "Yes",
+    "Description": "returns the network version at the given tipset",
+    "Group": "State",
+    "Include": "Exclude",
+    "Method": "StateNetworkVersion",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "State query",
+    "Description": "Returns the indicated actor's state",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateReadState",
+    "Perms (lotus)": "Read",
+    "W3M": "Yes"
+  },
+  {
+    "Category": "State query",
+    "Comment": "Documentation is unclear, requires further clarification. Including due to industry usage, may seek to deprecate.",
+    "Description": "https://github.com/filecoin-project/lotus/blob/286fadaca4d2af81bedf4213daebfbbdbcd5e337/api/api_full.go#L356-L373",
+    "GLIF": "Yes",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateReplay"
+  },
+  {
+    "Boost": "Yes",
+    "Category": "State query",
+    "Comment": "Documentation is unclear, requires further clarification. Including due to industry usage, may seek to deprecate.",
+    "Curio": "Yes",
+    "Description": "https://github.com/filecoin-project/lotus/blob/286fadaca4d2af81bedf4213daebfbbdbcd5e337/api/api_full.go#L431-L447",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateSearchMsg",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Boost": "Yes",
+    "Category": "State query",
+    "Description": "Returns the epoch at which given sector will expire",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateSectorExpiration",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Boost": "Yes",
+    "Category": "State query",
+    "Curio": "Yes",
+    "Description": "Returns the on-chain info for the specified miner's sector. Returns null in case the sector info isn't found. NOTE: returned info.Expiration may not be accurate in some cases, use StateSectorExpiration to get accurate expiration epoch.",
+    "GLIF": "Yes",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateSectorGetInfo",
+    "Perms (lotus)": "Read",
+    "W3M": "Yes"
+  },
+  {
+    "Category": "State query",
+    "Curio": "Yes",
+    "Description": "Finds deadline/partition with the specified sector",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateSectorPartition",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "State query",
+    "Curio": "Yes",
+    "Description": "Returns the PreCommit info for the specified miner's sector. Returns null and no error if the sector isn't precommitted. Note that the sector number may be allocated while PreCommitInfo is nil. This means that either allocated sector numbers were compacted, and the sector number was marked as allocated in order to reduce size of the allocated sectors bitfield, or that the sector was precommitted, but the precommit has expired.",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateSectorPreCommitInfo",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Boost": "Yes",
+    "Category": "State query",
+    "Description": "Returns the data cap for the given address. Returns nil if there is no entry in the data cap table for the address.",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateVerifiedClientStatus",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "State query",
+    "Description": "returns the address of the Verified Registry's root key",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateVerifiedRegistryRootKey"
+  },
+  {
+    "Category": "State query",
+    "Description": "Returns the data cap for the given address. Returns nil if there is no entry in the data cap table for the address.",
+    "GLIF": "Yes",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateVerifierStatus",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Category": "State query",
+    "Description": "returns an approximation of the circulating supply of Filecoin at the given tipset. This is the value reported by the runtime interface to actors code.",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateVMCirculatingSupplyInternal"
+  },
+  {
+    "Boost": "Yes",
+    "Category": "State query",
+    "Comment": "Documentation is unclear, requires further clarification. Including due to industry usage, may seek to deprecate.",
+    "Description": "https://github.com/filecoin-project/lotus/blob/286fadaca4d2af81bedf4213daebfbbdbcd5e337/api/api_full.go#L448-L466",
+    "Group": "State",
+    "Include": "Include",
+    "Method": "StateWaitMsg",
+    "Perms (lotus)": "Read"
+  },
+  {
+    "Comment": "No clear usage.",
+    "Description": "See comment",
+    "Group": "Subscribe",
+    "Include": "Exclude",
+    "Method": "SubscribeActorEventsRaw"
+  },
+  {
+    "Comment": "All Sync methods are excluded as they expose delicate internals and are somewhat client specific",
+    "Description": "checks if a block was marked as bad, and if it was, returns the reason",
+    "Group": "Sync",
+    "Include": "Exclude",
+    "Method": "SyncCheckBad"
+  },
+  {
+    "Comment": "All Sync methods are excluded as they expose delicate internals and are somewhat client specific",
+    "Description": "marks a blocks as checkpointed, meaning that it won't ever fork away from it.",
+    "Group": "Sync",
+    "Include": "Exclude",
+    "Method": "SyncCheckpoint"
+  },
+  {
+    "Comment": "All Sync methods are excluded as they expose delicate internals and are somewhat client specific",
+    "Description": "returns a channel streaming incoming, potentially not yet synced block headers.",
+    "Group": "Sync",
+    "Include": "Exclude",
+    "Method": "SyncIncomingBlocks"
+  },
+  {
+    "Comment": "All Sync methods are excluded as they expose delicate internals and are somewhat client specific",
+    "Description": "marks a blocks as bad, meaning that it won't ever by synced. Use with extreme caution.",
+    "Group": "Sync",
+    "Include": "Exclude",
+    "Method": "SyncMarkBad"
+  },
+  {
+    "Comment": "All Sync methods are excluded as they expose delicate internals and are somewhat client specific",
+    "Group": "Sync",
+    "Include": "Exclude",
+    "Method": "SyncState"
+  },
+  {
+    "Comment": "All Sync methods are excluded as they expose delicate internals and are somewhat client specific",
+    "Curio": "Yes",
+    "Group": "Sync",
+    "Include": "Exclude",
+    "Method": "SyncSubmitBlock"
+  },
+  {
+    "Comment": "All Sync methods are excluded as they expose delicate internals and are somewhat client specific",
+    "Group": "Sync",
+    "Include": "Exclude",
+    "Method": "SyncUnmarkAllBad"
+  },
+  {
+    "Comment": "All Sync methods are excluded as they expose delicate internals and are somewhat client specific",
+    "Group": "Sync",
+    "Include": "Exclude",
+    "Method": "SyncUnmarkBad"
+  },
+  {
+    "Comment": "All Sync methods are excluded as they expose delicate internals and are somewhat client specific",
+    "Group": "Sync",
+    "Include": "Exclude",
+    "Method": "SyncValidateTipset"
+  },
+  {
+    "Category": "Miner operations",
+    "Comment": "How do you get the balance of an address not in the wallet? This can potentially be replaced by that",
+    "Curio": "Yes",
+    "Description": "Returns balance of a wallet",
+    "Group": "Wallet",
+    "Include": "Include",
+    "Method": "WalletBalance"
+  },
+  {
+    "Comment": "Unclear use case",
+    "Description": "Returns default wallet address",
+    "Group": "Wallet",
+    "Include": "Exclude",
+    "Method": "WalletDefaultAddress"
+  },
+  {
+    "Comment": "This can presumably be done locally, no need for remote interaction",
+    "Description": "Deletes an address from the wallet.",
+    "Group": "Wallet",
+    "Include": "Exclude",
+    "Method": "WalletDelete"
+  },
+  {
+    "Comment": "Dangerous method with no clear use case",
+    "Description": "returns the private key of an address in the wallet.",
+    "Group": "Wallet",
+    "Include": "Exclude",
+    "Method": "WalletExport"
+  },
+  {
+    "Category": "Miner operations",
+    "Comment": "Use WalletList instead",
+    "Curio": "Yes",
+    "Description": "indicates whether the given address is in the wallet",
+    "Group": "Wallet",
+    "Include": "Include",
+    "Method": "WalletHas"
+  },
+  {
+    "Comment": "This can presumably be done locally, no need for remote interaction",
+    "Description": "receives a KeyInfo, which includes a private key, and imports it into the wallet.",
+    "Group": "Wallet",
+    "Include": "Exclude",
+    "Method": "WalletImport"
+  },
+  {
+    "Boost": "Yes",
+    "Category": "Miner operations",
+    "Description": "Returns a list of all the addresses in the wallet.",
+    "Group": "Wallet",
+    "Include": "Include",
+    "Method": "WalletList",
+    "Perms (lotus)": "Write"
+  },
+  {
+    "Comment": "Unclear use case",
+    "Description": "WalletNew creates a new address in the wallet with the given sigType. Available key types: bls, secp256k1, secp256k1-ledger. Support for numerical types: 1",
+    "Group": "Wallet",
+    "Include": "Exclude",
+    "Method": "WalletNew"
+  },
+  {
+    "Comment": "Unclear use case",
+    "Description": "Sets default wallet address",
+    "Group": "Wallet",
+    "Include": "Exclude",
+    "Method": "WalletSetDefault"
+  },
+  {
+    "Boost": "Yes",
+    "Category": "Miner operations",
+    "Comment": "Is this used for signing something other than a message?",
+    "Curio": "Yes",
+    "Description": "signs the given bytes using the given address",
+    "Group": "Wallet",
+    "Include": "Include",
+    "Method": "WalletSign"
+  },
+  {
+    "Category": "Miner operations",
+    "Comment": "See WalletSIgn",
+    "Curio": "Yes",
+    "Description": "signs the given message using the given address.",
+    "Group": "Wallet",
+    "Include": "Include",
+    "Method": "WalletSignMessage"
+  },
+  {
+    "Comment": "Helper method. Can be done locally.",
+    "Description": "Verifies an address is valid",
+    "Group": "Wallet",
+    "Include": "Exclude",
+    "Method": "WalletValidateAddress"
+  },
+  {
+    "Comment": "Helper method. Can be done locally.",
+    "Description": "Verifies a message was signed by the specified address",
+    "Group": "Wallet",
+    "Include": "Exclude",
+    "Method": "WalletVerify"
+  },
+  {
+    "GLIF": "Yes",
+    "Group": "Web3",
+    "Include": "Exclude",
+    "Method": "Web3ClientVersion"
+  }
+]
