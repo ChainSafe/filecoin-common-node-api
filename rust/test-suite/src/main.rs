@@ -1,7 +1,6 @@
 use std::{collections::BTreeSet, fs::File, io, ops::ControlFlow, path::PathBuf};
 
 use clap::Parser;
-use schemars::schema_for;
 use serde_json::json;
 
 mod tests;
@@ -16,16 +15,13 @@ enum Args {
     List,
     /// Run the tests, loading the given config file.
     Run {
-        /// The config file should match the schema given by the `config-schema`
-        /// subcommand.
+        /// The config file should match the schema in the repository.
         ///
         /// Tests will only run if the required config is available.
         config: PathBuf,
         /// If supplied, only run tests with this name.
         include: Vec<String>,
     },
-    /// Print the JSON-Schema for the test config file to stdout.
-    ConfigSchema,
 }
 
 fn main() -> anyhow::Result<()> {
@@ -40,7 +36,6 @@ fn main() -> anyhow::Result<()> {
                 serde_json::to_writer(io::stdout(), &j)?;
             }
         }
-        Args::ConfigSchema => serde_json::to_writer(io::stdout(), &schema_for!(harness::Config))?,
         Args::Run { config, include } => {
             let include = include.into_iter().collect::<BTreeSet<_>>();
             harness::run(
@@ -106,8 +101,6 @@ mod harness {
         pub use super::{v0admin, v0none, v0read, v0write, Context as _, Tag, Test};
         pub use bindings::v0::{self, Api as _};
     }
-
-    pub use config::Harness as Config;
 
     /// Create a test case that is provided with a [`V0Client`],
     /// with no authorization token.
@@ -277,6 +270,7 @@ mod harness {
         use std::time::Duration;
 
         #[derive(Deserialize, Default, JsonSchema)]
+        #[schemars(rename = "Test Suite Config")]
         pub struct Harness {
             pub(super) v0: Option<Client>,
             pub(super) timeouts: Option<Timeout>,
@@ -294,11 +288,45 @@ mod harness {
         #[derive(Deserialize, Default, JsonSchema)]
         pub struct Timeout {
             #[serde(with = "humantime_serde")]
-            #[schemars(with = "String")]
+            #[schemars(with = "Option<String>")]
             pub(super) default: Option<Duration>,
             #[serde(with = "humantime_serde")]
-            #[schemars(with = "String")]
+            #[schemars(with = "Option<String>")]
             pub(super) long: Option<Duration>,
+        }
+
+        #[test]
+        fn example() {
+            let cfg = serde_json::from_reader(json_comments::StripComments::new(
+                &include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/example-config.jsonc"))[..],
+            ))
+            .unwrap();
+
+            let Harness {
+                v0:
+                    Some(Client {
+                        url: _,
+                        none_token: Some(_),
+                        read_token: Some(_),
+                        write_token: Some(_),
+                        admin_token: Some(_),
+                    }),
+                timeouts:
+                    Some(Timeout {
+                        default: Some(_),
+                        long: Some(_),
+                    }),
+            } = cfg
+            else {
+                panic!("example config should be maximal")
+            };
+        }
+
+        #[test]
+        fn schema() {
+            let schema = serde_json::to_string_pretty(&schemars::schema_for!(Harness)).unwrap();
+            expect_test::expect_file![concat!(env!("CARGO_MANIFEST_DIR"), "/config-schema.json")]
+                .assert_eq(&schema)
         }
     }
 
@@ -350,12 +378,17 @@ mod harness {
     }
 
     impl Client {
+        /// RPC calls after this method has been called will use a longer timeout.
         pub fn long_timeout(&mut self) {
             self.timeout_mode = TimeoutMode::Long
         }
+        /// RPC calls after this method has been called will use the default timeout.
         pub fn default_timeout(&mut self) {
             self.timeout_mode = TimeoutMode::Default
         }
+        /// Add a log message.
+        ///
+        /// This is printed on failure.
         pub fn log(&mut self, log: impl fmt::Display) {
             self.log.log(LogEvent::User(log.to_string()))
         }

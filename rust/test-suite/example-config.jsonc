@@ -1,0 +1,20 @@
+{
+    "$schema": "./config-schema.json",
+    // Configuration for the v0 client.
+    // If this is not provided, tests depending on this client will not run.
+    "v0": {
+        "url": "http://host/path/to/v0/api",
+        "none_token": "shim-token-if-required",
+        // Token to be used as `Authorization: Bearer <token>`.
+        // If this is not provided, tests depending on this token will not run.
+        "read_token": "token-with-read-permissions",
+        "write_token": "token-with-write-permissions",
+        "admin_token": "token-with-admin-permissions"
+    },
+    // Tests reference "default" and "long" timeouts,
+    // you can override the default durations here.
+    "timeouts": {
+        "default": "30 seconds",
+        "long": "2 minutes"
+    }
+}
