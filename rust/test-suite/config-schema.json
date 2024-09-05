@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Test Suite Config",
+  "type": "object",
+  "properties": {
+    "timeouts": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/Timeout"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "v0": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/Client"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "definitions": {
+    "Client": {
+      "type": "object",
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "admin_token": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "none_token": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "read_token": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "url": {
+          "type": "string"
+        },
+        "write_token": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "Timeout": {
+      "type": "object",
+      "properties": {
+        "default": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "long": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}
