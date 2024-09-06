@@ -184,6 +184,9 @@ fn main() -> anyhow::Result<()> {
                 }
                 None => false,
             });
+            openrpc
+                .methods
+                .sort_by(|left, right| left.name.cmp(&right.name));
             gc::prune_schemas(&mut openrpc)?;
             if let Ok(missed) = nunny::Vec::new(
                 select
