@@ -46,5 +46,6 @@ util = { path = "../util" }
 uuid = { version = "1.10.0", features = ["serde"] }
 
 [dev-dependencies]
+assert_cmd = "2.0.16"
 expect-test = "1.5.0"
 stack_list = "0.1.0"
