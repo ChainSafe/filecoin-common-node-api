@@ -188,6 +188,7 @@
     "Method": "ChainPrune"
   },
   {
+    "Category": "Node operation",
     "Comment": "Excluded because this doesn't actually work on Lotus",
     "Curio": "Yes",
     "Description": "Puts a given object into the block store",
