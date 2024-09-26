@@ -6,3 +6,6 @@ release:
 
 install:
 	cargo install
+
+lint:
+	cargo fmt --all --check
