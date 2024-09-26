@@ -5,4 +5,4 @@ publish = false
 
 [workspace]
 resolver = "2"
-members = ["bindings", "test-suite", "tool", "util"]
+members = ["src/bindings", "test-suite", "tool", "util"]
