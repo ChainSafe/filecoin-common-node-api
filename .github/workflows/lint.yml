@@ -16,7 +16,7 @@ jobs:
           profile: minimal
           toolchain: nightly
           override: true
-          components: clippy
+          components: fmt, clippy
 
-      - name: Run clippy
+      - name: Run fmt
         run: make lint
