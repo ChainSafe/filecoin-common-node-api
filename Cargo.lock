@@ -354,6 +354,82 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "98cc8fbded0c607b7ba9dd60cd98df59af97e84d24e49c8557331cfc26d301ce"
 
 [[package]]
+name = "cna-test-suite"
+version = "0.0.0"
+dependencies = [
+ "anstream",
+ "anyhow",
+ "assert2",
+ "bindings",
+ "clap",
+ "cna-util",
+ "derive_more",
+ "expect-test",
+ "ez-jsonrpc",
+ "humantime-serde",
+ "itertools",
+ "owo-colors",
+ "reqwest",
+ "schemars",
+ "serde",
+ "serde_json",
+ "serde_path_to_error",
+ "strum",
+]
+
+[[package]]
+name = "cna-tool"
+version = "0.0.0"
+dependencies = [
+ "anstream",
+ "anyhow",
+ "ascii",
+ "axum",
+ "bstr",
+ "bytes",
+ "clap",
+ "cna-util",
+ "csv",
+ "either",
+ "expect-test",
+ "ez-jsonrpc",
+ "fluent-uri",
+ "futures",
+ "http",
+ "http-body-util",
+ "indexmap",
+ "itertools",
+ "jsonschema",
+ "lazy-regex",
+ "nunny",
+ "openrpc-types",
+ "proc-macro2",
+ "quote",
+ "regex",
+ "reqwest",
+ "schemars",
+ "serde",
+ "serde_json",
+ "serde_path_to_error",
+ "stack_list",
+ "strum",
+ "syn 2.0.72",
+ "tokio",
+ "tower",
+ "tracing",
+ "typify",
+ "uuid",
+]
+
+[[package]]
+name = "cna-util"
+version = "0.0.0"
+dependencies = [
+ "clap",
+ "stackstack",
+]
+
+[[package]]
 name = "colorchoice"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1863,30 +1939,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "test-suite"
-version = "0.0.0"
-dependencies = [
- "anstream",
- "anyhow",
- "assert2",
- "bindings",
- "clap",
- "derive_more",
- "expect-test",
- "ez-jsonrpc",
- "humantime-serde",
- "itertools",
- "owo-colors",
- "reqwest",
- "schemars",
- "serde",
- "serde_json",
- "serde_path_to_error",
- "strum",
- "util",
-]
-
-[[package]]
 name = "thiserror"
 version = "1.0.63"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2011,50 +2063,6 @@ dependencies = [
  "futures-sink",
  "pin-project-lite",
  "tokio",
-]
-
-[[package]]
-name = "tool"
-version = "0.0.0"
-dependencies = [
- "anstream",
- "anyhow",
- "ascii",
- "axum",
- "bstr",
- "bytes",
- "clap",
- "csv",
- "either",
- "expect-test",
- "ez-jsonrpc",
- "fluent-uri",
- "futures",
- "http",
- "http-body-util",
- "indexmap",
- "itertools",
- "jsonschema",
- "lazy-regex",
- "nunny",
- "openrpc-types",
- "proc-macro2",
- "quote",
- "regex",
- "reqwest",
- "schemars",
- "serde",
- "serde_json",
- "serde_path_to_error",
- "stack_list",
- "strum",
- "syn 2.0.72",
- "tokio",
- "tower",
- "tracing",
- "typify",
- "util",
- "uuid",
 ]
 
 [[package]]
@@ -2214,14 +2222,6 @@ name = "utf8parse"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "711b9620af191e0cdc7468a8d14e709c3dcdb115b36f838e601583af800a370a"
-
-[[package]]
-name = "util"
-version = "0.0.0"
-dependencies = [
- "clap",
- "stackstack",
-]
 
 [[package]]
 name = "uuid"
