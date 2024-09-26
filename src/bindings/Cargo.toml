@@ -1,5 +1,5 @@
 [package]
-name = "bindings"
+name = "cna-bindings"
 version.workspace = true
 edition.workspace = true
 publish.workspace = true

@@ -1,5 +1,5 @@
 [package]
-name = "test-suite"
+name = "cna-test-suite"
 version.workspace = true
 edition.workspace = true
 publish.workspace = true
