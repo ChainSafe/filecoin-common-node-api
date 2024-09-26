@@ -1,2 +1,4 @@
 *.ignoreme
 *.ipynb
+target/
+.DS_STORE

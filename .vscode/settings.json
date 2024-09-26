@@ -1,9 +1,0 @@
-{
-    "rust-analyzer.linkedProjects": [
-        "rust/Cargo.toml"
-    ],
-    "files.associations": {
-        "**/*.json.ignoreme": "jsonc"
-    },
-    "rust-analyzer.cargo.buildScripts.enable": true
-}
