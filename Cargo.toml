@@ -5,4 +5,4 @@ publish = false
 
 [workspace]
 resolver = "2"
-members = ["src/cna-bindings", "src/cna-test-suite", "src/cna-tool", "src/cna-util"]
+members = ["src/bindings", "src/test-suite", "src/tool", "src/util"]
