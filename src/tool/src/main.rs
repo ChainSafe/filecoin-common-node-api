@@ -684,5 +684,5 @@ impl FromStr for Header {
 #[test]
 fn doc() {
     expect_test::expect_file!["../README.md"]
-        .assert_eq(&util::markdown(&<Args as clap::CommandFactory>::command()));
+        .assert_eq(&cna_util::markdown(&<Args as clap::CommandFactory>::command()));
 }
