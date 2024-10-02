@@ -1,5 +1,5 @@
 [package]
-name = "test-suite"
+name = "cna-test-suite"
 version.workspace = true
 edition.workspace = true
 publish.workspace = true
@@ -21,7 +21,7 @@ anstream = "0.6.15"
 serde_json = "1.0.125"
 assert2 = "0.3.14"
 itertools = "0.13.0"
-util = { path = "../util" }
+cna-util = { path = "../util" }
 expect-test = "1.5.0"
 
 [dev-dependencies]
