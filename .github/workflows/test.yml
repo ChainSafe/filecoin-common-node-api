@@ -17,6 +17,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+        - name: Print toolchain version
+          run: rustup show active-toolchain
+
       - name: Setup sccache
         uses: mozilla-actions/sccache-action@v0.0.5
         timeout-minutes: 5
