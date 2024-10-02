@@ -3,7 +3,7 @@ use assert_cmd::Command;
 #[test]
 fn openrpc_select_is_up_to_date() -> anyhow::Result<()> {
     let repo_root = concat!(env!("CARGO_MANIFEST_DIR"), "/../..");
-    let stdout = Command::cargo_bin("tool")?
+    let stdout = Command::cargo_bin("cna-tool")?
         .args(["openrpc", "select"])
         .args([
             "schemas/forest-6ba5c966097-path-v0.json",
