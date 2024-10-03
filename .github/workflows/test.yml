@@ -1,0 +1,29 @@
+name: Check and Test
+
+on:
+  pull_request:
+
+env:
+  SCCACHE_GHA_ENABLED: "true"
+  RUSTC_WRAPPER: sccache
+  CC: sccache clang
+  CXX: sccache clang++
+
+jobs:
+  test:
+    name: check-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup sccache
+        uses: mozilla-actions/sccache-action@v0.0.5
+        timeout-minutes: 5
+        continue-on-error: true
+
+      - name: Check
+        run: make check
+
+      - name: Test
+        run: make test

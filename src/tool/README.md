@@ -1,9 +1,9 @@
-# `tool`
+# `cna-tool`
 
 ```
 Utilities for creating, interacting with, and testing against the Filecoin Common Node API
 
-Usage: tool <COMMAND>
+Usage: cna-tool <COMMAND>
 
 Commands:
   openrpc   Subcommands related to processing OpenRPC documents
@@ -11,7 +11,7 @@ Commands:
   json-rpc  Subcommands for interacting with JSON-RPC endpoints
 
 ```
-## `tool` `openrpc`
+## `cna-tool` `openrpc`
 
 ```
 Subcommands related to processing OpenRPC documents
@@ -23,7 +23,7 @@ Commands:
   select    Interpret `select` as a json document of methods to include in `openrpc`
 
 ```
-### `tool` `openrpc` `validate`
+### `cna-tool` `openrpc` `validate`
 
 ```
 Performs validation of the spec, including FIP-specific validation.
@@ -44,7 +44,7 @@ Arguments:
   <SPEC>
 
 ```
-### `tool` `openrpc` `select`
+### `cna-tool` `openrpc` `select`
 
 ```
 Interpret `select` as a json document of methods to include in `openrpc`.
@@ -68,7 +68,7 @@ Options:
           Specify a new version for the schema
 
 ```
-## `tool` `csv2json`
+## `cna-tool` `csv2json`
 
 ```
 Interpret stdin as a `delimiter`-separated series of lines, with a header, and print JSON
@@ -80,7 +80,7 @@ Options:
           [default: "\t"]
 
 ```
-## `tool` `json-rpc`
+## `cna-tool` `json-rpc`
 
 ```
 Subcommands for interacting with JSON-RPC endpoints
@@ -92,7 +92,7 @@ Commands:
   play     Receive's stdin's concatenated JSON summaries of JSON-RPC dialogue (as output by the `json-rpc capture` command)
 
 ```
-### `tool` `json-rpc` `capture`
+### `cna-tool` `json-rpc` `capture`
 
 ```
 Start a HTTP server, forwarding all requests to a single URI.
@@ -117,7 +117,7 @@ Options:
           The remote URI to forward requests to
 
 ```
-### `tool` `json-rpc` `play`
+### `cna-tool` `json-rpc` `play`
 
 ```
 Receive's stdin's concatenated JSON summaries of JSON-RPC dialogue (as output by the `json-rpc capture` command).
