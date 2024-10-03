@@ -10,9 +10,6 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Print toolchain version
-        run: rustup show active-toolchain
-
       - name: Run fmt
         run: make lint
 
@@ -21,9 +18,6 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
-
-      - name: Print toolchain version
-        run: rustup show active-toolchain
 
       - name: Run clippy
         run: make clippy
