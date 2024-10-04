@@ -744,7 +744,7 @@ mod harness {
 
 #[test]
 fn doc() {
-    expect_test::expect_file!["../README.md"].assert_eq(&cna_util::markdown(
+    expect_test::expect_file!["../API.md"].assert_eq(&cna_util::markdown(
         &<Args as clap::CommandFactory>::command(),
     ));
 }
