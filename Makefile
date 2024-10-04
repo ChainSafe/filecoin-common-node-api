@@ -18,3 +18,9 @@ test:
 
 check:
 	cargo check
+
+md-fmt:
+	corepack enable && yarn && yarn md-fmt
+
+md-check:
+	corepack enable && yarn && yarn md-check

@@ -19,30 +19,37 @@ and testing against the schema.
 - [`cna-util`](src/test-suite/README.md)
 
 ## Setup
+
 To get started, you should [install rust](https://www.rust-lang.org/tools/install).
 
 You can compile the utilities with:
+
 ```
 make build
 ```
 
 Or, install them with:
+
 ```
 make install
 ```
+
 ## Example Commands
 
 List the available tests
+
 ```console
 $ cna-test-suite list
 ```
 
 Capture JSON-RPC calls
+
 ```console
 $ cna-tool json-rpc capture --help
 ```
 
 Validate the spec, and perhaps captured calls
+
 ```console
 $ cna-tool openrpc validate --help
 ```

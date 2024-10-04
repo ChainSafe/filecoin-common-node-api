@@ -11,6 +11,7 @@ Commands:
   json-rpc  Subcommands for interacting with JSON-RPC endpoints
 
 ```
+
 ## `cna-tool` `openrpc`
 
 ```
@@ -23,6 +24,7 @@ Commands:
   select    Interpret `select` as a json document of methods to include in `openrpc`
 
 ```
+
 ### `cna-tool` `openrpc` `validate`
 
 ```
@@ -44,6 +46,7 @@ Arguments:
   <SPEC>
 
 ```
+
 ### `cna-tool` `openrpc` `select`
 
 ```
@@ -55,10 +58,10 @@ Usage: select [OPTIONS] <OPENRPC> <SELECT>
 
 Arguments:
   <OPENRPC>
-          
+
 
   <SELECT>
-          
+
 
 Options:
       --overwrite-title <OVERWRITE_TITLE>
@@ -68,6 +71,7 @@ Options:
           Specify a new version for the schema
 
 ```
+
 ## `cna-tool` `csv2json`
 
 ```
@@ -80,6 +84,7 @@ Options:
           [default: "\t"]
 
 ```
+
 ## `cna-tool` `json-rpc`
 
 ```
@@ -92,6 +97,7 @@ Commands:
   play     Receive's stdin's concatenated JSON summaries of JSON-RPC dialogue (as output by the `json-rpc capture` command)
 
 ```
+
 ### `cna-tool` `json-rpc` `capture`
 
 ```
@@ -117,6 +123,7 @@ Options:
           The remote URI to forward requests to
 
 ```
+
 ### `cna-tool` `json-rpc` `play`
 
 ```
@@ -133,7 +140,7 @@ Usage: play [OPTIONS] --remote <REMOTE>
 Options:
       --header <HEADER>
           Additional headers to append to every request.
-          
+
           By default, `Content-Type` and `User-Agent` headers are set.
 
       --remote <REMOTE>
