@@ -1,5 +1,7 @@
 # Filecoin Common Node API Specification
 
+[![codecov](https://codecov.io/gh/ChainSafe/filecoin-common-node-api/graph/badge.svg?token=15C2O7Z4G6)](https://codecov.io/gh/ChainSafe/filecoin-common-node-api)
+
 This repo is an appendix to the [Filecoin Common Node API FIP](https://github.com/filecoin-project/FIPs/pull/1027).
 
 # Spec
