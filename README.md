@@ -16,35 +16,42 @@ You may [browse the spec on the OpenRPC playground](https://playground.open-rpc.
 This repo also contains tooling for creating, interacting with,
 and testing against the schema.
 
-- [`cna-tool`](src/tool/README.md)
-- [`cna-test-suite`](src/test-suite/README.md)
-- [`cna-util`](src/test-suite/README.md)
+- [`cna-tool`](src/tool/API.md)
+- [`cna-test-suite`](src/test-suite/API.md)
+- [`cna-util`](src/util)
 
 ## Setup
+
 To get started, you should [install rust](https://www.rust-lang.org/tools/install).
 
 You can compile the utilities with:
+
 ```
 make build
 ```
 
 Or, install them with:
+
 ```
 make install
 ```
+
 ## Example Commands
 
 List the available tests
+
 ```console
 $ cna-test-suite list
 ```
 
 Capture JSON-RPC calls
+
 ```console
 $ cna-tool json-rpc capture --help
 ```
 
 Validate the spec, and perhaps captured calls
+
 ```console
 $ cna-tool openrpc validate --help
 ```
