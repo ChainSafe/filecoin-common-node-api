@@ -1,16 +1,16 @@
-# `test-suite`
+# `cna-test-suite`
 
 ```
 Filecoin RPC test suite
 
-Usage: test-suite <COMMAND>
+Usage: cna-test-suite <COMMAND>
 
 Commands:
   list  Print each test as a line of JSON to stdout
   run   Run the tests, loading the given config file
 
 ```
-## `test-suite` `list`
+## `cna-test-suite` `list`
 
 ```
 Print each test as a line of JSON to stdout
@@ -18,7 +18,7 @@ Print each test as a line of JSON to stdout
 Usage: list
 
 ```
-## `test-suite` `run`
+## `cna-test-suite` `run`
 
 ```
 Run the tests, loading the given config file
