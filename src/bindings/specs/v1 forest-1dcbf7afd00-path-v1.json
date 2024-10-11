@@ -6,192 +6,6 @@
   },
   "methods": [
     {
-      "name": "F3.Finalize",
-      "params": [
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/F3TipSetKey"
-          }
-        }
-      ],
-      "result": {
-        "name": "F3.Finalize.Result",
-        "required": true,
-        "schema": {
-          "type": "null"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "F3.GetHead",
-      "params": [],
-      "result": {
-        "name": "F3.GetHead.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/F3TipSet"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "F3.GetParent",
-      "params": [
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/F3TipSetKey"
-          }
-        }
-      ],
-      "result": {
-        "name": "F3.GetParent.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/F3TipSet"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "F3.GetParticipatingMinerIDs",
-      "params": [],
-      "result": {
-        "name": "F3.GetParticipatingMinerIDs.Result",
-        "required": false,
-        "schema": {
-          "type": [
-            "array",
-            "null"
-          ],
-          "items": {
-            "type": "integer",
-            "format": "uint64",
-            "minimum": 0
-          }
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "F3.GetPowerTable",
-      "params": [
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/F3TipSetKey"
-          }
-        }
-      ],
-      "result": {
-        "name": "F3.GetPowerTable.Result",
-        "required": false,
-        "schema": {
-          "type": [
-            "array",
-            "null"
-          ],
-          "items": {
-            "$ref": "#/components/schemas/F3PowerEntry"
-          }
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "F3.GetTipset",
-      "params": [
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/F3TipSetKey"
-          }
-        }
-      ],
-      "result": {
-        "name": "F3.GetTipset.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/F3TipSet"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "F3.GetTipsetByEpoch",
-      "params": [
-        {
-          "name": "epoch",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      ],
-      "result": {
-        "name": "F3.GetTipsetByEpoch.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/F3TipSet"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "F3.ProtectPeer",
-      "params": [
-        {
-          "name": "peer_id",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        }
-      ],
-      "result": {
-        "name": "F3.ProtectPeer.Result",
-        "required": true,
-        "schema": {
-          "type": "boolean"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "F3.SignMessage",
-      "params": [
-        {
-          "name": "pubkey",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Base64String"
-          }
-        },
-        {
-          "name": "message",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Base64String"
-          }
-        }
-      ],
-      "result": {
-        "name": "F3.SignMessage.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/Signature"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
       "name": "Filecoin.AuthNew",
       "params": [
         {
@@ -423,7 +237,7 @@
           "schema": {
             "type": "integer",
             "format": "uint32",
-            "minimum": 0
+            "minimum": 0.0
           }
         }
       ],
@@ -748,6 +562,56 @@
       "paramStructure": "by-position"
     },
     {
+      "name": "Filecoin.Session",
+      "params": [],
+      "result": {
+        "name": "Filecoin.Session.Result",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.Shutdown",
+      "params": [],
+      "result": {
+        "name": "Filecoin.Shutdown.Result",
+        "required": true,
+        "schema": {
+          "type": "null"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StartTime",
+      "params": [],
+      "result": {
+        "name": "Filecoin.StartTime.Result",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.Version",
+      "params": [],
+      "result": {
+        "name": "Filecoin.Version.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/PublicVersion"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
       "name": "Filecoin.EthAccounts",
       "params": [],
       "result": {
@@ -865,7 +729,7 @@
         "name": "Filecoin.EthEstimateGas.Result",
         "required": true,
         "schema": {
-          "$ref": "#/components/schemas/Uint64"
+          "$ref": "#/components/schemas/EthUint64"
         }
       },
       "paramStructure": "by-position"
@@ -877,7 +741,7 @@
           "name": "block_count",
           "required": true,
           "schema": {
-            "$ref": "#/components/schemas/Uint64"
+            "$ref": "#/components/schemas/EthUint64"
           }
         },
         {
@@ -1019,7 +883,7 @@
         "name": "Filecoin.EthGetBlockTransactionCountByHash.Result",
         "required": true,
         "schema": {
-          "$ref": "#/components/schemas/Uint64"
+          "$ref": "#/components/schemas/EthUint64"
         }
       },
       "paramStructure": "by-position"
@@ -1031,7 +895,7 @@
           "name": "block_number",
           "required": true,
           "schema": {
-            "$ref": "#/components/schemas/Int64"
+            "$ref": "#/components/schemas/EthInt64"
           }
         }
       ],
@@ -1039,7 +903,7 @@
         "name": "Filecoin.EthGetBlockTransactionCountByNumber.Result",
         "required": true,
         "schema": {
-          "$ref": "#/components/schemas/Uint64"
+          "$ref": "#/components/schemas/EthUint64"
         }
       },
       "paramStructure": "by-position"
@@ -1133,74 +997,6 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.EthGetTransactionByBlockHashAndIndex",
-      "params": [
-        {
-          "name": "p1",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/EthHash"
-          }
-        },
-        {
-          "name": "p2",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Uint64"
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.EthGetTransactionByBlockHashAndIndex.Result",
-        "required": false,
-        "schema": {
-          "anyOf": [
-            {
-              "$ref": "#/components/schemas/ApiEthTx"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.EthGetTransactionByBlockNumberAndIndex",
-      "params": [
-        {
-          "name": "p1",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Uint64"
-          }
-        },
-        {
-          "name": "p2",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Uint64"
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.EthGetTransactionByBlockNumberAndIndex.Result",
-        "required": false,
-        "schema": {
-          "anyOf": [
-            {
-              "$ref": "#/components/schemas/ApiEthTx"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
       "name": "Filecoin.EthGetTransactionByHash",
       "params": [
         {
@@ -1284,7 +1080,7 @@
         "name": "Filecoin.EthGetTransactionCount.Result",
         "required": true,
         "schema": {
-          "$ref": "#/components/schemas/Uint64"
+          "$ref": "#/components/schemas/EthUint64"
         }
       },
       "paramStructure": "by-position"
@@ -1317,21 +1113,69 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.EthGetTransactionReceipt",
+      "name": "Filecoin.EthGetTransactionByBlockNumberAndIndex",
       "params": [
         {
-          "name": "tx_hash",
+          "name": "p1",
           "required": true,
           "schema": {
-            "$ref": "#/components/schemas/EthHash"
+            "$ref": "#/components/schemas/EthUint64"
+          }
+        },
+        {
+          "name": "p2",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/EthUint64"
           }
         }
       ],
       "result": {
-        "name": "Filecoin.EthGetTransactionReceipt.Result",
-        "required": true,
+        "name": "Filecoin.EthGetTransactionByBlockNumberAndIndex.Result",
+        "required": false,
         "schema": {
-          "$ref": "#/components/schemas/EthTxReceipt"
+          "anyOf": [
+            {
+              "$ref": "#/components/schemas/ApiEthTx"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.EthGetTransactionByBlockHashAndIndex",
+      "params": [
+        {
+          "name": "p1",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/EthHash"
+          }
+        },
+        {
+          "name": "p2",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/EthUint64"
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.EthGetTransactionByBlockHashAndIndex.Result",
+        "required": false,
+        "schema": {
+          "anyOf": [
+            {
+              "$ref": "#/components/schemas/ApiEthTx"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "paramStructure": "by-position"
@@ -1349,13 +1193,33 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.EthNewBlockFilter",
+      "name": "Filecoin.EthProtocolVersion",
       "params": [],
       "result": {
-        "name": "Filecoin.EthNewBlockFilter.Result",
+        "name": "Filecoin.EthProtocolVersion.Result",
         "required": true,
         "schema": {
-          "$ref": "#/components/schemas/FilterID"
+          "$ref": "#/components/schemas/EthUint64"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.EthGetTransactionReceipt",
+      "params": [
+        {
+          "name": "tx_hash",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/EthHash"
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.EthGetTransactionReceipt.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/EthTxReceipt"
         }
       },
       "paramStructure": "by-position"
@@ -1393,25 +1257,13 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.EthProtocolVersion",
+      "name": "Filecoin.EthNewBlockFilter",
       "params": [],
       "result": {
-        "name": "Filecoin.EthProtocolVersion.Result",
+        "name": "Filecoin.EthNewBlockFilter.Result",
         "required": true,
         "schema": {
-          "$ref": "#/components/schemas/Uint64"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.EthSyncing",
-      "params": [],
-      "result": {
-        "name": "Filecoin.EthSyncing.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/EthSyncingResultLotusJson"
+          "$ref": "#/components/schemas/FilterID"
         }
       },
       "paramStructure": "by-position"
@@ -1437,111 +1289,25 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.F3GetCertificate",
-      "params": [
-        {
-          "name": "instance",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "format": "uint64",
-            "minimum": 0
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.F3GetCertificate.Result",
-        "required": true,
-        "schema": true
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.F3GetECPowerTable",
-      "params": [
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/F3TipSetKey"
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.F3GetECPowerTable.Result",
-        "required": false,
-        "schema": {
-          "type": [
-            "array",
-            "null"
-          ],
-          "items": {
-            "$ref": "#/components/schemas/F3PowerEntry"
-          }
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.F3GetF3PowerTable",
-      "params": [
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/F3TipSetKey"
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.F3GetF3PowerTable.Result",
-        "required": true,
-        "schema": true
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.F3GetLatestCertificate",
+      "name": "Filecoin.EthSyncing",
       "params": [],
       "result": {
-        "name": "Filecoin.F3GetLatestCertificate.Result",
+        "name": "Filecoin.EthSyncing.Result",
         "required": true,
-        "schema": true
+        "schema": {
+          "$ref": "#/components/schemas/EthSyncingResultLotusJson"
+        }
       },
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.F3Participate",
-      "params": [
-        {
-          "name": "miner_address",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/Address"
-          }
-        },
-        {
-          "name": "new_lease_expiration",
-          "required": true,
-          "schema": {
-            "type": "string",
-            "format": "date-time"
-          }
-        },
-        {
-          "name": "old_lease_expiration",
-          "required": true,
-          "schema": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      ],
+      "name": "Filecoin.Web3ClientVersion",
+      "params": [],
       "result": {
-        "name": "Filecoin.F3Participate.Result",
+        "name": "Filecoin.Web3ClientVersion.Result",
         "required": true,
         "schema": {
-          "type": "boolean"
+          "type": "string"
         }
       },
       "paramStructure": "by-position"
@@ -1630,7 +1396,7 @@
           "schema": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           }
         },
         {
@@ -1714,39 +1480,6 @@
         "required": true,
         "schema": {
           "$ref": "#/components/schemas/Message"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.GetActorEventsRaw",
-      "params": [
-        {
-          "name": "filter",
-          "required": true,
-          "schema": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ActorEventFilter"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.GetActorEventsRaw.Result",
-        "required": false,
-        "schema": {
-          "type": [
-            "array",
-            "null"
-          ],
-          "items": {
-            "$ref": "#/components/schemas/ActorEvent"
-          }
         }
       },
       "paramStructure": "by-position"
@@ -1934,7 +1667,7 @@
         "schema": {
           "type": "integer",
           "format": "uint64",
-          "minimum": 0
+          "minimum": 0.0
         }
       },
       "paramStructure": "by-position"
@@ -2338,6 +2071,18 @@
       "paramStructure": "by-position"
     },
     {
+      "name": "Forest.NetInfo",
+      "params": [],
+      "result": {
+        "name": "Forest.NetInfo.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/NetInfoResult"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
       "name": "Filecoin.NetListening",
       "params": [],
       "result": {
@@ -2462,44 +2207,6 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.Session",
-      "params": [],
-      "result": {
-        "name": "Filecoin.Session.Result",
-        "required": true,
-        "schema": {
-          "type": "string",
-          "format": "uuid"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.Shutdown",
-      "params": [],
-      "result": {
-        "name": "Filecoin.Shutdown.Result",
-        "required": true,
-        "schema": {
-          "type": "null"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StartTime",
-      "params": [],
-      "result": {
-        "name": "Filecoin.StartTime.Result",
-        "required": true,
-        "schema": {
-          "type": "string",
-          "format": "date-time"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
       "name": "Filecoin.StateAccountKey",
       "params": [
         {
@@ -2592,6 +2299,27 @@
       "paramStructure": "by-position"
     },
     {
+      "name": "Forest.StateCompute",
+      "params": [
+        {
+          "name": "epoch",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      ],
+      "result": {
+        "name": "Forest.StateCompute.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Cid"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
       "name": "Filecoin.StateDealProviderCollateralBounds",
       "params": [
         {
@@ -2600,7 +2328,7 @@
           "schema": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           }
         },
         {
@@ -2629,6 +2357,36 @@
         "required": true,
         "schema": {
           "$ref": "#/components/schemas/DealCollateralBounds"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Forest.StateFetchRoot",
+      "params": [
+        {
+          "name": "root_cid",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Cid"
+          }
+        },
+        {
+          "name": "save_to_file",
+          "required": true,
+          "schema": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      ],
+      "result": {
+        "name": "Forest.StateFetchRoot.Result",
+        "required": true,
+        "schema": {
+          "type": "string"
         }
       },
       "paramStructure": "by-position"
@@ -2747,7 +2505,7 @@
           "schema": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           }
         },
         {
@@ -2789,7 +2547,7 @@
           "schema": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           }
         },
         {
@@ -2831,7 +2589,7 @@
           "schema": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           }
         },
         {
@@ -2854,7 +2612,7 @@
         "schema": {
           "type": "integer",
           "format": "uint64",
-          "minimum": 0
+          "minimum": 0.0
         }
       },
       "paramStructure": "by-position"
@@ -2932,7 +2690,7 @@
           "schema": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           }
         },
         {
@@ -3489,7 +3247,7 @@
           "schema": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           }
         },
         {
@@ -3781,7 +3539,7 @@
           "schema": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           }
         },
         {
@@ -3968,7 +3726,7 @@
           "schema": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           }
         },
         {
@@ -4115,7 +3873,7 @@
         "schema": {
           "type": "integer",
           "format": "uint32",
-          "minimum": 0
+          "minimum": 0.0
         }
       },
       "paramStructure": "by-position"
@@ -4250,7 +4008,7 @@
           "schema": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           }
         },
         {
@@ -4292,7 +4050,7 @@
           "schema": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           }
         },
         {
@@ -4341,7 +4099,7 @@
           "schema": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           }
         },
         {
@@ -4383,7 +4141,7 @@
           "schema": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           }
         },
         {
@@ -4412,32 +4170,6 @@
               "type": "null"
             }
           ]
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.StateVMCirculatingSupplyInternal",
-      "params": [
-        {
-          "name": "tipset_key",
-          "required": true,
-          "schema": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/Cid"
-            }
-          }
-        }
-      ],
-      "result": {
-        "name": "Filecoin.StateVMCirculatingSupplyInternal.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/CirculatingSupply"
         }
       },
       "paramStructure": "by-position"
@@ -4544,6 +4276,32 @@
               "type": "null"
             }
           ]
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.StateVMCirculatingSupplyInternal",
+      "params": [
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.StateVMCirculatingSupplyInternal.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/CirculatingSupply"
         }
       },
       "paramStructure": "by-position"
@@ -4659,18 +4417,6 @@
         "required": true,
         "schema": {
           "type": "null"
-        }
-      },
-      "paramStructure": "by-position"
-    },
-    {
-      "name": "Filecoin.Version",
-      "params": [],
-      "result": {
-        "name": "Filecoin.Version.Result",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/PublicVersion"
         }
       },
       "paramStructure": "by-position"
@@ -4961,31 +4707,235 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.Web3ClientVersion",
-      "params": [],
+      "name": "Filecoin.F3GetCertificate",
+      "params": [
+        {
+          "name": "instance",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          }
+        }
+      ],
       "result": {
-        "name": "Filecoin.Web3ClientVersion.Result",
+        "name": "Filecoin.F3GetCertificate.Result",
         "required": true,
+        "schema": true
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.F3GetECPowerTable",
+      "params": [
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/F3TipSetKey"
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.F3GetECPowerTable.Result",
+        "required": false,
         "schema": {
-          "type": "string"
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/components/schemas/F3PowerEntry"
+          }
         }
       },
       "paramStructure": "by-position"
     },
     {
-      "name": "Forest.NetInfo",
+      "name": "Filecoin.F3GetF3PowerTable",
+      "params": [
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/F3TipSetKey"
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.F3GetF3PowerTable.Result",
+        "required": true,
+        "schema": true
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.F3IsRunning",
       "params": [],
       "result": {
-        "name": "Forest.NetInfo.Result",
+        "name": "Filecoin.F3IsRunning.Result",
+        "required": true,
+        "schema": true
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.F3GetProgress",
+      "params": [],
+      "result": {
+        "name": "Filecoin.F3GetProgress.Result",
+        "required": true,
+        "schema": true
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.F3GetLatestCertificate",
+      "params": [],
+      "result": {
+        "name": "Filecoin.F3GetLatestCertificate.Result",
+        "required": true,
+        "schema": true
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.F3Participate",
+      "params": [
+        {
+          "name": "miner_address",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        {
+          "name": "new_lease_expiration",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        {
+          "name": "old_lease_expiration",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.F3Participate.Result",
         "required": true,
         "schema": {
-          "$ref": "#/components/schemas/NetInfoResult"
+          "type": "boolean"
         }
       },
       "paramStructure": "by-position"
     },
     {
-      "name": "Forest.StateCompute",
+      "name": "F3.GetHead",
+      "params": [],
+      "result": {
+        "name": "F3.GetHead.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/F3TipSet"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "F3.GetParent",
+      "params": [
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/F3TipSetKey"
+          }
+        }
+      ],
+      "result": {
+        "name": "F3.GetParent.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/F3TipSet"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "F3.GetParticipatingMinerIDs",
+      "params": [],
+      "result": {
+        "name": "F3.GetParticipatingMinerIDs.Result",
+        "required": false,
+        "schema": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          }
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "F3.GetPowerTable",
+      "params": [
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/F3TipSetKey"
+          }
+        }
+      ],
+      "result": {
+        "name": "F3.GetPowerTable.Result",
+        "required": false,
+        "schema": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/components/schemas/F3PowerEntry"
+          }
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "F3.GetTipset",
+      "params": [
+        {
+          "name": "tipset_key",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/F3TipSetKey"
+          }
+        }
+      ],
+      "result": {
+        "name": "F3.GetTipset.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/F3TipSet"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "F3.GetTipsetByEpoch",
       "params": [
         {
           "name": "epoch",
@@ -4997,40 +4947,110 @@
         }
       ],
       "result": {
-        "name": "Forest.StateCompute.Result",
+        "name": "F3.GetTipsetByEpoch.Result",
         "required": true,
         "schema": {
-          "$ref": "#/components/schemas/Cid"
+          "$ref": "#/components/schemas/F3TipSet"
         }
       },
       "paramStructure": "by-position"
     },
     {
-      "name": "Forest.StateFetchRoot",
+      "name": "F3.Finalize",
       "params": [
         {
-          "name": "root_cid",
+          "name": "tipset_key",
           "required": true,
           "schema": {
-            "$ref": "#/components/schemas/Cid"
+            "$ref": "#/components/schemas/F3TipSetKey"
+          }
+        }
+      ],
+      "result": {
+        "name": "F3.Finalize.Result",
+        "required": true,
+        "schema": {
+          "type": "null"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "F3.ProtectPeer",
+      "params": [
+        {
+          "name": "peer_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "result": {
+        "name": "F3.ProtectPeer.Result",
+        "required": true,
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "F3.SignMessage",
+      "params": [
+        {
+          "name": "pubkey",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Base64String"
           }
         },
         {
-          "name": "save_to_file",
+          "name": "message",
           "required": true,
           "schema": {
-            "type": [
-              "string",
-              "null"
+            "$ref": "#/components/schemas/Base64String"
+          }
+        }
+      ],
+      "result": {
+        "name": "F3.SignMessage.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Signature"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.GetActorEventsRaw",
+      "params": [
+        {
+          "name": "filter",
+          "required": true,
+          "schema": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ActorEventFilter"
+              },
+              {
+                "type": "null"
+              }
             ]
           }
         }
       ],
       "result": {
-        "name": "Forest.StateFetchRoot.Result",
-        "required": true,
+        "name": "Filecoin.GetActorEventsRaw.Result",
+        "required": false,
         "schema": {
-          "type": "string"
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/components/schemas/ActorEvent"
+          }
         }
       },
       "paramStructure": "by-position"
@@ -5083,7 +5103,7 @@
           "codec": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "value": {
             "$ref": "#/components/schemas/Base64String"
@@ -5158,7 +5178,7 @@
           "Nonce": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           }
         }
       },
@@ -5172,7 +5192,7 @@
           "Id": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "State": {
             "$ref": "#/components/schemas/ActorState"
@@ -5216,7 +5236,7 @@
           "Client": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "Data": {
             "$ref": "#/components/schemas/Cid"
@@ -5228,12 +5248,12 @@
           "Provider": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "Size": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "TermMax": {
             "type": "integer",
@@ -5274,7 +5294,7 @@
           "DisputableProofCount": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "PostSubmissions": {
             "$ref": "#/components/schemas/BitField"
@@ -5319,7 +5339,7 @@
           "PieceSize": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "Provider": {
             "$ref": "#/components/schemas/Address"
@@ -5393,16 +5413,16 @@
             "$ref": "#/components/schemas/EthHash"
           },
           "blockNumber": {
-            "$ref": "#/components/schemas/Uint64"
+            "$ref": "#/components/schemas/EthUint64"
           },
           "chainId": {
-            "$ref": "#/components/schemas/Uint64"
+            "$ref": "#/components/schemas/EthUint64"
           },
           "from": {
             "$ref": "#/components/schemas/EthAddress"
           },
           "gas": {
-            "$ref": "#/components/schemas/Uint64"
+            "$ref": "#/components/schemas/EthUint64"
           },
           "gasPrice": {
             "anyOf": [
@@ -5441,7 +5461,7 @@
             ]
           },
           "nonce": {
-            "$ref": "#/components/schemas/Uint64"
+            "$ref": "#/components/schemas/EthUint64"
           },
           "r": {
             "$ref": "#/components/schemas/EthBigInt"
@@ -5460,10 +5480,10 @@
             ]
           },
           "transactionIndex": {
-            "$ref": "#/components/schemas/Uint64"
+            "$ref": "#/components/schemas/EthUint64"
           },
           "type": {
-            "$ref": "#/components/schemas/Uint64"
+            "$ref": "#/components/schemas/EthUint64"
           },
           "v": {
             "$ref": "#/components/schemas/EthBigInt"
@@ -5487,7 +5507,7 @@
           "Duration": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "Error": {
             "type": "string"
@@ -5564,7 +5584,7 @@
           "GasUsed": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "Return": {
             "$ref": "#/components/schemas/Base64String"
@@ -5599,7 +5619,7 @@
           "Round": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           }
         }
       },
@@ -5637,7 +5657,7 @@
         "items": {
           "type": "integer",
           "format": "uint8",
-          "minimum": 0
+          "minimum": 0.0
         }
       },
       "Block": {
@@ -5670,16 +5690,16 @@
             "$ref": "#/components/schemas/EthBigInt"
           },
           "difficulty": {
-            "$ref": "#/components/schemas/Uint64"
+            "$ref": "#/components/schemas/EthUint64"
           },
           "extraData": {
             "$ref": "#/components/schemas/EthBytes"
           },
           "gasLimit": {
-            "$ref": "#/components/schemas/Uint64"
+            "$ref": "#/components/schemas/EthUint64"
           },
           "gasUsed": {
-            "$ref": "#/components/schemas/Uint64"
+            "$ref": "#/components/schemas/EthUint64"
           },
           "hash": {
             "$ref": "#/components/schemas/EthHash"
@@ -5697,7 +5717,7 @@
             "$ref": "#/components/schemas/Nonce"
           },
           "number": {
-            "$ref": "#/components/schemas/Uint64"
+            "$ref": "#/components/schemas/EthUint64"
           },
           "parentHash": {
             "$ref": "#/components/schemas/EthHash"
@@ -5709,16 +5729,16 @@
             "$ref": "#/components/schemas/EthHash"
           },
           "size": {
-            "$ref": "#/components/schemas/Uint64"
+            "$ref": "#/components/schemas/EthUint64"
           },
           "stateRoot": {
             "$ref": "#/components/schemas/EthHash"
           },
           "timestamp": {
-            "$ref": "#/components/schemas/Uint64"
+            "$ref": "#/components/schemas/EthUint64"
           },
           "totalDifficulty": {
-            "$ref": "#/components/schemas/Uint64"
+            "$ref": "#/components/schemas/EthUint64"
           },
           "transactions": {
             "$ref": "#/components/schemas/Transactions"
@@ -5781,7 +5801,7 @@
           "ForkSignaling": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "Height": {
             "type": "integer",
@@ -5814,7 +5834,7 @@
           "Timestamp": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "WinPoStProof": {
             "$ref": "#/components/schemas/Nullable_Array_of_PoStProof"
@@ -5866,7 +5886,7 @@
         ],
         "properties": {
           "blockNumber": {
-            "$ref": "#/components/schemas/Int64"
+            "$ref": "#/components/schemas/EthInt64"
           }
         }
       },
@@ -5876,7 +5896,7 @@
             "type": "string"
           },
           {
-            "$ref": "#/components/schemas/Int64"
+            "$ref": "#/components/schemas/EthInt64"
           },
           {
             "$ref": "#/components/schemas/EthHash"
@@ -5895,7 +5915,7 @@
             "type": "string"
           },
           {
-            "$ref": "#/components/schemas/Int64"
+            "$ref": "#/components/schemas/EthInt64"
           }
         ]
       },
@@ -5937,7 +5957,7 @@
           "Timestamp": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "WinningPoStProof": {
             "$ref": "#/components/schemas/Nullable_Array_of_PoStProof"
@@ -6055,7 +6075,7 @@
           "Client": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "Data": {
             "$ref": "#/components/schemas/Cid"
@@ -6063,17 +6083,17 @@
           "Provider": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "Sector": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "Size": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "TermMax": {
             "type": "integer",
@@ -6152,7 +6172,7 @@
             ]
           },
           "gas": {
-            "$ref": "#/components/schemas/Uint64"
+            "$ref": "#/components/schemas/EthUint64"
           },
           "gasPrice": {
             "$ref": "#/components/schemas/EthBigInt"
@@ -6194,7 +6214,7 @@
             }
           },
           "oldestBlock": {
-            "$ref": "#/components/schemas/Uint64"
+            "$ref": "#/components/schemas/EthUint64"
           },
           "reward": {
             "type": [
@@ -6260,6 +6280,9 @@
           "$ref": "#/components/schemas/EthHash"
         }
       },
+      "EthInt64": {
+        "type": "string"
+      },
       "EthLog": {
         "description": "Represents the results of an event filter execution.",
         "type": "object",
@@ -6282,13 +6305,13 @@
             "$ref": "#/components/schemas/EthHash"
           },
           "blockNumber": {
-            "$ref": "#/components/schemas/Uint64"
+            "$ref": "#/components/schemas/EthUint64"
           },
           "data": {
             "$ref": "#/components/schemas/EthBytes"
           },
           "logIndex": {
-            "$ref": "#/components/schemas/Uint64"
+            "$ref": "#/components/schemas/EthUint64"
           },
           "removed": {
             "type": "boolean"
@@ -6303,7 +6326,7 @@
             "$ref": "#/components/schemas/EthHash"
           },
           "transactionIndex": {
-            "$ref": "#/components/schemas/Uint64"
+            "$ref": "#/components/schemas/EthUint64"
           }
         }
       },
@@ -6364,7 +6387,7 @@
             "$ref": "#/components/schemas/EthHash"
           },
           "blockNumber": {
-            "$ref": "#/components/schemas/Uint64"
+            "$ref": "#/components/schemas/EthUint64"
           },
           "contractAddress": {
             "anyOf": [
@@ -6377,7 +6400,7 @@
             ]
           },
           "cumulativeGasUsed": {
-            "$ref": "#/components/schemas/Uint64"
+            "$ref": "#/components/schemas/EthUint64"
           },
           "effectiveGasPrice": {
             "$ref": "#/components/schemas/EthBigInt"
@@ -6386,7 +6409,7 @@
             "$ref": "#/components/schemas/EthAddress"
           },
           "gasUsed": {
-            "$ref": "#/components/schemas/Uint64"
+            "$ref": "#/components/schemas/EthUint64"
           },
           "logs": {
             "type": "array",
@@ -6401,7 +6424,7 @@
             "$ref": "#/components/schemas/EthHash"
           },
           "status": {
-            "$ref": "#/components/schemas/Uint64"
+            "$ref": "#/components/schemas/EthUint64"
           },
           "to": {
             "anyOf": [
@@ -6417,12 +6440,15 @@
             "$ref": "#/components/schemas/EthHash"
           },
           "transactionIndex": {
-            "$ref": "#/components/schemas/Uint64"
+            "$ref": "#/components/schemas/EthUint64"
           },
           "type": {
-            "$ref": "#/components/schemas/Uint64"
+            "$ref": "#/components/schemas/EthUint64"
           }
         }
+      },
+      "EthUint64": {
+        "type": "string"
       },
       "Event": {
         "type": "object",
@@ -6435,7 +6461,7 @@
             "description": "Actor ID",
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "Entries": {
             "type": "array",
@@ -6457,12 +6483,12 @@
           "Codec": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "Flags": {
             "type": "integer",
             "format": "uint8",
-            "minimum": 0
+            "minimum": 0.0
           },
           "Key": {
             "type": "string"
@@ -6512,7 +6538,7 @@
         "description": "`Newtype` wrapper for the FVM `ExitCode`.\n\n# Examples ``` # use forest_filecoin::doctest_private::ExitCode; let fvm2_success = fvm_shared2::error::ExitCode::new(0); let fvm3_success = fvm_shared3::error::ExitCode::new(0);\n\nlet shim_from_v2 = ExitCode::from(fvm2_success); let shim_from_v3 = ExitCode::from(fvm3_success);\n\nassert_eq!(shim_from_v2, shim_from_v3); assert_eq!(shim_from_v2, fvm2_success.into()); assert_eq!(shim_from_v3, fvm3_success.into()); ```",
         "type": "integer",
         "format": "uint32",
-        "minimum": 0
+        "minimum": 0.0
       },
       "ExtendedSectorInfo": {
         "type": "object",
@@ -6535,7 +6561,7 @@
           "SectorNumber": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           }
         }
       },
@@ -6551,7 +6577,7 @@
           "ID": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "Power": {
             "type": "string"
@@ -6586,7 +6612,7 @@
             "description": "Block creation time, in seconds since the Unix epoch",
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           }
         }
       },
@@ -6760,22 +6786,22 @@
           "cg": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "sg": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "tg": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "tt": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           }
         }
       },
@@ -6797,9 +6823,6 @@
             "$ref": "#/components/schemas/Cid"
           }
         }
-      },
-      "Int64": {
-        "type": "string"
       },
       "KeyInfo": {
         "type": "object",
@@ -6850,7 +6873,7 @@
             "default": 0,
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "GasPremium": {
             "default": "0",
@@ -6860,13 +6883,13 @@
             "default": 0,
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "Nonce": {
             "default": 0,
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "Params": {
             "$ref": "#/components/schemas/Nullable_Base64String"
@@ -6882,7 +6905,7 @@
             "default": 0,
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           }
         }
       },
@@ -6997,12 +7020,12 @@
               "null"
             ],
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "Method": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "Params": {
             "$ref": "#/components/schemas/Base64String"
@@ -7010,7 +7033,7 @@
           "ParamsCodec": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "ReadOnly": {
             "type": [
@@ -7083,7 +7106,7 @@
           "WindowPoStPartitionSectors": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "WindowPoStProofType": {
             "type": "string"
@@ -7154,17 +7177,17 @@
           "Active": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "Faulty": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "Live": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           }
         }
       },
@@ -7199,7 +7222,7 @@
           "SectorSize": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "Sectors": {
             "$ref": "#/components/schemas/Nullable_Array_of_ExtendedSectorInfo"
@@ -7265,32 +7288,32 @@
           "num_connections": {
             "type": "integer",
             "format": "uint32",
-            "minimum": 0
+            "minimum": 0.0
           },
           "num_established": {
             "type": "integer",
             "format": "uint32",
-            "minimum": 0
+            "minimum": 0.0
           },
           "num_peers": {
             "type": "integer",
             "format": "uint",
-            "minimum": 0
+            "minimum": 0.0
           },
           "num_pending": {
             "type": "integer",
             "format": "uint32",
-            "minimum": 0
+            "minimum": 0.0
           },
           "num_pending_incoming": {
             "type": "integer",
             "format": "uint32",
-            "minimum": 0
+            "minimum": 0.0
           },
           "num_pending_outgoing": {
             "type": "integer",
             "format": "uint32",
-            "minimum": 0
+            "minimum": 0.0
           }
         }
       },
@@ -7309,7 +7332,7 @@
           "BlockDelaySecs": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "ConsensusMinerMinPower": {
             "$ref": "#/components/schemas/BigInt"
@@ -7317,7 +7340,7 @@
           "Eip155ChainID": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "ForkUpgradeParams": {
             "$ref": "#/components/schemas/ForkUpgradeParams"
@@ -7361,12 +7384,12 @@
           "peers_to_publish_blocks": {
             "type": "integer",
             "format": "uint32",
-            "minimum": 0
+            "minimum": 0.0
           },
           "peers_to_publish_msgs": {
             "type": "integer",
             "format": "uint32",
-            "minimum": 0
+            "minimum": 0.0
           }
         }
       },
@@ -7399,12 +7422,12 @@
           "behind": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "epoch": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           }
         }
       },
@@ -7533,7 +7556,7 @@
         "items": {
           "type": "integer",
           "format": "uint64",
-          "minimum": 0
+          "minimum": 0.0
         }
       },
       "Nullable_Base64String": {
@@ -7639,12 +7662,12 @@
           "Links": {
             "type": "integer",
             "format": "uint",
-            "minimum": 0
+            "minimum": 0.0
           },
           "Size": {
             "type": "integer",
             "format": "uint",
-            "minimum": 0
+            "minimum": 0.0
           }
         }
       },
@@ -7746,7 +7769,7 @@
           "BlockDelay": {
             "type": "integer",
             "format": "uint32",
-            "minimum": 0
+            "minimum": 0.0
           },
           "Version": {
             "type": "string"
@@ -7779,12 +7802,12 @@
           "ExitCode": {
             "type": "integer",
             "format": "uint32",
-            "minimum": 0
+            "minimum": 0.0
           },
           "GasUsed": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "Return": {
             "$ref": "#/components/schemas/Base64String"
@@ -7808,7 +7831,7 @@
           "ReturnCodec": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           }
         }
       },
@@ -7839,12 +7862,12 @@
           "Deadline": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "Partition": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           }
         }
       },
@@ -7897,7 +7920,7 @@
             "description": "Additional flags, see [`fil_actor_miner_state::v12::SectorOnChainInfoFlags`]",
             "type": "integer",
             "format": "uint32",
-            "minimum": 0
+            "minimum": 0.0
           },
           "InitialPledge": {
             "description": "Pledge collected to commit this sector",
@@ -7926,7 +7949,7 @@
           "SectorNumber": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "VerifiedDealWeight": {
             "description": "Integral of active verified deals over sector lifetime",
@@ -7966,7 +7989,7 @@
           "SectorNumber": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "UnsealedCid": {
             "$ref": "#/components/schemas/Nullable_Cid"
@@ -7996,13 +8019,13 @@
       "SectorSize": {
         "type": "integer",
         "format": "uint64",
-        "minimum": 0
+        "minimum": 0.0
       },
       "ShiftingVersion": {
         "description": "Integer based value on version information. Highest order bits for Major, Mid order for Minor and lowest for Patch.",
         "type": "integer",
         "format": "uint32",
-        "minimum": 0
+        "minimum": 0.0
       },
       "Signature": {
         "type": "object",
@@ -8033,7 +8056,7 @@
           {
             "type": "integer",
             "format": "uint8",
-            "minimum": 0
+            "minimum": 0.0
           },
           {
             "$ref": "#/components/schemas/SignatureType"
@@ -8148,7 +8171,7 @@
           "Method": {
             "type": "integer",
             "format": "uint64",
-            "minimum": 0
+            "minimum": 0.0
           },
           "Params": {
             "$ref": "#/components/schemas/Base64String"
@@ -8176,9 +8199,6 @@
             }
           }
         ]
-      },
-      "Uint64": {
-        "type": "string"
       },
       "int64": {
         "type": "integer",
