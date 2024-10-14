@@ -26,7 +26,7 @@ jsonschema = { version = "0.18.0", default-features = false }
 lazy-regex = "3.2.0"
 nunny = "0.2.0"
 openrpc-types = "0.3.3"
-proc-macro2 = { version = "1.0.86", default-features = false }
+proc-macro2 = { version = "1.0.87", default-features = false }
 quote = { version = "1.0.37", default-features = false }
 regex = "1.10.5"
 reqwest = { version = "0.12.5", features = ["json", "blocking"] }
