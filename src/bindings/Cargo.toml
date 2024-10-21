@@ -12,7 +12,7 @@ serde_json = "1.0.124"
 uuid = { version = "1.10.0", features = ["serde"] }
 
 [build-dependencies]
-anyhow = "1.0.86"
+anyhow = "1.0.90"
 lazy-regex = "3.2.0"
 openrpc-types = "0.4.0"
 prettyplease = "0.2.20"
