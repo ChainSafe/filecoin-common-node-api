@@ -22,6 +22,16 @@
           "type": "null"
         }
       ]
+    },
+    "v1": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/Client"
+        },
+        {
+          "type": "null"
+        }
+      ]
     }
   },
   "definitions": {

@@ -11,6 +11,17 @@
         "write_token": "token-with-write-permissions",
         "admin_token": "token-with-admin-permissions"
     },
+    // Configuration for the v1 client.
+    // If this is not provided, tests depending on this client will not run.
+    "v1": {
+        "url": "http://host/path/to/v1/api",
+        "none_token": "shim-token-if-required",
+        // Token to be used as `Authorization: Bearer <token>`.
+        // If this is not provided, tests depending on this token will not run.
+        "read_token": "token-with-read-permissions",
+        "write_token": "token-with-write-permissions",
+        "admin_token": "token-with-admin-permissions"
+    },
     // Tests reference "default" and "long" timeouts,
     // you can override the default durations here.
     "timeouts": {

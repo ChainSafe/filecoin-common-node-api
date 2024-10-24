@@ -98,52 +98,104 @@ mod harness {
     #[allow(unused)]
     pub mod prelude {
         pub(crate) use super::fail;
-        pub use super::{v0admin, v0none, v0read, v0write, Context as _, Tag, Test};
-        pub use bindings::v0::{self, Api as _};
+        pub use super::{v0, v1, Context as _, Tag, Test};
+        pub use bindings::{v0::Api as _, v1::Api as _};
     }
 
-    /// Create a test case that is provided with a [`V0Client`],
-    /// with no authorization token.
-    ///
-    /// `name` SHOULD:
-    /// - be unique.
-    /// - NOT contain tabs.
-    /// - fit on a single line, with no punctuation.
-    // track_caller allows us to grab where the test was defined
-    #[track_caller]
-    pub fn v0none<'a>(
-        name: impl Into<String>,
-        tags: impl IntoIterator<Item = Tag>,
-        f: impl FnOnce(&mut V0Client) -> Result<(), TestFailure> + 'a,
-    ) -> Test<'a> {
-        Test::new(name, tags, TestInner::V0None(Box::new(f)))
+    pub mod v0 {
+        use super::*;
+
+        /// Create a test case that is provided with a [`V0Client`],
+        /// with no authorization token.
+        ///
+        /// `name` SHOULD:
+        /// - be unique.
+        /// - NOT contain tabs.
+        /// - fit on a single line, with no punctuation.
+        // track_caller allows us to grab where the test was defined
+        #[track_caller]
+        pub fn none<'a>(
+            name: impl Into<String>,
+            tags: impl IntoIterator<Item = Tag>,
+            f: impl FnOnce(&mut V0Client) -> Result<(), TestFailure> + 'a,
+        ) -> Test<'a> {
+            Test::new(name, tags, TestInner::V0None(Box::new(f)))
+        }
+        /// Like [`none`], but with a `read` token.
+        #[track_caller]
+        pub fn read<'a>(
+            name: impl Into<String>,
+            tags: impl IntoIterator<Item = Tag>,
+            f: impl FnOnce(&mut V0Client) -> Result<(), TestFailure> + 'a,
+        ) -> Test<'a> {
+            Test::new(name, tags, TestInner::V0Read(Box::new(f)))
+        }
+        /// Like [`none`], but with a `write` token.
+        #[track_caller]
+        pub fn write<'a>(
+            name: impl Into<String>,
+            tags: impl IntoIterator<Item = Tag>,
+            f: impl FnOnce(&mut V0Client) -> Result<(), TestFailure> + 'a,
+        ) -> Test<'a> {
+            Test::new(name, tags, TestInner::V0Write(Box::new(f)))
+        }
+        /// Like [`none`], but with an `admin` token.
+        #[track_caller]
+        pub fn admin<'a>(
+            name: impl Into<String>,
+            tags: impl IntoIterator<Item = Tag>,
+            f: impl FnOnce(&mut V0Client) -> Result<(), TestFailure> + 'a,
+        ) -> Test<'a> {
+            Test::new(name, tags, TestInner::V0Admin(Box::new(f)))
+        }
     }
-    /// Like [`v0none`], but with a `read` token.
-    #[track_caller]
-    pub fn v0read<'a>(
-        name: impl Into<String>,
-        tags: impl IntoIterator<Item = Tag>,
-        f: impl FnOnce(&mut V0Client) -> Result<(), TestFailure> + 'a,
-    ) -> Test<'a> {
-        Test::new(name, tags, TestInner::V0Read(Box::new(f)))
-    }
-    /// Like [`v0none`], but with a `write` token.
-    #[track_caller]
-    pub fn v0write<'a>(
-        name: impl Into<String>,
-        tags: impl IntoIterator<Item = Tag>,
-        f: impl FnOnce(&mut V0Client) -> Result<(), TestFailure> + 'a,
-    ) -> Test<'a> {
-        Test::new(name, tags, TestInner::V0Write(Box::new(f)))
-    }
-    /// Like [`v0none`], but with an `admin` token.
-    #[track_caller]
-    pub fn v0admin<'a>(
-        name: impl Into<String>,
-        tags: impl IntoIterator<Item = Tag>,
-        f: impl FnOnce(&mut V0Client) -> Result<(), TestFailure> + 'a,
-    ) -> Test<'a> {
-        Test::new(name, tags, TestInner::V0Admin(Box::new(f)))
+
+    pub mod v1 {
+        use super::*;
+
+        /// Create a test case that is provided with a [`V1Client`],
+        /// with no authorization token.
+        ///
+        /// `name` SHOULD:
+        /// - be unique.
+        /// - NOT contain tabs.
+        /// - fit on a single line, with no punctuation.
+        // track_caller allows us to grab where the test was defined
+        #[track_caller]
+        pub fn none<'a>(
+            name: impl Into<String>,
+            tags: impl IntoIterator<Item = Tag>,
+            f: impl FnOnce(&mut V1Client) -> Result<(), TestFailure> + 'a,
+        ) -> Test<'a> {
+            Test::new(name, tags, TestInner::V1None(Box::new(f)))
+        }
+        /// Like [`none`], but with a `read` token.
+        #[track_caller]
+        pub fn read<'a>(
+            name: impl Into<String>,
+            tags: impl IntoIterator<Item = Tag>,
+            f: impl FnOnce(&mut V1Client) -> Result<(), TestFailure> + 'a,
+        ) -> Test<'a> {
+            Test::new(name, tags, TestInner::V1Read(Box::new(f)))
+        }
+        /// Like [`none`], but with a `write` token.
+        #[track_caller]
+        pub fn write<'a>(
+            name: impl Into<String>,
+            tags: impl IntoIterator<Item = Tag>,
+            f: impl FnOnce(&mut V1Client) -> Result<(), TestFailure> + 'a,
+        ) -> Test<'a> {
+            Test::new(name, tags, TestInner::V1Write(Box::new(f)))
+        }
+        /// Like [`none`], but with an `admin` token.
+        #[track_caller]
+        pub fn admin<'a>(
+            name: impl Into<String>,
+            tags: impl IntoIterator<Item = Tag>,
+            f: impl FnOnce(&mut V1Client) -> Result<(), TestFailure> + 'a,
+        ) -> Test<'a> {
+            Test::new(name, tags, TestInner::V1Admin(Box::new(f)))
+        }
     }
 
     /// A dynamic test case, created by free functions in this module.
@@ -203,7 +255,23 @@ mod harness {
     #[derive(Debug, derive_more::Deref, derive_more::DerefMut)]
     pub struct V0Client(Client);
 
+    // These Deref impls allow the user to set timeouts and make logs.
+    #[derive(Debug, derive_more::Deref, derive_more::DerefMut)]
+    pub struct V1Client(Client);
+
     impl bindings::v0::Api for V0Client {
+        type Error = TestFailure;
+
+        fn call<T: DeserializeOwned>(
+            &mut self,
+            method: impl Into<String>,
+            params: impl ez_jsonrpc::params::SerializePositional,
+        ) -> Result<T, Self::Error> {
+            self.0.call(method, params)
+        }
+    }
+
+    impl bindings::v1::Api for V1Client {
         type Error = TestFailure;
 
         fn call<T: DeserializeOwned>(
@@ -261,6 +329,10 @@ mod harness {
         V0Read(Box<dyn FnOnce(&mut V0Client) -> Result<(), TestFailure> + 'a>),
         V0Write(Box<dyn FnOnce(&mut V0Client) -> Result<(), TestFailure> + 'a>),
         V0Admin(Box<dyn FnOnce(&mut V0Client) -> Result<(), TestFailure> + 'a>),
+        V1None(Box<dyn FnOnce(&mut V1Client) -> Result<(), TestFailure> + 'a>),
+        V1Read(Box<dyn FnOnce(&mut V1Client) -> Result<(), TestFailure> + 'a>),
+        V1Write(Box<dyn FnOnce(&mut V1Client) -> Result<(), TestFailure> + 'a>),
+        V1Admin(Box<dyn FnOnce(&mut V1Client) -> Result<(), TestFailure> + 'a>),
     }
 
     /// On-disk config for the harness.
@@ -273,6 +345,7 @@ mod harness {
         #[schemars(rename = "Test Suite Config")]
         pub struct Harness {
             pub(super) v0: Option<Client>,
+            pub(super) v1: Option<Client>,
             pub(super) timeouts: Option<Timeout>,
         }
 
@@ -311,6 +384,14 @@ mod harness {
                         write_token: Some(_),
                         admin_token: Some(_),
                     }),
+                v1:
+                    Some(Client {
+                        url: _,
+                        none_token: Some(_),
+                        read_token: Some(_),
+                        write_token: Some(_),
+                        admin_token: Some(_),
+                    }),
                 timeouts:
                     Some(Timeout {
                         default: Some(_),
@@ -335,11 +416,17 @@ mod harness {
         v0read: Option<V0Client>,
         v0write: Option<V0Client>,
         v0admin: Option<V0Client>,
+        v1none: Option<V1Client>,
+        v1read: Option<V1Client>,
+        v1write: Option<V1Client>,
+        v1admin: Option<V1Client>,
     }
 
     impl RunnerClients {
         fn from_config(config: &config::Harness, log: &LogSender) -> Self {
-            let config::Harness { v0, timeouts, .. } = config;
+            let config::Harness {
+                v0, v1, timeouts, ..
+            } = config;
 
             // Shared client for conneciton pooling
             let client = reqwest::blocking::Client::builder()
@@ -360,6 +447,10 @@ mod harness {
                 v0read: mk(v0, AuthMode::Read).map(V0Client),
                 v0write: mk(v0, AuthMode::Write).map(V0Client),
                 v0admin: mk(v0, AuthMode::Admin).map(V0Client),
+                v1none: mk(v1, AuthMode::None).map(V1Client),
+                v1read: mk(v1, AuthMode::Read).map(V1Client),
+                v1write: mk(v1, AuthMode::Write).map(V1Client),
+                v1admin: mk(v1, AuthMode::Admin).map(V1Client),
             }
         }
     }
@@ -571,6 +662,34 @@ mod harness {
                     TestInner::V0Admin(runme),
                     RunnerClients {
                         v0admin: Some(client),
+                        ..
+                    },
+                ) => panic::catch_unwind(AssertUnwindSafe(|| runme(client))),
+                (
+                    TestInner::V1None(runme),
+                    RunnerClients {
+                        v1none: Some(client),
+                        ..
+                    },
+                )
+                | (
+                    TestInner::V1Read(runme),
+                    RunnerClients {
+                        v1read: Some(client),
+                        ..
+                    },
+                )
+                | (
+                    TestInner::V1Write(runme),
+                    RunnerClients {
+                        v1write: Some(client),
+                        ..
+                    },
+                )
+                | (
+                    TestInner::V1Admin(runme),
+                    RunnerClients {
+                        v1admin: Some(client),
                         ..
                     },
                 ) => panic::catch_unwind(AssertUnwindSafe(|| runme(client))),
