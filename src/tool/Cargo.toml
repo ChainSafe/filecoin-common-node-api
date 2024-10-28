@@ -39,7 +39,7 @@ serde_path_to_error = "0.1.16"
 strum = { version = "0.26.3", features = ["derive"] }
 syn = { version = "2.0.72", default-features = false }
 tokio = { version = "1.38.0", features = ["net", "rt", "signal"] }
-tower = "0.4.13"
+tower = "0.5.0"
 tracing = "0.1.40"
 typify = "0.1.0"
 cna-util = { path = "../util" }
