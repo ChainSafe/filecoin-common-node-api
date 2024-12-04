@@ -143,10 +143,10 @@ pub fn all() -> Vec<Test<'static>> {
         //     [Tag::SchemaCoverage],
         //     |client| {
         //         let _balance = client.Filecoin_EthGetBalance(
-        //             &EthAddress::from_str("0xff38c072f286e3b20b3954ca9f99c05fbecc64aa").unwrap(),
+        //             &EthAddress::from_str("0x6cb414224f0b91de5c3b616e700e34a5172c149f").unwrap(),
         //             &BlockNumberOrHash {
         //                 subtype_0: None,
-        //                 subtype_1: Some(EthInt64("0x1FFBDF".into())),
+        //                 subtype_1: Some(EthInt64("0x219153".into())),
         //                 subtype_2: None,
         //                 subtype_3: None,
         //                 subtype_4: None,
@@ -160,11 +160,11 @@ pub fn all() -> Vec<Test<'static>> {
         //     [Tag::SchemaCoverage],
         //     |client| {
         //         let _balance = client.Filecoin_EthGetBalance(
-        //             &EthAddress::from_str("0xff38c072f286e3b20b3954ca9f99c05fbecc64aa").unwrap(),
+        //             &EthAddress::from_str("0x6cb414224f0b91de5c3b616e700e34a5172c149f").unwrap(),
         //             &BlockNumberOrHash {
         //                 subtype_0: None,
         //                 subtype_1: None,
-        //                 subtype_2: Some(EthHash("0xabe09cdb5df97dfe16510f1714282fb16d66147ba21378f8bb1e9a9a52d38c98".into())),
+        //                 subtype_2: Some(EthHash("0x711da3a3ebc8fdfea3427d0d7b14e55b94f354baf33a93adca658b28e333f133".into())),
         //                 subtype_3: None,
         //                 subtype_4: None,
         //             },
