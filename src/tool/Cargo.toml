@@ -22,7 +22,7 @@ http = "1.1.0"
 http-body-util = "0.1.2"
 indexmap = { version = "2.2.6", features = ["serde"] }
 itertools = "0.13.0"
-jsonschema = { version = "0.18.0", default-features = false }
+jsonschema = { version = "0.21.0", default-features = false }
 lazy-regex = "3.2.0"
 nunny = "0.2.0"
 openrpc-types = "0.3.3"

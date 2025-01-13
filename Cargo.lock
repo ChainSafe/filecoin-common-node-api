@@ -454,7 +454,7 @@ dependencies = [
  "either",
  "expect-test",
  "ez-jsonrpc",
- "fluent-uri",
+ "fluent-uri 0.2.0",
  "futures",
  "http",
  "http-body-util",
@@ -728,6 +728,17 @@ checksum = "5d77395429e0ce700a8378be6625660a4aa00ca5dc5cd1527193ebd0946cc9b3"
 dependencies = [
  "borrow-or-share",
  "ref-cast",
+]
+
+[[package]]
+name = "fluent-uri"
+version = "0.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1918b65d96df47d3591bed19c5cca17e3fa5d0707318e4b5ef2eae01764df7e5"
+dependencies = [
+ "borrow-or-share",
+ "ref-cast",
+ "serde",
 ]
 
 [[package]]
@@ -1169,9 +1180,9 @@ checksum = "9dbbfed4e59ba9750e15ba154fdfd9329cee16ff3df539c2666b70f58cc32105"
 
 [[package]]
 name = "jsonschema"
-version = "0.18.0"
+version = "0.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ec0afd06142c9bcb03f4a8787c77897a87b6be9c4918f1946c33caa714c27578"
+checksum = "507489ad0bb386bda1ff52086877dc5847cc3730b9da5c5a4af75a9e4991eb30"
 dependencies = [
  "ahash",
  "anyhow",
@@ -1182,17 +1193,16 @@ dependencies = [
  "getrandom",
  "iso8601",
  "itoa",
- "memchr",
  "num-cmp",
  "once_cell",
- "parking_lot",
  "percent-encoding",
+ "referencing",
  "regex",
  "serde",
  "serde_json",
  "time",
  "url",
- "uuid",
+ "uuid-simd",
 ]
 
 [[package]]
@@ -1235,16 +1245,6 @@ name = "linux-raw-sys"
 version = "0.4.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "78b3ae25bc7c8c38cec158d1f2757ee79e9b3740fbc7ccf0e59e4b08d793fa89"
-
-[[package]]
-name = "lock_api"
-version = "0.4.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "07af8b9cdd281b7915f413fa73f29ebd5d55d0d3f0155584dade1ff18cea1b17"
-dependencies = [
- "autocfg",
- "scopeguard",
-]
 
 [[package]]
 name = "log"
@@ -1503,33 +1503,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "outref"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4030760ffd992bef45b0ae3f10ce1aba99e33464c90d14dd7c039884963ddc7a"
+
+[[package]]
 name = "owo-colors"
 version = "4.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "caff54706df99d2a78a5a4e3455ff45448d81ef1bb63c22cd14052ca0e993a3f"
-
-[[package]]
-name = "parking_lot"
-version = "0.12.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f1bf18183cf54e8d6059647fc3063646a1801cf30896933ec2311622cc4b9a27"
-dependencies = [
- "lock_api",
- "parking_lot_core",
-]
-
-[[package]]
-name = "parking_lot_core"
-version = "0.9.10"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1e401f977ab385c9e4e3ab30627d6f26d00e2c73eef317493c4ec6d468726cf8"
-dependencies = [
- "cfg-if",
- "libc",
- "redox_syscall",
- "smallvec",
- "windows-targets 0.52.5",
-]
 
 [[package]]
 name = "percent-encoding"
@@ -1637,15 +1620,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "redox_syscall"
-version = "0.5.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2a908a6e00f1fdd0dfd9c0eb08ce85126f6d8bbda50017e74bc4a4b7d4a926a4"
-dependencies = [
- "bitflags 2.6.0",
-]
-
-[[package]]
 name = "ref-cast"
 version = "1.0.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1663,6 +1637,19 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.74",
+]
+
+[[package]]
+name = "referencing"
+version = "0.21.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fc5ad87f9bf7d32f48f98d606085fe5eae4404ad1cc1025c50111b80f53ea029"
+dependencies = [
+ "ahash",
+ "fluent-uri 0.3.2",
+ "once_cell",
+ "percent-encoding",
+ "serde_json",
 ]
 
 [[package]]
@@ -1875,12 +1862,6 @@ dependencies = [
  "serde_derive_internals",
  "syn 2.0.74",
 ]
-
-[[package]]
-name = "scopeguard"
-version = "1.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
 
 [[package]]
 name = "security-framework"
@@ -2445,6 +2426,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "uuid-simd"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "23b082222b4f6619906941c17eb2297fff4c2fb96cb60164170522942a200bd8"
+dependencies = [
+ "outref",
+ "uuid",
+ "vsimd",
+]
+
+[[package]]
 name = "vcpkg"
 version = "0.2.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2455,6 +2447,12 @@ name = "version_check"
 version = "0.9.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
+
+[[package]]
+name = "vsimd"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5c3082ca00d5a5ef149bb8b555a72ae84c9c59f7250f013ac822ac2e49b19c64"
 
 [[package]]
 name = "wait-timeout"
