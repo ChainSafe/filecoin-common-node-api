@@ -27,7 +27,7 @@ lazy-regex = "3.2.0"
 nunny = "0.2.0"
 openrpc-types = "0.3.3"
 proc-macro2 = { version = "1.0.87", default-features = false }
-quote = { version = "1.0.37", default-features = false }
+quote = { version = "1.0.38", default-features = false }
 regex = "1.10.5"
 reqwest = { version = "0.12.5", features = ["json", "blocking"] }
 schemars = { version = "0.8.21", default-features = false, features = [
