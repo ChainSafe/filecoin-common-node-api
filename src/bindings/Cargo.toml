@@ -7,7 +7,7 @@ publish.workspace = true
 [dependencies]
 chrono = { version = "0.4.38", features = ["serde"] }
 ez-jsonrpc = "0.4.0"
-serde = { version = "1.0.207", features = ["derive"] }
+serde = { version = "1.0.217", features = ["derive"] }
 serde_json = "1.0.133"
 uuid = { version = "1.10.0", features = ["serde"] }
 
