@@ -8,7 +8,7 @@ publish.workspace = true
 clap = { version = "4.5.15", features = ["derive"] }
 ez-jsonrpc = "0.4.0"
 owo-colors = "4.0.0"
-serde = { version = "1.0.207", features = ["derive"] }
+serde = { version = "1.0.217", features = ["derive"] }
 bindings = { path = "../bindings" }
 strum = { version = "0.26.3", features = ["derive"] }
 derive_more = { version = "1.0.0", features = ["deref", "deref_mut"] }
