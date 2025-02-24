@@ -6,7 +6,7 @@ publish.workspace = true
 
 
 [dependencies]
-anstream = "0.6.15"
+anstream = "0.6.18"
 anyhow = "1.0.90"
 ascii = "1.1.0"
 axum = "0.7.5"

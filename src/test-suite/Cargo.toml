@@ -17,7 +17,7 @@ schemars = { version = "0.8.21", features = ["derive"] }
 reqwest = { version = "0.12.5", features = ["blocking", "json"] }
 humantime-serde = "1.1.1"
 serde_path_to_error = "0.1.16"
-anstream = "0.6.15"
+anstream = "0.6.18"
 serde_json = "1.0.133"
 assert2 = "0.3.14"
 itertools = "0.13.0"
