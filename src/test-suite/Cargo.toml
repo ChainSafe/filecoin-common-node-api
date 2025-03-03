@@ -7,7 +7,7 @@ publish.workspace = true
 [dependencies]
 clap = { version = "4.5.15", features = ["derive"] }
 ez-jsonrpc = "0.4.0"
-owo-colors = "4.0.0"
+owo-colors = "4.2.0"
 serde = { version = "1.0.217", features = ["derive"] }
 bindings = { path = "../bindings" }
 strum = { version = "0.26.3", features = ["derive"] }
