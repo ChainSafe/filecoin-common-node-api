@@ -2,7 +2,7 @@
   "openrpc": "1.3.2",
   "info": {
     "title": "forest",
-    "version": "0.20.0"
+    "version": "0.21.1"
   },
   "methods": [
     {
@@ -931,6 +931,26 @@
         "required": true,
         "schema": {
           "$ref": "#/components/schemas/EthBytes"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.EthGetLogs",
+      "params": [
+        {
+          "name": "eth_filter",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/EthFilterSpec"
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.EthGetLogs.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/EthFilterResult"
         }
       },
       "paramStructure": "by-position"
@@ -4733,7 +4753,13 @@
           "name": "tipset_key",
           "required": true,
           "schema": {
-            "$ref": "#/components/schemas/F3TipSetKey"
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
           }
         }
       ],
@@ -4759,7 +4785,13 @@
           "name": "tipset_key",
           "required": true,
           "schema": {
-            "$ref": "#/components/schemas/F3TipSetKey"
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Cid"
+            }
           }
         }
       ],
@@ -4786,7 +4818,37 @@
       "result": {
         "name": "Filecoin.F3GetProgress.Result",
         "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/F3Instant"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.F3GetManifest",
+      "params": [],
+      "result": {
+        "name": "Filecoin.F3GetManifest.Result",
+        "required": true,
         "schema": true
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.F3ListParticipants",
+      "params": [],
+      "result": {
+        "name": "Filecoin.F3ListParticipants.Result",
+        "required": false,
+        "schema": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/components/schemas/F3Participant"
+          }
+        }
       },
       "paramStructure": "by-position"
     },
@@ -4801,7 +4863,7 @@
       "paramStructure": "by-position"
     },
     {
-      "name": "Filecoin.F3Participate",
+      "name": "Filecoin.F3GetOrRenewParticipationTicket",
       "params": [
         {
           "name": "miner_address",
@@ -4811,19 +4873,39 @@
           }
         },
         {
-          "name": "new_lease_expiration",
+          "name": "previous_lease_ticket",
           "required": true,
           "schema": {
-            "type": "string",
-            "format": "date-time"
+            "$ref": "#/components/schemas/Base64String"
           }
         },
         {
-          "name": "old_lease_expiration",
+          "name": "instances",
           "required": true,
           "schema": {
-            "type": "string",
-            "format": "date-time"
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          }
+        }
+      ],
+      "result": {
+        "name": "Filecoin.F3GetOrRenewParticipationTicket.Result",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Base64String"
+        }
+      },
+      "paramStructure": "by-position"
+    },
+    {
+      "name": "Filecoin.F3Participate",
+      "params": [
+        {
+          "name": "lease_ticket",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Base64String"
           }
         }
       ],
@@ -4831,7 +4913,7 @@
         "name": "Filecoin.F3Participate.Result",
         "required": true,
         "schema": {
-          "type": "boolean"
+          "$ref": "#/components/schemas/ApiF3ParticipationLease"
         }
       },
       "paramStructure": "by-position"
@@ -5490,6 +5572,45 @@
           },
           "value": {
             "$ref": "#/components/schemas/EthBigInt"
+          }
+        }
+      },
+      "ApiF3ParticipationLease": {
+        "description": "defines the lease granted to a storage provider for participating in F3 consensus, detailing the session identifier, issuer, subject, and the expiration instance.",
+        "type": "object",
+        "required": [
+          "FromInstance",
+          "Issuer",
+          "MinerID",
+          "Network",
+          "ValidityTerm"
+        ],
+        "properties": {
+          "FromInstance": {
+            "description": "specifies the instance ID from which this lease is valid.",
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          },
+          "Issuer": {
+            "description": "the identity of the node that issued the lease.",
+            "type": "string"
+          },
+          "MinerID": {
+            "description": "the actor ID of the miner that holds the lease.",
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          },
+          "Network": {
+            "description": "the name of the network this lease belongs to.",
+            "type": "string"
+          },
+          "ValidityTerm": {
+            "description": "specifies the number of instances for which the lease remains valid from the FromInstance.",
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
           }
         }
       },
@@ -6230,12 +6351,34 @@
           }
         }
       },
+      "EthFilterResult": {
+        "description": "`EthFilterResult` represents the response from executing a filter: - A list of block hashes - A list of transaction hashes - Or a list of logs",
+        "anyOf": [
+          {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EthHash"
+            }
+          },
+          {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EthHash"
+            }
+          },
+          {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EthLog"
+            }
+          }
+        ]
+      },
       "EthFilterSpec": {
         "description": "Represents a filter specification for querying Ethereum event logs. This struct can be used to specify criteria for filtering Ethereum event logs based on block range, address, topics, and block hash. It is useful for making requests to Ethereum nodes to fetch logs that match certain conditions.\n\n# Fields\n\n* `from_block` - Optional field interpreted as an epoch (in hex): - `\"latest\"`: latest mined block. - `\"earliest\"`: first block. - `\"pending\"`: blocks that have not yet been mined. If omitted, the default value is `\"latest\"`. This field is skipped during serialization if `None`.\n\n* `to_block` - Optional field interpreted as an epoch (in hex): - `\"latest\"`: latest mined block. - `\"earliest\"`: first block. - `\"pending\"`: blocks that have not yet been mined. If omitted, the default value is `\"latest\"`. This field is skipped during serialization if `None`.\n\n* `address` - Actor address or a list of addresses (`Vec<EthAddress>`) from which event logs should originate. If the filter needs to match a single address, it can be specified as single element vector. This field is required and cannot be omitted.\n\n* `topics` - List of topics (`EthTopicSpec`) to be matched in the event logs.\n\n* `block_hash` - Optional field specifying a block hash (`Hash`) Restricts event logs returned to those emitted from messages contained in this tipset. When `block_hash` is provided, neither `from_block` nor `to_block` can be specified. This field is skipped during serialization if `None`. [the spec](https://github.com/filecoin-project/lotus/blob/475139ff95407ed9d55d3a2ef87e28da66512937/chain/types/ethtypes/eth_types.go#L602-L627).",
         "type": "object",
         "required": [
-          "address",
-          "topics"
+          "address"
         ],
         "properties": {
           "address": {
@@ -6267,7 +6410,14 @@
             ]
           },
           "topics": {
-            "$ref": "#/components/schemas/EthTopicSpec"
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EthTopicSpec"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         }
       },
@@ -6275,10 +6425,25 @@
         "type": "string"
       },
       "EthHashList": {
-        "type": "array",
-        "items": {
-          "$ref": "#/components/schemas/EthHash"
-        }
+        "description": "`EthHashList` represents a topic filter that can take one of two forms: - `List`: Matches if the hash is present in the vector. - `Single`: An optional hash, where: - `Some(hash)`: Matches exactly this hash. - `None`: Acts as a wildcard.",
+        "anyOf": [
+          {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EthHash"
+            }
+          },
+          {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EthHash"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        ]
       },
       "EthInt64": {
         "type": "string"
@@ -6299,33 +6464,42 @@
         ],
         "properties": {
           "address": {
+            "description": "The address of the actor that produced the event log.",
             "$ref": "#/components/schemas/EthAddress"
           },
           "blockHash": {
+            "description": "The hash of the tipset containing the message that produced the log.",
             "$ref": "#/components/schemas/EthHash"
           },
           "blockNumber": {
+            "description": "The epoch of the tipset containing the message.",
             "$ref": "#/components/schemas/EthUint64"
           },
           "data": {
+            "description": "The value of the event log, excluding topics.",
             "$ref": "#/components/schemas/EthBytes"
           },
           "logIndex": {
+            "description": "The index of the event log in the sequence of events produced by the message execution. (this is the index in the events AMT on the message receipt)",
             "$ref": "#/components/schemas/EthUint64"
           },
           "removed": {
+            "description": "Indicates whether the log was removed due to a chain reorganization.",
             "type": "boolean"
           },
           "topics": {
+            "description": "List of topics associated with the event log.",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/EthHash"
             }
           },
           "transactionHash": {
+            "description": "The hash of the RLP message that produced the event log.",
             "$ref": "#/components/schemas/EthHash"
           },
           "transactionIndex": {
+            "description": "The index in the tipset of the transaction that produced the event log. The index corresponds to the sequence of messages produced by `ChainGetParentMessages`",
             "$ref": "#/components/schemas/EthUint64"
           }
         }
@@ -6487,7 +6661,7 @@
           },
           "Flags": {
             "type": "integer",
-            "format": "uint8",
+            "format": "uint64",
             "minimum": 0.0
           },
           "Key": {
@@ -6559,6 +6733,57 @@
             "$ref": "#/components/schemas/Nullable_Cid"
           },
           "SectorNumber": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          }
+        }
+      },
+      "F3Instant": {
+        "description": "represents a particular moment in the progress of GPBFT, captured by instance ID, round and phase.",
+        "type": "object",
+        "required": [
+          "ID",
+          "Phase",
+          "Round"
+        ],
+        "properties": {
+          "ID": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          },
+          "Phase": {
+            "type": "integer",
+            "format": "uint8",
+            "minimum": 0.0
+          },
+          "Round": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          }
+        }
+      },
+      "F3Participant": {
+        "type": "object",
+        "required": [
+          "FromInstance",
+          "MinerID",
+          "ValidityTerm"
+        ],
+        "properties": {
+          "FromInstance": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          },
+          "MinerID": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          },
+          "ValidityTerm": {
             "type": "integer",
             "format": "uint64",
             "minimum": 0.0
